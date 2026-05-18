@@ -23,6 +23,7 @@ import io.github.maniramezan.compose.components.BottomBar
 import io.github.maniramezan.compose.components.NavigationItem
 import io.github.maniramezan.compose.components.PasswordField
 import io.github.maniramezan.compose.components.PrimaryButton
+import io.github.maniramezan.compose.components.ProgressIndicator
 import io.github.maniramezan.compose.components.RadioGroup
 import io.github.maniramezan.compose.components.SearchField
 import io.github.maniramezan.compose.components.SecondaryButton
@@ -30,6 +31,7 @@ import io.github.maniramezan.compose.components.Section
 import io.github.maniramezan.compose.components.SegmentedControl
 import io.github.maniramezan.compose.components.Slider
 import io.github.maniramezan.compose.components.Snackbar
+import io.github.maniramezan.compose.components.Skeleton
 import io.github.maniramezan.compose.components.Switch
 import io.github.maniramezan.compose.components.TextButton
 import io.github.maniramezan.compose.components.TextField
@@ -112,6 +114,8 @@ public class SampleActivity : ComponentActivity() {
                                     selectedIndex = 1,
                                     onItemSelected = {},
                                 )
+                                ProgressIndicator(progress = 0.45f, label = "Storage used")
+                                Skeleton()
                             }
                         }
                     }
