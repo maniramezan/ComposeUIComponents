@@ -25,5 +25,9 @@ gradlePlugin {
             id = "compose.system.kotlin.library"
             implementationClass = "KotlinLibraryConventionPlugin"
         }
+        register("kotlinMultiplatformLibrary") {
+            id = "compose.system.kotlin.multiplatform.library"
+            implementationClass = "KotlinMultiplatformLibraryConventionPlugin"
+        }
     }
 }

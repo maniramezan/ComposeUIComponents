@@ -225,6 +225,7 @@ Implementation will be done in **one continuous run**, but with **one commit per
 
 **Phase 4 — KMP (optional, future)**
 - Promote `:foundation`, `:tokens`, and parts of `:theme` to Compose Multiplatform.
+- Current readiness step: `:foundation` is pure Kotlin Multiplatform. Keep `:tokens` Android-only until Compose Multiplatform token dependencies (`Color`, `Dp`, `Easing`) are intentionally adopted.
 
 ---
 

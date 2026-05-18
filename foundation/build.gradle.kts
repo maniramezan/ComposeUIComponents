@@ -1,14 +1,18 @@
 plugins {
-    alias(libs.plugins.compose.system.kotlin.library)
+    alias(libs.plugins.compose.system.kotlin.multiplatform.library)
 }
 
 group = providers.gradleProperty("GROUP").get()
 version = providers.gradleProperty("VERSION_NAME").get()
 
-dependencies {
-    testImplementation(libs.junit.jupiter)
-    testImplementation(libs.truth)
-    testRuntimeOnly(libs.junit.platform.launcher)
+kotlin {
+    sourceSets {
+        jvmTest.dependencies {
+            implementation(libs.junit.jupiter)
+            implementation(libs.truth)
+            runtimeOnly(libs.junit.platform.launcher)
+        }
+    }
 }
 
 tasks.withType<Test>().configureEach {
