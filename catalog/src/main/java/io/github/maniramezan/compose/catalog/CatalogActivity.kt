@@ -19,6 +19,8 @@ import io.github.maniramezan.compose.components.Checkbox
 import io.github.maniramezan.compose.components.IconButton
 import io.github.maniramezan.compose.components.EmptyState
 import io.github.maniramezan.compose.components.ListItem
+import io.github.maniramezan.compose.components.BottomBar
+import io.github.maniramezan.compose.components.NavigationItem
 import io.github.maniramezan.compose.components.PasswordField
 import io.github.maniramezan.compose.components.PrimaryButton
 import io.github.maniramezan.compose.components.RadioGroup
@@ -31,6 +33,8 @@ import io.github.maniramezan.compose.components.Snackbar
 import io.github.maniramezan.compose.components.Switch
 import io.github.maniramezan.compose.components.TextButton
 import io.github.maniramezan.compose.components.TextField
+import io.github.maniramezan.compose.components.TopAppBar
+import io.github.maniramezan.compose.components.TabRow
 import io.github.maniramezan.compose.icons.defaultAppIcons
 import io.github.maniramezan.compose.theme.AppTheme
 
@@ -98,6 +102,22 @@ public class CatalogActivity : ComponentActivity() {
                                 EmptyState(
                                     title = "No projects",
                                     message = "Create your first project to get started.",
+                                )
+                                Text("Navigation")
+                                TopAppBar(title = "Dashboard")
+                                TabRow(
+                                    tabs = listOf("Overview", "Activity", "Settings"),
+                                    selectedIndex = 0,
+                                    onTabSelected = {},
+                                )
+                                BottomBar(
+                                    items = listOf(
+                                        NavigationItem("Home", AppTheme.icons.check),
+                                        NavigationItem("Tasks", AppTheme.icons.check, badge = "3"),
+                                        NavigationItem("Close", AppTheme.icons.close),
+                                    ),
+                                    selectedIndex = 0,
+                                    onItemSelected = {},
                                 )
                             }
                         }
