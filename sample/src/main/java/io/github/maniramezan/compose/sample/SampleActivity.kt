@@ -15,8 +15,10 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import io.github.maniramezan.compose.components.Card
 import io.github.maniramezan.compose.components.Checkbox
+import io.github.maniramezan.compose.components.EmptyState
 import io.github.maniramezan.compose.components.FAB
 import io.github.maniramezan.compose.components.IconButton
+import io.github.maniramezan.compose.components.ListItem
 import io.github.maniramezan.compose.components.PasswordField
 import io.github.maniramezan.compose.components.PrimaryButton
 import io.github.maniramezan.compose.components.RadioGroup
@@ -82,6 +84,15 @@ public class SampleActivity : ComponentActivity() {
                                     }
                                 }
                                 Snackbar(message = "Profile saved")
+                                ListItem(
+                                    headline = "Workspace",
+                                    supportingText = "Personal",
+                                    trailingContent = { Text("Open") },
+                                )
+                                EmptyState(
+                                    title = "No recent files",
+                                    message = "Recent projects will appear here.",
+                                )
                             }
                         }
                     }

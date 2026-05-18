@@ -17,6 +17,8 @@ import io.github.maniramezan.compose.components.FAB
 import io.github.maniramezan.compose.components.Card
 import io.github.maniramezan.compose.components.Checkbox
 import io.github.maniramezan.compose.components.IconButton
+import io.github.maniramezan.compose.components.EmptyState
+import io.github.maniramezan.compose.components.ListItem
 import io.github.maniramezan.compose.components.PasswordField
 import io.github.maniramezan.compose.components.PrimaryButton
 import io.github.maniramezan.compose.components.RadioGroup
@@ -86,6 +88,16 @@ public class CatalogActivity : ComponentActivity() {
                                     message = "Catalog saved",
                                     actionLabel = "Undo",
                                     onAction = {},
+                                )
+                                Text("Lists")
+                                ListItem(
+                                    headline = "Compose Pro",
+                                    supportingText = "Active subscription",
+                                    trailingContent = { Text("Active") },
+                                )
+                                EmptyState(
+                                    title = "No projects",
+                                    message = "Create your first project to get started.",
                                 )
                             }
                         }
