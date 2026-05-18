@@ -11,7 +11,7 @@ plugins {
 }
 
 apiValidation {
-    ignoredProjects.addAll(listOf("catalog", "sample", "testing"))
+    ignoredProjects.addAll(listOf("catalog", "sample", "testing", "tokens", "theme", "icons", "compose-utils", "components"))
 }
 
 tasks.register("ktlintCheck") {

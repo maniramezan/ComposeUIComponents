@@ -9,6 +9,7 @@ public class AndroidApplicationConventionPlugin : Plugin<Project> {
 
         extensions.configure<ApplicationExtension> {
             configureAndroidApplication(this)
+            configureCompose(this)
         }
     }
 }
