@@ -9,6 +9,12 @@ version = providers.gradleProperty("VERSION_NAME").get()
 
 android {
     namespace = "io.github.maniramezan.compose.components"
+
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
@@ -27,15 +33,18 @@ dependencies {
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.junit)
     testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.ext.junit)
     testImplementation(libs.roborazzi.compose)
     testImplementation(libs.roborazzi.junit.rule)
     testImplementation(libs.androidx.compose.ui.test.junit4)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
     testImplementation(libs.truth)
     testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
+    systemProperty("robolectric.pixelCopyRenderMode", "hardware")
 }
 
 tasks.matching { it.name == "testDebugUnitTest" }.configureEach {
