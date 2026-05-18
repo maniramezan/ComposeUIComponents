@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.compose.system.android.application)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -26,5 +27,7 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.showkase)
     implementation(libs.showkase.annotation)
+    ksp(libs.showkase.processor)
 }
