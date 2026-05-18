@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.dokka) apply false
     alias(libs.plugins.kotlin.jvm) apply false
     alias(libs.plugins.kotlin.compose) apply false
+    alias(libs.plugins.ksp) apply false
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.maven.publish) apply false
@@ -22,4 +23,11 @@ tasks.register("ktlintCheck") {
 tasks.register("composeCompilerReports") {
     group = "verification"
     description = "Enable with -PenableComposeCompilerReports=true on assemble tasks."
+}
+
+subprojects {
+    pluginManager.withPlugin("com.android.library") {
+        pluginManager.apply("org.jetbrains.dokka")
+        pluginManager.apply("com.vanniktech.maven.publish")
+    }
 }
