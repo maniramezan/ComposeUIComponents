@@ -12,7 +12,6 @@ import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar as MaterialTopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -20,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.theme.IconToken
+import androidx.compose.material3.TopAppBar as MaterialTopAppBar
 
 @Immutable
 public data class NavigationItem(
@@ -42,12 +42,13 @@ public fun TopAppBar(
         modifier = modifier,
         navigationIcon = navigationIcon,
         actions = { actions() },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = AppTheme.colors.surface,
-            titleContentColor = AppTheme.colors.onSurface,
-            navigationIconContentColor = AppTheme.colors.primary,
-            actionIconContentColor = AppTheme.colors.primary,
-        ),
+        colors =
+            TopAppBarDefaults.topAppBarColors(
+                containerColor = AppTheme.colors.surface,
+                titleContentColor = AppTheme.colors.onSurface,
+                navigationIconContentColor = AppTheme.colors.primary,
+                actionIconContentColor = AppTheme.colors.primary,
+            ),
     )
 }
 

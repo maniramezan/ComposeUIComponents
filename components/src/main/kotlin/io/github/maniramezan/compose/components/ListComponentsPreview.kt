@@ -9,21 +9,22 @@ import io.github.maniramezan.compose.theme.AppTheme
 
 @Preview(name = "List Components", group = "Lists")
 @Composable
-public fun ListComponentsPreview(): Unit = AppTheme {
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        ListItem(
-            headline = "Compose Pro",
-            supportingText = "Active subscription",
-            trailingContent = { Text(text = "Active") },
-        )
-        EmptyState(
-            title = "No projects",
-            message = "Create your first project to get started.",
-        )
-        LoadingState(label = "Loading projects")
-        ErrorState(
-            title = "Could not load",
-            message = "Check your connection and retry.",
-        )
+public fun ListComponentsPreview(): Unit =
+    AppTheme {
+        Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
+            ListItem(
+                headline = "Compose Pro",
+                supportingText = "Active subscription",
+                trailingContent = { Text(text = "Active") },
+            )
+            EmptyState(
+                title = "No projects",
+                message = "Create your first project to get started.",
+            )
+            LoadingState(label = "Loading projects")
+            ErrorState(
+                title = "Could not load",
+                message = "Check your connection and retry.",
+            )
+        }
     }
-}

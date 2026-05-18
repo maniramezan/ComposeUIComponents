@@ -30,9 +30,10 @@ public fun AppText(
 }
 
 @Composable
-private fun AppTextStyle.toTextStyle(): TextStyle = when (this) {
-    AppTextStyle.Display -> AppTheme.typography.display
-    AppTextStyle.Title -> AppTheme.typography.title
-    AppTextStyle.Body -> AppTheme.typography.body
-    AppTextStyle.Label -> AppTheme.typography.label
-}
+private fun AppTextStyle.toTextStyle(): TextStyle =
+    when (this) {
+        AppTextStyle.Display -> AppTheme.typography.display
+        AppTextStyle.Title -> AppTheme.typography.title
+        AppTextStyle.Body -> AppTheme.typography.body
+        AppTextStyle.Label -> AppTheme.typography.label
+    }

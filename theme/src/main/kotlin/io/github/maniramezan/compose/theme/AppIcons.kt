@@ -16,17 +16,20 @@ public data class AppIcons(
     public val close: IconToken,
 ) {
     public companion object {
-        public fun default(): AppIcons = AppIcons(
-            check = IconToken(EmptyIcon),
-            close = IconToken(EmptyIcon),
-        )
+        public fun default(): AppIcons =
+            AppIcons(
+                check = IconToken(EmptyIcon),
+                close = IconToken(EmptyIcon),
+            )
     }
 }
 
-private val EmptyIcon: ImageVector = ImageVector.Builder(
-    name = "EmptyIcon",
-    defaultWidth = 24.dp,
-    defaultHeight = 24.dp,
-    viewportWidth = 24f,
-    viewportHeight = 24f,
-).build()
+private val EmptyIcon: ImageVector =
+    ImageVector
+        .Builder(
+            name = "EmptyIcon",
+            defaultWidth = 24.dp,
+            defaultHeight = 24.dp,
+            viewportWidth = 24f,
+            viewportHeight = 24f,
+        ).build()

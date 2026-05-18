@@ -9,27 +9,28 @@ import io.github.maniramezan.compose.theme.AppTheme
 
 @Preview(name = "Action Components", group = "Actions")
 @Composable
-public fun ActionComponentsPreview(): Unit = AppTheme {
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        PrimaryButton(text = "Primary", onClick = {})
-        SecondaryButton(text = "Secondary", onClick = {})
-        TextButton(text = "Text", onClick = {})
-        Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-            IconButton(
-                icon = AppTheme.icons.check,
-                contentDescription = "Confirm",
-                onClick = {},
-            )
-            FAB(
-                icon = AppTheme.icons.check,
-                contentDescription = "Create",
-                onClick = {},
+public fun ActionComponentsPreview(): Unit =
+    AppTheme {
+        Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
+            PrimaryButton(text = "Primary", onClick = {})
+            SecondaryButton(text = "Secondary", onClick = {})
+            TextButton(text = "Text", onClick = {})
+            Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
+                IconButton(
+                    icon = AppTheme.icons.check,
+                    contentDescription = "Confirm",
+                    onClick = {},
+                )
+                FAB(
+                    icon = AppTheme.icons.check,
+                    contentDescription = "Create",
+                    onClick = {},
+                )
+            }
+            SegmentedControl(
+                options = listOf("Day", "Week", "Month"),
+                selectedIndex = 1,
+                onOptionSelected = {},
             )
         }
-        SegmentedControl(
-            options = listOf("Day", "Week", "Month"),
-            selectedIndex = 1,
-            onOptionSelected = {},
-        )
     }
-}

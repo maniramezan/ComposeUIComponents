@@ -31,11 +31,12 @@ public fun AppTheme(
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit,
 ) {
-    val colorScheme = appColorScheme(
-        colors = colors,
-        darkTheme = darkTheme,
-        dynamicColor = dynamicColor,
-    )
+    val colorScheme =
+        appColorScheme(
+            colors = colors,
+            darkTheme = darkTheme,
+            dynamicColor = dynamicColor,
+        )
     val appColors = colorScheme.toAppColors()
 
     CompositionLocalProvider(
@@ -97,26 +98,29 @@ private fun appColorScheme(
     }
 }
 
-private fun AppColors.toLightMaterialColorScheme(): ColorScheme = lightColorScheme(
-    primary = primary,
-    onPrimary = onPrimary,
-    surface = surface,
-    onSurface = onSurface,
-    surfaceVariant = surfaceVariant,
-)
+private fun AppColors.toLightMaterialColorScheme(): ColorScheme =
+    lightColorScheme(
+        primary = primary,
+        onPrimary = onPrimary,
+        surface = surface,
+        onSurface = onSurface,
+        surfaceVariant = surfaceVariant,
+    )
 
-private fun ColorScheme.toAppColors(): AppColors = AppColors(
-    primary = primary,
-    onPrimary = onPrimary,
-    surface = surface,
-    onSurface = onSurface,
-    surfaceVariant = surfaceVariant,
-)
+private fun ColorScheme.toAppColors(): AppColors =
+    AppColors(
+        primary = primary,
+        onPrimary = onPrimary,
+        surface = surface,
+        onSurface = onSurface,
+        surfaceVariant = surfaceVariant,
+    )
 
-internal fun AppColors.toDarkMaterialColorScheme(): ColorScheme = darkColorScheme(
-    primary = primary,
-    onPrimary = onPrimary,
-    surface = surface,
-    onSurface = onSurface,
-    surfaceVariant = surfaceVariant,
-)
+internal fun AppColors.toDarkMaterialColorScheme(): ColorScheme =
+    darkColorScheme(
+        primary = primary,
+        onPrimary = onPrimary,
+        surface = surface,
+        onSurface = onSurface,
+        surfaceVariant = surfaceVariant,
+    )

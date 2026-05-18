@@ -14,34 +14,40 @@ public data class AppTypography(
     public val label: TextStyle,
 ) {
     public companion object {
-        public fun default(): AppTypography = AppTypography(
-            display = TextStyle(
-                fontSize = 40.sp,
-                lineHeight = 48.sp,
-                fontWeight = FontWeight.Bold,
-            ),
-            title = TextStyle(
-                fontSize = 24.sp,
-                lineHeight = 32.sp,
-                fontWeight = FontWeight.SemiBold,
-            ),
-            body = TextStyle(
-                fontSize = 16.sp,
-                lineHeight = 24.sp,
-                fontWeight = FontWeight.Normal,
-            ),
-            label = TextStyle(
-                fontSize = 14.sp,
-                lineHeight = 20.sp,
-                fontWeight = FontWeight.Medium,
-            ),
-        )
+        public fun default(): AppTypography =
+            AppTypography(
+                display =
+                    TextStyle(
+                        fontSize = 40.sp,
+                        lineHeight = 48.sp,
+                        fontWeight = FontWeight.Bold,
+                    ),
+                title =
+                    TextStyle(
+                        fontSize = 24.sp,
+                        lineHeight = 32.sp,
+                        fontWeight = FontWeight.SemiBold,
+                    ),
+                body =
+                    TextStyle(
+                        fontSize = 16.sp,
+                        lineHeight = 24.sp,
+                        fontWeight = FontWeight.Normal,
+                    ),
+                label =
+                    TextStyle(
+                        fontSize = 14.sp,
+                        lineHeight = 20.sp,
+                        fontWeight = FontWeight.Medium,
+                    ),
+            )
     }
 }
 
-internal fun AppTypography.toMaterialTypography(): Typography = Typography(
-    displayLarge = display,
-    titleLarge = title,
-    bodyLarge = body,
-    labelLarge = label,
-)
+internal fun AppTypography.toMaterialTypography(): Typography =
+    Typography(
+        displayLarge = display,
+        titleLarge = title,
+        bodyLarge = body,
+        labelLarge = label,
+    )

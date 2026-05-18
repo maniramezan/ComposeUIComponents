@@ -6,9 +6,10 @@ import io.github.maniramezan.compose.theme.AppTheme
 
 @ShowkaseComposable(name = "Primary Button", group = "Actions")
 @Composable
-public fun PrimaryButtonShowkase(): Unit = AppTheme {
-    PrimaryButton(
-        text = "Continue",
-        onClick = {},
-    )
-}
+public fun PrimaryButtonShowkase(): Unit =
+    AppTheme {
+        PrimaryButton(
+            text = "Continue",
+            onClick = {},
+        )
+    }

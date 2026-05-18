@@ -46,15 +46,14 @@ public fun ProgressIndicator(
 }
 
 @Composable
-public fun Skeleton(
-    modifier: Modifier = Modifier,
-) {
+public fun Skeleton(modifier: Modifier = Modifier) {
     Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .defaultMinSize(minHeight = 48.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .background(AppTheme.colors.surfaceVariant),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .defaultMinSize(minHeight = 48.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(AppTheme.colors.surfaceVariant),
     )
 }
 
@@ -66,11 +65,12 @@ public fun Toast(
     onAction: (() -> Unit)? = null,
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .background(AppTheme.colors.onSurface)
-            .padding(horizontal = AppTheme.spacing.lg, vertical = AppTheme.spacing.md),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(12.dp))
+                .background(AppTheme.colors.onSurface)
+                .padding(horizontal = AppTheme.spacing.lg, vertical = AppTheme.spacing.md),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {

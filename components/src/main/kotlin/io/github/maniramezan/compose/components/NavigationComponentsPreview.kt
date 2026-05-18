@@ -8,36 +8,39 @@ import io.github.maniramezan.compose.theme.AppTheme
 
 @Preview(name = "Navigation Components", group = "Navigation")
 @Composable
-public fun NavigationComponentsPreview(): Unit = AppTheme {
-    val items = previewNavigationItems()
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        TopAppBar(title = "Dashboard")
-        TabRow(
-            tabs = listOf("Overview", "Activity", "Settings"),
-            selectedIndex = 0,
-            onTabSelected = {},
-        )
-        BottomBar(
-            items = items,
-            selectedIndex = 0,
-            onItemSelected = {},
-        )
+public fun NavigationComponentsPreview(): Unit =
+    AppTheme {
+        val items = previewNavigationItems()
+        Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
+            TopAppBar(title = "Dashboard")
+            TabRow(
+                tabs = listOf("Overview", "Activity", "Settings"),
+                selectedIndex = 0,
+                onTabSelected = {},
+            )
+            BottomBar(
+                items = items,
+                selectedIndex = 0,
+                onItemSelected = {},
+            )
+        }
     }
-}
 
 @Preview(name = "Nav Rail", group = "Navigation")
 @Composable
-public fun NavRailPreview(): Unit = AppTheme {
-    NavRail(
-        items = previewNavigationItems(),
-        selectedIndex = 1,
-        onItemSelected = {},
-    )
-}
+public fun NavRailPreview(): Unit =
+    AppTheme {
+        NavRail(
+            items = previewNavigationItems(),
+            selectedIndex = 1,
+            onItemSelected = {},
+        )
+    }
 
 @Composable
-private fun previewNavigationItems(): List<NavigationItem> = listOf(
-    NavigationItem(label = "Home", icon = AppTheme.icons.check),
-    NavigationItem(label = "Tasks", icon = AppTheme.icons.check, badge = "3"),
-    NavigationItem(label = "Close", icon = AppTheme.icons.close),
-)
+private fun previewNavigationItems(): List<NavigationItem> =
+    listOf(
+        NavigationItem(label = "Home", icon = AppTheme.icons.check),
+        NavigationItem(label = "Tasks", icon = AppTheme.icons.check, badge = "3"),
+        NavigationItem(label = "Close", icon = AppTheme.icons.close),
+    )

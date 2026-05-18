@@ -8,11 +8,12 @@ import io.github.maniramezan.compose.theme.AppTheme
 
 @Preview(name = "Typography", group = "Typography")
 @Composable
-public fun TypographyComponentsPreview(): Unit = AppTheme {
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
-        AppText(text = "Display", style = AppTextStyle.Display)
-        AppText(text = "Title", style = AppTextStyle.Title)
-        AppText(text = "Body text for reading content.", style = AppTextStyle.Body)
-        AppText(text = "Label", style = AppTextStyle.Label)
+public fun TypographyComponentsPreview(): Unit =
+    AppTheme {
+        Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
+            AppText(text = "Display", style = AppTextStyle.Display)
+            AppText(text = "Title", style = AppTextStyle.Title)
+            AppText(text = "Body text for reading content.", style = AppTextStyle.Body)
+            AppText(text = "Label", style = AppTextStyle.Label)
+        }
     }
-}
