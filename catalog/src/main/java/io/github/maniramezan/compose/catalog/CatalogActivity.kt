@@ -37,6 +37,8 @@ import io.github.maniramezan.compose.components.TextButton
 import io.github.maniramezan.compose.components.TextField
 import io.github.maniramezan.compose.components.TopAppBar
 import io.github.maniramezan.compose.components.TabRow
+import io.github.maniramezan.compose.components.AppText
+import io.github.maniramezan.compose.components.AppTextStyle
 import io.github.maniramezan.compose.icons.defaultAppIcons
 import io.github.maniramezan.compose.theme.AppTheme
 
@@ -124,6 +126,10 @@ public class CatalogActivity : ComponentActivity() {
                                 Text("Feedback")
                                 ProgressIndicator(progress = 0.65f, label = "Syncing")
                                 Skeleton()
+                                Text("Typography")
+                                AppText(text = "Display", style = AppTextStyle.Display)
+                                AppText(text = "Title", style = AppTextStyle.Title)
+                                AppText(text = "Body text for reading content.")
                             }
                         }
                     }

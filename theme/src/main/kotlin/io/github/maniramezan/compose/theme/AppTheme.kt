@@ -13,6 +13,7 @@ private val LocalAppColors = staticCompositionLocalOf { AppColors.light() }
 private val LocalAppSpacing = staticCompositionLocalOf { AppSpacing.default() }
 private val LocalAppMotion = staticCompositionLocalOf { AppMotion.default() }
 private val LocalAppIcons = staticCompositionLocalOf { AppIcons.default() }
+private val LocalAppTypography = staticCompositionLocalOf { AppTypography.default() }
 
 @Composable
 public fun AppTheme(
@@ -20,6 +21,7 @@ public fun AppTheme(
     spacing: AppSpacing = AppSpacing.default(),
     motion: AppMotion = AppMotion.default(),
     icons: AppIcons = AppIcons.default(),
+    typography: AppTypography = AppTypography.default(),
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit,
 ) {
@@ -28,9 +30,11 @@ public fun AppTheme(
         LocalAppSpacing provides spacing,
         LocalAppMotion provides motion,
         LocalAppIcons provides icons,
+        LocalAppTypography provides typography,
     ) {
         MaterialTheme(
             colorScheme = colors.toMaterialColorScheme(dynamicColor),
+            typography = typography.toMaterialTypography(),
             content = content,
         )
     }
@@ -56,6 +60,11 @@ public object AppTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalAppIcons.current
+
+    public val typography: AppTypography
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalAppTypography.current
 }
 
 private fun AppColors.toMaterialColorScheme(dynamicColor: Boolean): ColorScheme {
