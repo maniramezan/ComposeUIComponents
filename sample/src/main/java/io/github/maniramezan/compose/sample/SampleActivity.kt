@@ -13,6 +13,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
+import io.github.maniramezan.compose.components.AppText
+import io.github.maniramezan.compose.components.AppTextStyle
 import io.github.maniramezan.compose.components.Card
 import io.github.maniramezan.compose.components.Checkbox
 import io.github.maniramezan.compose.components.EmptyState
@@ -116,6 +118,8 @@ public class SampleActivity : ComponentActivity() {
                                 )
                                 ProgressIndicator(progress = 0.45f, label = "Storage used")
                                 Skeleton()
+                                AppText(text = "Account summary", style = AppTextStyle.Title)
+                                AppText(text = "Your workspace is ready.")
                             }
                         }
                     }
