@@ -1,0 +1,5 @@
+.claude/settings.local.json
+.gradle/
+build/
+**/build/
+local.properties

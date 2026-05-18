@@ -1,0 +1,4 @@
+public final class io/github/maniramezan/compose/foundation/Foundation {
+	public static final field INSTANCE Lio/github/maniramezan/compose/foundation/Foundation;
+}
+
