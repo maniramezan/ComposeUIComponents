@@ -38,6 +38,14 @@ jobs:
         with:
           name: sample-debug-apk
           path: sample/build/outputs/apk/debug/sample-debug.apk
+      - name: Generate Compose compiler reports
+        run: ./gradlew composeCompilerReports -PenableComposeCompilerReports=true
+      - uses: actions/upload-artifact@v7.0.1
+        with:
+          name: compose-compiler-reports
+          path: |
+            **/build/compose-metrics
+            **/build/compose-reports
       - uses: actions/setup-python@v6.2.0
         with:
           python-version: '3.13'

@@ -4,7 +4,9 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.getByType
+import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension
 
 internal const val COMPILE_SDK = 36
 internal const val MIN_SDK = 26
@@ -51,6 +53,8 @@ internal fun Project.configureAndroidLibrary(extension: LibraryExtension) {
 internal fun Project.configureCompose(extension: LibraryExtension) {
     pluginManager.apply("org.jetbrains.kotlin.plugin.compose")
 
+    configureComposeCompilerReports()
+
     extension.apply {
         buildFeatures.compose = true
     }
@@ -66,6 +70,8 @@ internal fun Project.configureCompose(extension: LibraryExtension) {
 internal fun Project.configureCompose(extension: ApplicationExtension) {
     pluginManager.apply("org.jetbrains.kotlin.plugin.compose")
 
+    configureComposeCompilerReports()
+
     extension.apply {
         buildFeatures.compose = true
     }
@@ -75,5 +81,16 @@ internal fun Project.configureCompose(extension: ApplicationExtension) {
         add("implementation", libs.findLibrary("androidx-compose-runtime").get())
         add("implementation", libs.findLibrary("androidx-compose-ui-tooling-preview").get())
         add("debugImplementation", libs.findLibrary("androidx-compose-ui-tooling").get())
+    }
+}
+
+private fun Project.configureComposeCompilerReports() {
+    if (!providers.gradleProperty("enableComposeCompilerReports").map(String::toBoolean).getOrElse(false)) {
+        return
+    }
+
+    extensions.configure<ComposeCompilerGradlePluginExtension> {
+        metricsDestination.set(layout.buildDirectory.dir("compose-metrics"))
+        reportsDestination.set(layout.buildDirectory.dir("compose-reports"))
     }
 }
