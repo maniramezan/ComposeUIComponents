@@ -13,12 +13,19 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
+import io.github.maniramezan.compose.components.Checkbox
 import io.github.maniramezan.compose.components.FAB
 import io.github.maniramezan.compose.components.IconButton
+import io.github.maniramezan.compose.components.PasswordField
 import io.github.maniramezan.compose.components.PrimaryButton
+import io.github.maniramezan.compose.components.RadioGroup
+import io.github.maniramezan.compose.components.SearchField
 import io.github.maniramezan.compose.components.SecondaryButton
 import io.github.maniramezan.compose.components.SegmentedControl
+import io.github.maniramezan.compose.components.Slider
+import io.github.maniramezan.compose.components.Switch
 import io.github.maniramezan.compose.components.TextButton
+import io.github.maniramezan.compose.components.TextField
 import io.github.maniramezan.compose.icons.defaultAppIcons
 import io.github.maniramezan.compose.theme.AppTheme
 
@@ -53,6 +60,18 @@ public class SampleActivity : ComponentActivity() {
                                     selectedIndex = 0,
                                     onOptionSelected = {},
                                 )
+                                Text("Profile")
+                                TextField(value = "Mani", onValueChange = {}, label = "Name")
+                                PasswordField(value = "secret", onValueChange = {}, label = "Password")
+                                SearchField(value = "settings", onValueChange = {})
+                                Checkbox(checked = true, onCheckedChange = {}, label = "Email updates")
+                                RadioGroup(
+                                    options = listOf("Compact", "Comfortable", "Spacious"),
+                                    selectedIndex = 1,
+                                    onOptionSelected = {},
+                                )
+                                Switch(checked = true, onCheckedChange = {}, label = "Notifications")
+                                Slider(value = 0.45f, onValueChange = {})
                             }
                         }
                     }
