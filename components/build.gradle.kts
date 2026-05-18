@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.compose.system.compose.library)
+    alias(libs.plugins.ksp)
     alias(libs.plugins.roborazzi)
 }
 
@@ -19,7 +20,9 @@ dependencies {
     implementation(libs.androidx.compose.foundation.layout)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.ui)
+    implementation(libs.showkase)
     implementation(libs.showkase.annotation)
+    ksp(libs.showkase.processor)
 
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.junit)
