@@ -17,6 +17,15 @@ jobs:
       - uses: gradle/actions/setup-gradle@v5
       - name: Check
         run: ./gradlew check
+      - name: Record component screenshots
+        run: ./gradlew :components:recordRoborazziDebug
+      - uses: actions/upload-artifact@v4
+        if: ${{ always() }}
+        with:
+          name: component-screenshots
+          path: |
+            components/build/outputs/roborazzi
+            components/build/reports/roborazzi
       - name: Assemble catalog
         run: ./gradlew :catalog:assembleDebug
       - name: Assemble sample
