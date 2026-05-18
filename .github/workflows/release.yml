@@ -1,0 +1,58 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6.0.2
+      - uses: actions/setup-java@v5.2.0
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v6.1.0
+
+      - name: Check
+        run: ./gradlew check
+      - name: Record component screenshots
+        run: ./gradlew :components:recordRoborazziDebug
+      - name: Assemble release assets
+        run: ./gradlew :catalog:assembleDebug :sample:assembleDebug
+      - name: Verify local publication metadata
+        run: ./gradlew publishToMavenLocal
+
+      - uses: actions/setup-python@v6.2.0
+        with:
+          python-version: '3.13'
+      - name: Install docs dependencies
+        run: python -m pip install -r requirements-docs.txt
+      - name: Build docs site
+        run: mkdocs build --strict
+
+      - name: Publish to Maven Central
+        env:
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_IN_MEMORY_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_IN_MEMORY_KEY_PASSWORD }}
+        run: ./gradlew publish
+
+      - name: Package docs site
+        run: tar -czf docs-site.tar.gz site
+      - name: Package component screenshots
+        run: tar -czf component-screenshots.tar.gz -C components/build outputs/roborazzi reports/roborazzi
+
+      - uses: softprops/action-gh-release@v3.0.0
+        with:
+          files: |
+            catalog/build/outputs/apk/debug/catalog-debug.apk
+            sample/build/outputs/apk/debug/sample-debug.apk
+            docs-site.tar.gz
+            component-screenshots.tar.gz
