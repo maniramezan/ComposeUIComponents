@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.dokka) apply false
     alias(libs.plugins.kotlin.jvm) apply false
+    alias(libs.plugins.kotlin.multiplatform) apply false
     alias(libs.plugins.kotlin.compose) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.android.library) apply false
@@ -27,6 +28,10 @@ tasks.register("composeCompilerReports") {
 
 subprojects {
     pluginManager.withPlugin("com.android.library") {
+        pluginManager.apply("org.jetbrains.dokka")
+        pluginManager.apply("com.vanniktech.maven.publish")
+    }
+    pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
         pluginManager.apply("org.jetbrains.dokka")
         pluginManager.apply("com.vanniktech.maven.publish")
     }

@@ -52,6 +52,7 @@ detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "mavenPublish" }
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
@@ -60,3 +61,4 @@ compose-system-android-application = { id = "compose.system.android.application"
 compose-system-android-library = { id = "compose.system.android.library" }
 compose-system-compose-library = { id = "compose.system.compose.library" }
 compose-system-kotlin-library = { id = "compose.system.kotlin.library" }
+compose-system-kotlin-multiplatform-library = { id = "compose.system.kotlin.multiplatform.library" }
