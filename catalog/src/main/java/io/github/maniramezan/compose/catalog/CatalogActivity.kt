@@ -7,8 +7,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -47,90 +53,101 @@ public class CatalogActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContent {
-            AppTheme(icons = defaultAppIcons()) {
-                MaterialTheme {
-                    Scaffold { innerPadding ->
-                        Surface(modifier = Modifier.padding(innerPadding)) {
-                            Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-                                Text("Compose UI Catalog")
-                                PrimaryButton(text = "Primary", onClick = {})
-                                SecondaryButton(text = "Secondary", onClick = {})
-                                TextButton(text = "Text", onClick = {})
-                                Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-                                    IconButton(
-                                        icon = AppTheme.icons.check,
-                                        contentDescription = "Confirm",
-                                        onClick = {},
-                                    )
-                                    FAB(
-                                        icon = AppTheme.icons.check,
-                                        contentDescription = "Create",
-                                        onClick = {},
-                                    )
-                                }
-                                SegmentedControl(
-                                    options = listOf("Day", "Week", "Month"),
-                                    selectedIndex = 1,
-                                    onOptionSelected = {},
+            AppTheme(
+                icons = defaultAppIcons(),
+                dynamicColor = true,
+            ) {
+                Scaffold(contentWindowInsets = WindowInsets.safeDrawing) { innerPadding ->
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding)
+                            .consumeWindowInsets(innerPadding)
+                            .imePadding()
+                            .verticalScroll(rememberScrollState()),
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(AppTheme.spacing.lg),
+                            verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md),
+                        ) {
+                            Text("Compose UI Catalog")
+                            PrimaryButton(text = "Primary", onClick = {})
+                            SecondaryButton(text = "Secondary", onClick = {})
+                            TextButton(text = "Text", onClick = {})
+                            Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
+                                IconButton(
+                                    icon = AppTheme.icons.check,
+                                    contentDescription = "Confirm",
+                                    onClick = {},
                                 )
-                                Text("Inputs")
-                                TextField(value = "Mani", onValueChange = {}, label = "Name")
-                                PasswordField(value = "secret", onValueChange = {}, label = "Password")
-                                SearchField(value = "compose", onValueChange = {})
-                                Checkbox(checked = true, onCheckedChange = {}, label = "Email updates")
-                                RadioGroup(
-                                    options = listOf("Small", "Medium", "Large"),
-                                    selectedIndex = 1,
-                                    onOptionSelected = {},
+                                FAB(
+                                    icon = AppTheme.icons.check,
+                                    contentDescription = "Create",
+                                    onClick = {},
                                 )
-                                Switch(checked = true, onCheckedChange = {}, label = "Notifications")
-                                Slider(value = 0.65f, onValueChange = {})
-                                Text("Containers")
-                                Section(title = "Account") {
-                                    Card {
-                                        Text("Plan")
-                                        Text("Compose Pro")
-                                    }
-                                }
-                                Snackbar(
-                                    message = "Catalog saved",
-                                    actionLabel = "Undo",
-                                    onAction = {},
-                                )
-                                Text("Lists")
-                                ListItem(
-                                    headline = "Compose Pro",
-                                    supportingText = "Active subscription",
-                                    trailingContent = { Text("Active") },
-                                )
-                                EmptyState(
-                                    title = "No projects",
-                                    message = "Create your first project to get started.",
-                                )
-                                Text("Navigation")
-                                TopAppBar(title = "Dashboard")
-                                TabRow(
-                                    tabs = listOf("Overview", "Activity", "Settings"),
-                                    selectedIndex = 0,
-                                    onTabSelected = {},
-                                )
-                                BottomBar(
-                                    items = listOf(
-                                        NavigationItem("Home", AppTheme.icons.check),
-                                        NavigationItem("Tasks", AppTheme.icons.check, badge = "3"),
-                                        NavigationItem("Close", AppTheme.icons.close),
-                                    ),
-                                    selectedIndex = 0,
-                                    onItemSelected = {},
-                                )
-                                Text("Feedback")
-                                ProgressIndicator(progress = 0.65f, label = "Syncing")
-                                Skeleton()
-                                Text("Typography")
-                                AppText(text = "Display", style = AppTextStyle.Display)
-                                AppText(text = "Title", style = AppTextStyle.Title)
-                                AppText(text = "Body text for reading content.")
                             }
+                            SegmentedControl(
+                                options = listOf("Day", "Week", "Month"),
+                                selectedIndex = 1,
+                                onOptionSelected = {},
+                            )
+                            Text("Inputs")
+                            TextField(value = "Mani", onValueChange = {}, label = "Name")
+                            PasswordField(value = "secret", onValueChange = {}, label = "Password")
+                            SearchField(value = "compose", onValueChange = {})
+                            Checkbox(checked = true, onCheckedChange = {}, label = "Email updates")
+                            RadioGroup(
+                                options = listOf("Small", "Medium", "Large"),
+                                selectedIndex = 1,
+                                onOptionSelected = {},
+                            )
+                            Switch(checked = true, onCheckedChange = {}, label = "Notifications")
+                            Slider(value = 0.65f, onValueChange = {})
+                            Text("Containers")
+                            Section(title = "Account") {
+                                Card {
+                                    Text("Plan")
+                                    Text("Compose Pro")
+                                }
+                            }
+                            Snackbar(
+                                message = "Catalog saved",
+                                actionLabel = "Undo",
+                                onAction = {},
+                            )
+                            Text("Lists")
+                            ListItem(
+                                headline = "Compose Pro",
+                                supportingText = "Active subscription",
+                                trailingContent = { Text("Active") },
+                            )
+                            EmptyState(
+                                title = "No projects",
+                                message = "Create your first project to get started.",
+                            )
+                            Text("Navigation")
+                            TopAppBar(title = "Dashboard")
+                            TabRow(
+                                tabs = listOf("Overview", "Activity", "Settings"),
+                                selectedIndex = 0,
+                                onTabSelected = {},
+                            )
+                            BottomBar(
+                                items = listOf(
+                                    NavigationItem("Home", AppTheme.icons.check),
+                                    NavigationItem("Tasks", AppTheme.icons.check, badge = "3"),
+                                    NavigationItem("Close", AppTheme.icons.close),
+                                ),
+                                selectedIndex = 0,
+                                onItemSelected = {},
+                            )
+                            Text("Feedback")
+                            ProgressIndicator(progress = 0.65f, label = "Syncing")
+                            Skeleton()
+                            Text("Typography")
+                            AppText(text = "Display", style = AppTextStyle.Display)
+                            AppText(text = "Title", style = AppTextStyle.Title)
+                            AppText(text = "Body text for reading content.")
                         }
                     }
                 }
