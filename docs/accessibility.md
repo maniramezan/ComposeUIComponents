@@ -15,3 +15,9 @@ Run this checklist before a release and when adding components.
 - `CatalogActivity` and `SampleActivity` call `enableEdgeToEdge()`.
 - Both app manifests use `adjustResize` because the screens contain text fields.
 - Both app screens consume `Scaffold` safe drawing insets and apply IME padding before scrolling.
+
+## Automated Coverage
+
+- `AccessibilityComponentsTest` verifies representative action and input components keep at least a 48dp touch target.
+- Icon-only actions are covered by semantics assertions for meaningful content descriptions.
+- Empty and error states are covered by readable text assertions so feedback is not color-only.
