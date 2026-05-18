@@ -1,0 +1,49 @@
+[versions]
+activity = "1.13.0"
+agp = "9.2.1"
+binaryCompatibilityValidator = "0.18.1"
+composeBom = "2026.05.00"
+detekt = "1.23.8"
+dokka = "2.2.0"
+junit = "4.13.2"
+kotlin = "2.3.21"
+coroutines = "1.11.0"
+mavenPublish = "0.36.0"
+roborazzi = "1.61.0"
+showkase = "1.0.5"
+truth = "1.4.5"
+
+[libraries]
+activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity" }
+android-gradle-plugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
+androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
+androidx-compose-material-icons-core = { module = "androidx.compose.material:material-icons-core" }
+androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
+androidx-compose-runtime = { module = "androidx.compose.runtime:runtime" }
+androidx-compose-ui = { module = "androidx.compose.ui:ui" }
+androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
+androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
+androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+junit = { module = "junit:junit", version.ref = "junit" }
+kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+showkase = { module = "com.airbnb.android:showkase", version.ref = "showkase" }
+showkase-annotation = { module = "com.airbnb.android:showkase-annotation", version.ref = "showkase" }
+showkase-processor = { module = "com.airbnb.android:showkase-processor", version.ref = "showkase" }
+truth = { module = "com.google.truth:truth", version.ref = "truth" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+binary-compatibility-validator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "binaryCompatibilityValidator" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "mavenPublish" }
+roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
+
+compose-system-android-application = { id = "compose.system.android.application" }
+compose-system-android-library = { id = "compose.system.android.library" }
+compose-system-compose-library = { id = "compose.system.compose.library" }
+compose-system-kotlin-library = { id = "compose.system.kotlin.library" }
