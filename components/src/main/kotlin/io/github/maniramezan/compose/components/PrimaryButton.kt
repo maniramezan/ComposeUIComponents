@@ -21,14 +21,16 @@ public fun PrimaryButton(
         onClick = onClick,
         modifier = modifier.defaultMinSize(minHeight = 48.dp),
         enabled = enabled,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = AppTheme.colors.primary,
-            contentColor = AppTheme.colors.onPrimary,
-        ),
-        contentPadding = PaddingValues(
-            horizontal = AppTheme.spacing.lg,
-            vertical = AppTheme.spacing.sm,
-        ),
+        colors =
+            ButtonDefaults.buttonColors(
+                containerColor = AppTheme.colors.primary,
+                contentColor = AppTheme.colors.onPrimary,
+            ),
+        contentPadding =
+            PaddingValues(
+                horizontal = AppTheme.spacing.lg,
+                vertical = AppTheme.spacing.sm,
+            ),
     ) {
         Text(text = text)
     }

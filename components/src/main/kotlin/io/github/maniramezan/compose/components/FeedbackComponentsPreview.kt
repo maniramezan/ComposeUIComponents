@@ -8,15 +8,16 @@ import io.github.maniramezan.compose.theme.AppTheme
 
 @Preview(name = "Feedback Components", group = "Feedback")
 @Composable
-public fun FeedbackComponentsPreview(): Unit = AppTheme {
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        ProgressIndicator(label = "Loading")
-        ProgressIndicator(progress = 0.65f, label = "Syncing")
-        Skeleton()
-        Toast(
-            message = "Saved",
-            actionLabel = "Undo",
-            onAction = {},
-        )
+public fun FeedbackComponentsPreview(): Unit =
+    AppTheme {
+        Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
+            ProgressIndicator(label = "Loading")
+            ProgressIndicator(progress = 0.65f, label = "Syncing")
+            Skeleton()
+            Toast(
+                message = "Saved",
+                actionLabel = "Undo",
+                onAction = {},
+            )
+        }
     }
-}

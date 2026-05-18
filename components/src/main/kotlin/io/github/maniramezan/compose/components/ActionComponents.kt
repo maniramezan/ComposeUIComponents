@@ -9,15 +9,15 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton as MaterialIconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton as MaterialTextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.theme.IconToken
+import androidx.compose.material3.IconButton as MaterialIconButton
+import androidx.compose.material3.TextButton as MaterialTextButton
 
 @Composable
 public fun SecondaryButton(
@@ -30,13 +30,15 @@ public fun SecondaryButton(
         onClick = onClick,
         modifier = modifier.defaultMinSize(minHeight = 48.dp),
         enabled = enabled,
-        colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = AppTheme.colors.primary,
-        ),
-        contentPadding = PaddingValues(
-            horizontal = AppTheme.spacing.lg,
-            vertical = AppTheme.spacing.sm,
-        ),
+        colors =
+            ButtonDefaults.outlinedButtonColors(
+                contentColor = AppTheme.colors.primary,
+            ),
+        contentPadding =
+            PaddingValues(
+                horizontal = AppTheme.spacing.lg,
+                vertical = AppTheme.spacing.sm,
+            ),
     ) {
         Text(text = text)
     }
@@ -53,13 +55,15 @@ public fun TextButton(
         onClick = onClick,
         modifier = modifier.defaultMinSize(minHeight = 48.dp),
         enabled = enabled,
-        colors = ButtonDefaults.textButtonColors(
-            contentColor = AppTheme.colors.primary,
-        ),
-        contentPadding = PaddingValues(
-            horizontal = AppTheme.spacing.md,
-            vertical = AppTheme.spacing.sm,
-        ),
+        colors =
+            ButtonDefaults.textButtonColors(
+                contentColor = AppTheme.colors.primary,
+            ),
+        contentPadding =
+            PaddingValues(
+                horizontal = AppTheme.spacing.md,
+                vertical = AppTheme.spacing.sm,
+            ),
     ) {
         Text(text = text)
     }
@@ -126,10 +130,11 @@ public fun SegmentedControl(
                     onClick = { onOptionSelected(index) },
                     enabled = enabled,
                     modifier = Modifier.defaultMinSize(minHeight = 48.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = AppTheme.colors.primary,
-                        contentColor = AppTheme.colors.onPrimary,
-                    ),
+                    colors =
+                        ButtonDefaults.buttonColors(
+                            containerColor = AppTheme.colors.primary,
+                            contentColor = AppTheme.colors.onPrimary,
+                        ),
                 ) {
                     Text(text = option)
                 }
@@ -138,9 +143,10 @@ public fun SegmentedControl(
                     onClick = { onOptionSelected(index) },
                     enabled = enabled,
                     modifier = Modifier.defaultMinSize(minHeight = 48.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = AppTheme.colors.primary,
-                    ),
+                    colors =
+                        ButtonDefaults.outlinedButtonColors(
+                            contentColor = AppTheme.colors.primary,
+                        ),
                 ) {
                     Text(text = option)
                 }

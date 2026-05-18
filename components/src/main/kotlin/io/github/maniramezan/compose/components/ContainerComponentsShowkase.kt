@@ -11,28 +11,31 @@ public fun ContainerComponentsShowkase(): Unit = ContainerComponentsPreview()
 
 @ShowkaseComposable(name = "Card", group = "Containers")
 @Composable
-public fun CardShowkase(): Unit = AppTheme {
-    Card {
-        Text(text = "Plan")
-        Text(text = "Compose Pro")
+public fun CardShowkase(): Unit =
+    AppTheme {
+        Card {
+            Text(text = "Plan")
+            Text(text = "Compose Pro")
+        }
     }
-}
 
 @ShowkaseComposable(name = "Surface", group = "Containers")
 @Composable
-public fun SurfaceShowkase(): Unit = AppTheme {
-    Surface {
-        Text(text = "Surface content")
+public fun SurfaceShowkase(): Unit =
+    AppTheme {
+        Surface {
+            Text(text = "Surface content")
+        }
     }
-}
 
 @ShowkaseComposable(name = "Section", group = "Containers")
 @Composable
-public fun SectionShowkase(): Unit = AppTheme {
-    Section(title = "Account") {
-        Text(text = "Profile")
+public fun SectionShowkase(): Unit =
+    AppTheme {
+        Section(title = "Account") {
+            Text(text = "Profile")
+        }
     }
-}
 
 @ShowkaseComposable(name = "Dialog", group = "Containers")
 @Composable
@@ -40,10 +43,11 @@ public fun DialogShowkase(): Unit = DialogPreview()
 
 @ShowkaseComposable(name = "Snackbar", group = "Containers")
 @Composable
-public fun SnackbarShowkase(): Unit = AppTheme {
-    Snackbar(
-        message = "Saved",
-        actionLabel = "Undo",
-        onAction = {},
-    )
-}
+public fun SnackbarShowkase(): Unit =
+    AppTheme {
+        Snackbar(
+            message = "Saved",
+            actionLabel = "Undo",
+            onAction = {},
+        )
+    }

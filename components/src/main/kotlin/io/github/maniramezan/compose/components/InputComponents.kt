@@ -7,11 +7,8 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Checkbox as MaterialCheckbox
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
-import androidx.compose.material3.Slider as MaterialSlider
-import androidx.compose.material3.Switch as MaterialSwitch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,6 +18,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import io.github.maniramezan.compose.theme.AppTheme
+import androidx.compose.material3.Checkbox as MaterialCheckbox
+import androidx.compose.material3.Slider as MaterialSlider
+import androidx.compose.material3.Switch as MaterialSwitch
 
 @Composable
 public fun TextField(
@@ -120,14 +120,15 @@ public fun RadioGroup(
     Column(modifier = modifier) {
         options.forEachIndexed { index, option ->
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .defaultMinSize(minHeight = 48.dp)
-                    .selectable(
-                        selected = selectedIndex == index,
-                        enabled = enabled,
-                        onClick = { onOptionSelected(index) },
-                    ),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .defaultMinSize(minHeight = 48.dp)
+                        .selectable(
+                            selected = selectedIndex == index,
+                            enabled = enabled,
+                            onClick = { onOptionSelected(index) },
+                        ),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm),
             ) {

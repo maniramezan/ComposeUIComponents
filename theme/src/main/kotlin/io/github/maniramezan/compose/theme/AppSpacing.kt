@@ -13,12 +13,13 @@ public data class AppSpacing(
     public val xl: Dp,
 ) {
     public companion object {
-        public fun default(): AppSpacing = AppSpacing(
-            xs = AppReferenceSpacing.Space4,
-            sm = AppReferenceSpacing.Space8,
-            md = AppReferenceSpacing.Space12,
-            lg = AppReferenceSpacing.Space16,
-            xl = AppReferenceSpacing.Space24,
-        )
+        public fun default(): AppSpacing =
+            AppSpacing(
+                xs = AppReferenceSpacing.Space4,
+                sm = AppReferenceSpacing.Space8,
+                md = AppReferenceSpacing.Space12,
+                lg = AppReferenceSpacing.Space16,
+                xl = AppReferenceSpacing.Space24,
+            )
     }
 }

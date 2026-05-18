@@ -25,9 +25,10 @@ public fun ListItem(
     trailingContent: @Composable (() -> Unit)? = null,
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = AppTheme.spacing.lg, vertical = AppTheme.spacing.md),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = AppTheme.spacing.lg, vertical = AppTheme.spacing.md),
         horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -102,9 +103,10 @@ private fun StateColumn(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(AppTheme.spacing.xl),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(AppTheme.spacing.xl),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm),
         content = content,

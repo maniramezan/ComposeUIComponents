@@ -9,17 +9,17 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Card as MaterialCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Snackbar as MaterialSnackbar
-import androidx.compose.material3.Surface as MaterialSurface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton as MaterialTextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.github.maniramezan.compose.theme.AppTheme
+import androidx.compose.material3.Card as MaterialCard
+import androidx.compose.material3.Snackbar as MaterialSnackbar
+import androidx.compose.material3.Surface as MaterialSurface
+import androidx.compose.material3.TextButton as MaterialTextButton
 
 @Composable
 public fun Card(
@@ -117,13 +117,14 @@ public fun Dialog(
                 Text(text = confirmText)
             }
         },
-        dismissButton = dismissText?.let {
-            {
-                MaterialTextButton(onClick = onDismissRequest) {
-                    Text(text = it)
+        dismissButton =
+            dismissText?.let {
+                {
+                    MaterialTextButton(onClick = onDismissRequest) {
+                        Text(text = it)
+                    }
                 }
-            }
-        },
+            },
     )
 }
 
@@ -136,15 +137,16 @@ public fun Snackbar(
 ) {
     MaterialSnackbar(
         modifier = modifier,
-        action = if (actionLabel != null && onAction != null) {
-            {
-                MaterialTextButton(onClick = onAction) {
-                    Text(text = actionLabel)
+        action =
+            if (actionLabel != null && onAction != null) {
+                {
+                    MaterialTextButton(onClick = onAction) {
+                        Text(text = actionLabel)
+                    }
                 }
-            }
-        } else {
-            null
-        },
+            } else {
+                null
+            },
     ) {
         Text(text = message)
     }

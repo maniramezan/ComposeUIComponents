@@ -10,6 +10,7 @@ public fun TypographyComponentsShowkase(): Unit = TypographyComponentsPreview()
 
 @ShowkaseComposable(name = "App Text", group = "Typography")
 @Composable
-public fun AppTextShowkase(): Unit = AppTheme {
-    AppText(text = "Body text for reading content.")
-}
+public fun AppTextShowkase(): Unit =
+    AppTheme {
+        AppText(text = "Body text for reading content.")
+    }

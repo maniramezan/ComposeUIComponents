@@ -12,11 +12,12 @@ public data class AppMotion(
     public val emphasizedEasing: Easing,
 ) {
     public companion object {
-        public fun default(): AppMotion = AppMotion(
-            shortMillis = AppReferenceMotion.DurationShortMillis,
-            mediumMillis = AppReferenceMotion.DurationMediumMillis,
-            longMillis = AppReferenceMotion.DurationLongMillis,
-            emphasizedEasing = AppReferenceMotion.EmphasizedEasing,
-        )
+        public fun default(): AppMotion =
+            AppMotion(
+                shortMillis = AppReferenceMotion.DurationShortMillis,
+                mediumMillis = AppReferenceMotion.DurationMediumMillis,
+                longMillis = AppReferenceMotion.DurationLongMillis,
+                emphasizedEasing = AppReferenceMotion.EmphasizedEasing,
+            )
     }
 }
