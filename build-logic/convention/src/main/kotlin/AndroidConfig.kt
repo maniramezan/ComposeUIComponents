@@ -61,3 +61,17 @@ internal fun Project.configureCompose(extension: LibraryExtension) {
         add("debugImplementation", libs.findLibrary("androidx-compose-ui-tooling").get())
     }
 }
+
+internal fun Project.configureCompose(extension: ApplicationExtension) {
+    pluginManager.apply("org.jetbrains.kotlin.plugin.compose")
+
+    extension.apply {
+        buildFeatures.compose = true
+    }
+
+    dependencies {
+        add("implementation", platform(libs.findLibrary("androidx-compose-bom").get()))
+        add("implementation", libs.findLibrary("androidx-compose-runtime").get())
+        add("debugImplementation", libs.findLibrary("androidx-compose-ui-tooling").get())
+    }
+}

@@ -12,5 +12,6 @@ android {
 dependencies {
     implementation(project(":foundation"))
     implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.animation.core)
     implementation(libs.androidx.compose.ui)
 }
