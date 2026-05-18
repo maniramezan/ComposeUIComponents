@@ -19,6 +19,8 @@ import io.github.maniramezan.compose.components.EmptyState
 import io.github.maniramezan.compose.components.FAB
 import io.github.maniramezan.compose.components.IconButton
 import io.github.maniramezan.compose.components.ListItem
+import io.github.maniramezan.compose.components.BottomBar
+import io.github.maniramezan.compose.components.NavigationItem
 import io.github.maniramezan.compose.components.PasswordField
 import io.github.maniramezan.compose.components.PrimaryButton
 import io.github.maniramezan.compose.components.RadioGroup
@@ -31,6 +33,8 @@ import io.github.maniramezan.compose.components.Snackbar
 import io.github.maniramezan.compose.components.Switch
 import io.github.maniramezan.compose.components.TextButton
 import io.github.maniramezan.compose.components.TextField
+import io.github.maniramezan.compose.components.TopAppBar
+import io.github.maniramezan.compose.components.TabRow
 import io.github.maniramezan.compose.icons.defaultAppIcons
 import io.github.maniramezan.compose.theme.AppTheme
 
@@ -92,6 +96,21 @@ public class SampleActivity : ComponentActivity() {
                                 EmptyState(
                                     title = "No recent files",
                                     message = "Recent projects will appear here.",
+                                )
+                                TopAppBar(title = "Profile")
+                                TabRow(
+                                    tabs = listOf("General", "Billing", "Security"),
+                                    selectedIndex = 0,
+                                    onTabSelected = {},
+                                )
+                                BottomBar(
+                                    items = listOf(
+                                        NavigationItem("Home", AppTheme.icons.check),
+                                        NavigationItem("Settings", AppTheme.icons.check),
+                                        NavigationItem("Close", AppTheme.icons.close),
+                                    ),
+                                    selectedIndex = 1,
+                                    onItemSelected = {},
                                 )
                             }
                         }
