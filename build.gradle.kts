@@ -19,7 +19,16 @@ apiValidation {
 
 tasks.register("composeCompilerReports") {
     group = "verification"
-    description = "Enable with -PenableComposeCompilerReports=true on assemble tasks."
+    description = "Generate Compose compiler metrics and reports for Compose modules."
+    dependsOn(
+        ":tokens:assembleDebug",
+        ":theme:assembleDebug",
+        ":icons:assembleDebug",
+        ":compose-utils:assembleDebug",
+        ":components:assembleDebug",
+        ":catalog:assembleDebug",
+        ":sample:assembleDebug",
+    )
 }
 
 tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
