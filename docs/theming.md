@@ -25,3 +25,7 @@ AppTheme(colors = brandColors) {
 ```
 
 Components read semantic colors, spacing, motion, typography, and icon contracts from `AppTheme`.
+
+## Catalog token coverage
+
+Showkase discovers the light and dark semantic color tokens plus the default typography scale through annotated catalog entries in `:components`. Spacing, motion, shapes, and icons remain visible through component previews because Showkase only has first-class token annotations for colors and typography.
