@@ -1,6 +1,5 @@
 package io.github.maniramezan.compose.components
 
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -18,6 +17,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
 import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.theme.IconToken
+import io.github.maniramezan.compose.utils.minimumTouchTargetHeight
 import androidx.compose.material3.TopAppBar as MaterialTopAppBar
 
 @Immutable
@@ -65,7 +65,7 @@ public fun BottomBar(
                 onClick = { onItemSelected(index) },
                 icon = { NavigationItemIcon(item) },
                 label = { Text(text = item.label) },
-                modifier = Modifier.defaultMinSize(minHeight = minimumTouchTargetSize()),
+                modifier = Modifier.minimumTouchTargetHeight(minimumTouchTargetSize()),
             )
         }
     }
@@ -86,7 +86,7 @@ public fun TabRow(
             Tab(
                 selected = index == selectedIndex,
                 onClick = { onTabSelected(index) },
-                modifier = Modifier.defaultMinSize(minHeight = minimumTouchTargetSize()),
+                modifier = Modifier.minimumTouchTargetHeight(minimumTouchTargetSize()),
                 text = { Text(text = tab) },
             )
         }
@@ -107,7 +107,7 @@ public fun NavRail(
                 onClick = { onItemSelected(index) },
                 icon = { NavigationItemIcon(item) },
                 label = { Text(text = item.label) },
-                modifier = Modifier.defaultMinSize(minHeight = minimumTouchTargetSize()),
+                modifier = Modifier.minimumTouchTargetHeight(minimumTouchTargetSize()),
             )
         }
     }

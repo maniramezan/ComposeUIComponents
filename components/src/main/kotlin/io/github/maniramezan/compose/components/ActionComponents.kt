@@ -3,7 +3,6 @@ package io.github.maniramezan.compose.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -15,6 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.theme.IconToken
+import io.github.maniramezan.compose.utils.minimumTouchTarget
+import io.github.maniramezan.compose.utils.minimumTouchTargetHeight
 import androidx.compose.material3.IconButton as MaterialIconButton
 import androidx.compose.material3.TextButton as MaterialTextButton
 
@@ -27,7 +28,7 @@ public fun SecondaryButton(
 ) {
     OutlinedButton(
         onClick = onClick,
-        modifier = modifier.defaultMinSize(minHeight = minimumTouchTargetSize()),
+        modifier = modifier.minimumTouchTargetHeight(minimumTouchTargetSize()),
         enabled = enabled,
         colors =
             ButtonDefaults.outlinedButtonColors(
@@ -52,7 +53,7 @@ public fun TextButton(
 ) {
     MaterialTextButton(
         onClick = onClick,
-        modifier = modifier.defaultMinSize(minHeight = minimumTouchTargetSize()),
+        modifier = modifier.minimumTouchTargetHeight(minimumTouchTargetSize()),
         enabled = enabled,
         colors =
             ButtonDefaults.textButtonColors(
@@ -78,7 +79,7 @@ public fun IconButton(
 ) {
     MaterialIconButton(
         onClick = onClick,
-        modifier = modifier.defaultMinSize(minWidth = minimumTouchTargetSize(), minHeight = minimumTouchTargetSize()),
+        modifier = modifier.minimumTouchTarget(minimumTouchTargetSize()),
         enabled = enabled,
     ) {
         Icon(
@@ -98,7 +99,7 @@ public fun FAB(
 ) {
     FloatingActionButton(
         onClick = onClick,
-        modifier = modifier.defaultMinSize(minWidth = minimumTouchTargetSize(), minHeight = minimumTouchTargetSize()),
+        modifier = modifier.minimumTouchTarget(minimumTouchTargetSize()),
         containerColor = AppTheme.colors.primary,
         contentColor = AppTheme.colors.onPrimary,
     ) {
@@ -128,7 +129,7 @@ public fun SegmentedControl(
                 Button(
                     onClick = { onOptionSelected(index) },
                     enabled = enabled,
-                    modifier = Modifier.defaultMinSize(minHeight = minimumTouchTargetSize()),
+                    modifier = Modifier.minimumTouchTargetHeight(minimumTouchTargetSize()),
                     colors =
                         ButtonDefaults.buttonColors(
                             containerColor = AppTheme.colors.primary,
@@ -141,7 +142,7 @@ public fun SegmentedControl(
                 OutlinedButton(
                     onClick = { onOptionSelected(index) },
                     enabled = enabled,
-                    modifier = Modifier.defaultMinSize(minHeight = minimumTouchTargetSize()),
+                    modifier = Modifier.minimumTouchTargetHeight(minimumTouchTargetSize()),
                     colors =
                         ButtonDefaults.outlinedButtonColors(
                             contentColor = AppTheme.colors.primary,
