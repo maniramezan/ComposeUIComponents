@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
+import io.github.maniramezan.compose.theme.AppSpacingDefaults
 
 /**
  * Centers content horizontally and caps it at [maxWidth] so screens don't
@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 public fun AdaptiveContentContainer(
     modifier: Modifier = Modifier,
-    maxWidth: Dp = 600.dp,
+    maxWidth: Dp = AppSpacingDefaults.maxContentWidthForm,
     contentAlignment: Alignment = Alignment.TopCenter,
     content: @Composable BoxScope.() -> Unit,
 ) {

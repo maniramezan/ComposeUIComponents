@@ -7,7 +7,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.utils.PreviewLightDark
 
@@ -16,7 +15,7 @@ import io.github.maniramezan.compose.utils.PreviewLightDark
 @Composable
 public fun AdaptiveContentContainerPreview(): Unit =
     AppTheme {
-        AdaptiveContentContainer(maxWidth = 480.dp) {
+        AdaptiveContentContainer(maxWidth = AppTheme.spacing.maxContentWidthForm) {
             Text(
                 text = "Capped content area",
                 modifier =
