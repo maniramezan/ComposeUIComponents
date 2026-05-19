@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import io.github.maniramezan.compose.theme.AppTheme
+import io.github.maniramezan.compose.utils.minimumTouchTargetHeight
 
 @Composable
 public fun ProgressIndicator(
@@ -50,7 +50,7 @@ public fun Skeleton(modifier: Modifier = Modifier) {
         modifier =
             modifier
                 .fillMaxWidth()
-                .defaultMinSize(minHeight = minimumTouchTargetSize())
+                .minimumTouchTargetHeight(minimumTouchTargetSize())
                 .clip(RoundedCornerShape(containerCornerRadius()))
                 .background(AppTheme.colors.surfaceVariant),
     )

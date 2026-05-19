@@ -20,6 +20,7 @@ Run this checklist before a release and when adding components.
 
 - `AccessibilityComponentsTest` verifies representative action and input components keep at least a 48dp touch target.
 - `:testing` exposes `assertMinimumTouchTarget` and `onNodeWithRequiredContentDescription` helpers for downstream app tests.
+- `:compose-utils` exposes `minimumTouchTarget` and `minimumTouchTargetHeight` modifiers for shared component sizing.
 - Icon-only actions are covered by semantics assertions for meaningful content descriptions.
 - `checkComponentTokenUsage` rejects nullable or null icon descriptions in component APIs and implementations.
 - Empty and error states are covered by readable text assertions so feedback is not color-only.

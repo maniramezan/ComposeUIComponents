@@ -3,7 +3,6 @@ package io.github.maniramezan.compose.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.toggleable
@@ -19,6 +18,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import io.github.maniramezan.compose.theme.AppTheme
+import io.github.maniramezan.compose.utils.minimumTouchTargetHeight
 import androidx.compose.material3.Checkbox as MaterialCheckbox
 import androidx.compose.material3.Slider as MaterialSlider
 import androidx.compose.material3.Switch as MaterialSwitch
@@ -99,7 +99,7 @@ public fun Checkbox(
     Row(
         modifier =
             modifier
-                .defaultMinSize(minHeight = minimumTouchTargetSize())
+                .minimumTouchTargetHeight(minimumTouchTargetSize())
                 .toggleable(
                     value = checked,
                     enabled = enabled,
@@ -132,7 +132,7 @@ public fun RadioGroup(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .defaultMinSize(minHeight = minimumTouchTargetSize())
+                        .minimumTouchTargetHeight(minimumTouchTargetSize())
                         .selectable(
                             selected = selectedIndex == index,
                             enabled = enabled,
@@ -163,7 +163,7 @@ public fun Switch(
     Row(
         modifier =
             modifier
-                .defaultMinSize(minHeight = minimumTouchTargetSize())
+                .minimumTouchTargetHeight(minimumTouchTargetSize())
                 .toggleable(
                     value = checked,
                     enabled = enabled,

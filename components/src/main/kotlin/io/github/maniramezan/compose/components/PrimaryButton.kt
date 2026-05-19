@@ -1,13 +1,13 @@
 package io.github.maniramezan.compose.components
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.github.maniramezan.compose.theme.AppTheme
+import io.github.maniramezan.compose.utils.minimumTouchTargetHeight
 
 @Composable
 public fun PrimaryButton(
@@ -18,7 +18,7 @@ public fun PrimaryButton(
 ) {
     Button(
         onClick = onClick,
-        modifier = modifier.defaultMinSize(minHeight = minimumTouchTargetSize()),
+        modifier = modifier.minimumTouchTargetHeight(minimumTouchTargetSize()),
         enabled = enabled,
         colors =
             ButtonDefaults.buttonColors(
