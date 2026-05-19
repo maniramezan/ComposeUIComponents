@@ -6,6 +6,7 @@ Run this checklist before a release and when adding complex components.
 - Record component category screenshots with `./gradlew :components:recordRoborazziDebug` before reviewing visual changes.
 - Generate Compose compiler metrics with `./gradlew composeCompilerReports -PenableComposeCompilerReports=true` when investigating recomposition.
 - Keep component APIs state-hoisted and stable.
+- Use `rememberRecompositionCounter` from `:compose-utils` for local/debug recomposition diagnostics around suspicious composables.
 - Prefer `LazyList` for large collections and pass stable item keys in callers.
 - Avoid adding heavyweight icon packs or app-specific dependencies to core modules.
 - Use the `:sample` app for startup and navigation macrobenchmark scenarios before `1.0.0`.
@@ -13,6 +14,10 @@ Run this checklist before a release and when adding complex components.
 ## Compose Compiler Reports
 
 CI uploads `compose-compiler-reports` whenever the reports task runs. Local outputs are written under each Compose module's `build/compose-metrics` and `build/compose-reports` directories.
+
+## Recomposition Diagnostics
+
+`rememberRecompositionCounter` exposes a lightweight counter for local debugging. Pass an `onRecompose` callback only while investigating a suspected hot composable, and remove noisy logging before release changes unless the diagnostic is intentionally kept behind debug-only code.
 
 ## Screenshot Coverage
 
