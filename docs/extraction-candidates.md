@@ -2,20 +2,29 @@
 
 Audit source: `~/Developer/novalingo/mobile/Android`. Do not copy app code into this library. Use these candidates as product-tested references, strip Novalingo-specific naming, strings, models, analytics, and business rules, then re-implement with this design system's tokens, previews, tests, screenshots, and docs.
 
+## Status
+
+| Status | Meaning |
+|---|---|
+| ✅ Done | Shipping in this library as a generic component. |
+| 🟡 Partial | Generic primitive shipped; consumer keeps a thin domain wrapper. |
+| ⏳ Pending | Identified but not yet extracted. |
+
 ## Candidate Components
 
-| Candidate | Source reference | Why it is useful | Extraction notes |
-|---|---|---|---|
-| Branded button variants | `core-ui/NovalingoButton.kt` | Confirms the common need for primary, secondary, and tertiary actions with shared sizing and typography. | Already mostly covered by `PrimaryButton`, `SecondaryButton`, and `TextButton`; keep future variants token-driven rather than enum-driven. |
-| Search bar | `core-ui/SearchBar.kt`, `feature/home/HomeSearchBar.kt` | Shows a compact search input with leading icon, placeholder, IME action, and full-width layout. | Generalize as `SearchField`; decorative search icon can stay hidden from semantics while the field exposes label/placeholder text. |
-| Empty state | `core-ui/EmptyStateView.kt`, `feature/home/HomeEmptyErrorStates.kt` | Repeated centered title/body/icon pattern for zero-data screens. | Keep icon optional and decorative by default; require readable title/message text. |
-| Error retry state | `core-ui/ErrorRetryView.kt`, `feature/player/PlayerErrorOverlay.kt` | Common recoverable failure pattern with message and retry action. | Preserve slot/action flexibility; avoid product-specific copy and player/network assumptions. |
-| Loading skeletons | `core-ui/GhostLoadingBlock.kt`, `feature/home/HomeLoadingSkeletons.kt`, `feature/videodetails/VideoDetailsLoadingSkeleton.kt` | Validates skeleton placeholders for list and detail loading states. | Keep animation and dimensions tokenized; provide reduced-motion-safe behavior through motion tokens. |
-| Adaptive content container | `core-ui/AdaptiveContentContainer.kt` | Prevents form/list/player content from stretching on tablets and desktops. | Candidate for `:compose-utils`; expose semantic max widths through tokens instead of Novalingo-specific names. |
-| Section header | `core-ui/SectionHeader.kt` | Common list/detail section labeling pattern. | Re-implement as a small slot-based header that works with `Section`. |
-| Pill chip | `core-ui/PillChip.kt`, `feature/home/HomeFilters.kt` | Useful for filters, tags, and compact selectable states. | Consider after Phase 1 as a dedicated chip family with selected/disabled states and accessibility labels. |
-| Skill/badge pattern | `core-ui/SkillLevelBadge.kt`, `core-design/SkillLevelDesign.kt` | Demonstrates semantic badge colors and text contrast requirements. | Keep as generic `Badge`/status badge tokens; do not import language-learning skill models. |
-| Word/card pattern | `core-ui/WordCard.kt`, `feature/savedwords/SavedWordCard.kt`, `feature/home/HomeVideoCard.kt` | Real-world card layouts validate spacing, nested text hierarchy, and trailing actions. | Use as inspiration for richer card/list examples, not a direct component unless repeated outside product domains. |
+| Status | Candidate | Library home | Source reference | Notes |
+|---|---|---|---|---|
+| ✅ Done | Pill chip | `components/PillChip.kt` | `core-ui/PillChip.kt`, `feature/home/HomeFilters.kt` | Generic selectable capsule; selected/unselected colors are themed tokens with per-call overrides for tinted variants (filter rows). |
+| ✅ Done | Overlay card | `components/OverlayCard.kt` | `core-ui/OverlayCard.kt` | Subtle rounded surface for media overlays. Defaults to `AppTheme.colors.overlaySubtle` + `AppTheme.shapes.large`. |
+| ✅ Done | Adaptive content container | `components/AdaptiveContentContainer.kt` | `core-ui/AdaptiveContentContainer.kt` | Caps content width on tablets, pass-through on phones. Consumers pick a semantic max width from their own layout-dimension tokens. |
+| ✅ Done | Section header | `components/SectionHeader.kt` | `core-ui/SectionHeader.kt` | Title + optional trailing text action. Reads `AppTheme.typography.titleSmall` and `AppTheme.colors.primary`. |
+| ✅ Done | Content row | `components/ContentRow.kt` | `core-ui/WordCard.kt`, `feature/savedwords/SavedWordCard.kt` | Slot-based list row (title, optional secondary text, supporting text, leading + trailing content). Word-card-style usage is now a thin consumer wrapper. |
+| 🟡 Partial | Level badge | `components/LevelBadge.kt` + `theme/LevelPalette.kt` | `core-ui/SkillLevelBadge.kt`, `core-design/SkillLevelDesign.kt` | Generic tiered-badge component takes a `LevelTier` from a `LevelPalette`. Apps own the tier→domain mapping (e.g., skill level → palette index). |
+| 🟡 Partial | Sized skeleton block | `components/FeedbackComponents.kt::SkeletonBlock` | `core-ui/GhostLoadingBlock.kt` | Parameterized height/width/shape variant of `Skeleton`. Shimmer animation is left to the consumer to keep `core` dependency-free. |
+| ✅ Done | Branded button variants | `components/PrimaryButton.kt`, `components/ActionComponents.kt::{SecondaryButton, TextButton}` | `core-ui/NovalingoButton.kt` | Three-style enum collapses 1:1 into the library's three button components — no extra wrapper needed in consumers. |
+| ⏳ Pending | Search bar | — | `core-ui/SearchBar.kt`, `feature/home/HomeSearchBar.kt` | Library already ships `SearchField`. Audit Novalingo's variant against it before adding a second component. |
+| ⏳ Pending | Empty state | — | `core-ui/EmptyStateView.kt` | Library already ships `EmptyState`. Audit for icon/action parity before adding a second component. |
+| ⏳ Pending | Error retry state | — | `core-ui/ErrorRetryView.kt`, `feature/player/PlayerErrorOverlay.kt` | Library already ships `ErrorState`. Audit for icon/action-button styling parity. |
 
 ## Token References
 

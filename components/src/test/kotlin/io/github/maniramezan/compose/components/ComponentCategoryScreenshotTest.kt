@@ -73,4 +73,46 @@ public class ComponentCategoryScreenshotTest {
             TypographyComponentsPreview()
         }
     }
+
+    @Test
+    public fun pillChipMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/pill-chip.png") {
+            PillChipPreview()
+        }
+    }
+
+    @Test
+    public fun overlayCardMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/overlay-card.png") {
+            OverlayCardPreview()
+        }
+    }
+
+    @Test
+    public fun adaptiveContentContainerMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/adaptive-content-container.png") {
+            AdaptiveContentContainerPreview()
+        }
+    }
+
+    @Test
+    public fun sectionHeaderMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/section-header.png") {
+            SectionHeaderPreview()
+        }
+    }
+
+    @Test
+    public fun contentRowMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/content-row.png") {
+            ContentRowPreview()
+        }
+    }
+
+    @Test
+    public fun levelBadgeMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/level-badge.png") {
+            LevelBadgePreview()
+        }
+    }
 }
