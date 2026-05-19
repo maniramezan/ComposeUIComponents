@@ -19,7 +19,7 @@ See `spec.md` for the implementation plan.
 
 ## Documentation
 
-- Docs site: `https://maniramezan.github.io/ComposeUISystemDesign/`.
+- Docs site: `https://maniramezan.github.io/ComposeUIComponents/`.
 - Component guides live in `docs/`.
 - API reference is generated with Dokka.
 - The MkDocs Material site can be built with `mkdocs build --strict` after installing `requirements-docs.txt`.
