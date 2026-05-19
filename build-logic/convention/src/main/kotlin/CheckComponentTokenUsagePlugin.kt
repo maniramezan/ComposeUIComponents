@@ -6,7 +6,7 @@ public class CheckComponentTokenUsagePlugin : Plugin<Project> {
         val checkComponentTokenUsage =
             tasks.register("checkComponentTokenUsage", CheckComponentTokenUsageTask::class.java) {
                 group = "verification"
-                description = "Reject hardcoded Color values and raw dp literals in component source."
+                description = "Reject hardcoded tokens and unsafe icon descriptions in component source."
                 sourceFiles.from(
                     fileTree("components/src/main/kotlin") {
                         include("**/*.kt")

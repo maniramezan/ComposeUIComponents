@@ -24,7 +24,7 @@ import androidx.compose.material3.TopAppBar as MaterialTopAppBar
 public data class NavigationItem(
     public val label: String,
     public val icon: IconToken,
-    public val contentDescription: String? = label,
+    public val contentDescription: String = label,
     public val badge: String? = null,
 )
 
