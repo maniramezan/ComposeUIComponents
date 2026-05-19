@@ -16,4 +16,5 @@ public object AppReferenceSpacing {
     public val Space44: Dp = 44.dp
     public val Space48: Dp = 48.dp
     public val Space72: Dp = 72.dp
+    public val Space600: Dp = 600.dp
 }

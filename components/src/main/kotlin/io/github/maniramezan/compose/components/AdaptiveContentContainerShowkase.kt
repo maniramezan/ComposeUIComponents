@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.airbnb.android.showkase.annotation.ShowkaseComposable
 import io.github.maniramezan.compose.theme.AppTheme
 
@@ -14,7 +13,7 @@ import io.github.maniramezan.compose.theme.AppTheme
 @Composable
 public fun AdaptiveContentContainerShowkase(): Unit =
     AppTheme {
-        AdaptiveContentContainer(maxWidth = 480.dp) {
+        AdaptiveContentContainer(maxWidth = AppTheme.spacing.maxContentWidthForm) {
             Text(
                 text = "Capped content area",
                 modifier =

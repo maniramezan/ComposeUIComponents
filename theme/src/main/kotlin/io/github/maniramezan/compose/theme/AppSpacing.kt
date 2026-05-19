@@ -20,6 +20,7 @@ import io.github.maniramezan.compose.tokens.AppReferenceSpacing
  * default to `0.dp`. Apps that use those layouts must supply real values.
  */
 @Immutable
+@Suppress("ConstructorParameterNaming")
 public data class AppSpacing(
     // ===== Multiplier scale =====
     public val half: Dp,
@@ -81,6 +82,7 @@ public data class AppSpacing(
                 strokeRegular = AppReferenceSpacing.Space2,
                 strokeThick = AppReferenceSpacing.Space4,
                 minTapTarget = AppReferenceSpacing.Space44,
+                maxContentWidthForm = AppReferenceSpacing.Space600,
             )
     }
 }
@@ -110,4 +112,5 @@ public object AppSpacingDefaults {
     public val strokeRegular: Dp = AppReferenceSpacing.Space2
     public val strokeThick: Dp = AppReferenceSpacing.Space4
     public val minTapTarget: Dp = AppReferenceSpacing.Space44
+    public val maxContentWidthForm: Dp = AppReferenceSpacing.Space600
 }

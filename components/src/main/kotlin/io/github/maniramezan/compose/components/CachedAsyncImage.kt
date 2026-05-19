@@ -32,7 +32,7 @@ public enum class ImageCachePolicy {
 @Composable
 public fun CachedAsyncImage(
     data: Any?,
-    contentDescription: String?,
+    contentDescription: String,
     modifier: Modifier = Modifier,
     memoryCachePolicy: ImageCachePolicy = ImageCachePolicy.ENABLED,
     diskCachePolicy: ImageCachePolicy = ImageCachePolicy.ENABLED,
