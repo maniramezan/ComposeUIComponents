@@ -11,6 +11,7 @@
 - Baseline profile generation is reviewed when startup or sample navigation changes.
 - Accessibility checklist is complete.
 - Performance checklist is complete.
+- GitHub Pages deployment succeeds from `main` before cutting a release.
 - Maven Central publishing credentials and signing are configured outside the repository.
 
 ## Verification
