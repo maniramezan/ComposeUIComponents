@@ -34,6 +34,13 @@ class AppColorsTest {
         assertThat(light.overlayHeavy).isNotEqualTo(Color.Unspecified)
         assertThat(light.overlayMedium).isNotEqualTo(Color.Unspecified)
         assertThat(light.overlaySubtle).isNotEqualTo(Color.Unspecified)
+        assertThat(light.onOverlay).isNotEqualTo(Color.Unspecified)
+    }
+
+    @Test
+    fun onOverlayDefaultsToWhiteForScrimLegibility() {
+        assertThat(AppColors.light().onOverlay).isEqualTo(Color.White)
+        assertThat(AppColors.dark().onOverlay).isEqualTo(Color.White)
     }
 
     @Test

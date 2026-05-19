@@ -46,6 +46,7 @@ public data class AppColors(
     public val overlayHeavy: Color,
     public val overlayMedium: Color,
     public val overlaySubtle: Color,
+    public val onOverlay: Color,
     public val overlayShadowStart: Color,
     public val overlayShadowEnd: Color,
     public val overlayBottomTint: Color,
@@ -83,6 +84,7 @@ public data class AppColors(
                 overlayHeavy = Color(0xBF000000), // 75% black
                 overlayMedium = Color(0x99000000), // 60% black
                 overlaySubtle = Color(0x1A000000), // 10% black
+                onOverlay = AppReferenceColors.White,
                 overlayShadowStart = Color(0x24000000), // 14% black
                 overlayShadowEnd = Color(0x0D000000), // 5% black
                 overlayBottomTint = Color(0x38000000), // 22% black
@@ -120,6 +122,7 @@ public data class AppColors(
                 overlayHeavy = Color(0xBF000000),
                 overlayMedium = Color(0x99000000),
                 overlaySubtle = Color(0x1A000000),
+                onOverlay = AppReferenceColors.White,
                 overlayShadowStart = Color(0x24000000),
                 overlayShadowEnd = Color(0x0D000000),
                 overlayBottomTint = Color(0x38000000),
