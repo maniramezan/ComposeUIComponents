@@ -5,6 +5,21 @@ repo_name: maniramezan/ComposeUIComponents
 
 theme:
   name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
   features:
     - navigation.sections
     - navigation.top
@@ -29,7 +44,6 @@ nav:
       - Performance: performance.md
   - Migration: migration.md
   - Extraction Candidates: extraction-candidates.md
-  - Changelog: changelog.md
   - Contributing: contributing.md
   - Release: release.md
   - ADRs:
@@ -37,7 +51,6 @@ nav:
       - Theming Model: adr/0001-theming-model.md
       - Module Boundaries: adr/0002-module-boundaries.md
       - Testing Strategy: adr/0003-testing-strategy.md
-      - Catalog Choice: adr/0004-catalog-choice.md
 
 markdown_extensions:
   - admonition
