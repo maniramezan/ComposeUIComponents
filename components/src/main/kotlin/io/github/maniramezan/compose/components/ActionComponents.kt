@@ -71,7 +71,7 @@ public fun TextButton(
 @Composable
 public fun IconButton(
     icon: IconToken,
-    contentDescription: String?,
+    contentDescription: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -92,7 +92,7 @@ public fun IconButton(
 @Composable
 public fun FAB(
     icon: IconToken,
-    contentDescription: String?,
+    contentDescription: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
