@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.LinearProgressIndicator
@@ -16,6 +18,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.unit.Dp
 import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.utils.minimumTouchTargetHeight
 
@@ -53,6 +58,35 @@ public fun Skeleton(modifier: Modifier = Modifier) {
                 .minimumTouchTargetHeight(minimumTouchTargetSize())
                 .clip(RoundedCornerShape(containerCornerRadius()))
                 .background(AppTheme.colors.surfaceVariant),
+    )
+}
+
+/**
+ * Sized placeholder block for skeleton/ghost loading states. Pass an explicit
+ * [height] and an optional [width]; when [width] is null the block expands to
+ * the constraints supplied via [modifier]. Defaults pick neutral surface
+ * colors so the placeholder reads as "empty content" against any theme.
+ */
+@Composable
+public fun SkeletonBlock(
+    height: Dp,
+    modifier: Modifier = Modifier,
+    width: Dp? = null,
+    shape: Shape = AppTheme.shapes.small,
+    background: Color = AppTheme.colors.surfaceContainer,
+) {
+    val sizeModifier =
+        if (width != null) {
+            Modifier.width(width).height(height)
+        } else {
+            Modifier.height(height)
+        }
+    Box(
+        modifier =
+            modifier
+                .then(sizeModifier)
+                .clip(shape)
+                .background(background),
     )
 }
 
