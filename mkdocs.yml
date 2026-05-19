@@ -28,6 +28,7 @@ nav:
       - Accessibility: accessibility.md
       - Performance: performance.md
   - Migration: migration.md
+  - Extraction Candidates: extraction-candidates.md
   - Changelog: changelog.md
   - Contributing: contributing.md
   - Release: release.md
