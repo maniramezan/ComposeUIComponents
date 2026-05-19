@@ -158,7 +158,7 @@ Each component must ship with: light/dark previews, multi-state previews (`@Prev
   - Getting started / install
   - Theming guide with concrete override examples
   - Per-component pages (screenshots + code + a11y notes)
-  - Migration guide & changelog
+  - Migration guide and links to GitHub Releases for release notes
   - Contributing guide + ADR index
 - **ADRs** (Architecture Decision Records) in `/docs/adr/` for non-obvious choices (theming model, module boundaries, testing strategy, etc.).
 - Root README links to docs site, catalog APK, and sample APK.
