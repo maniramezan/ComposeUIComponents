@@ -37,6 +37,7 @@ nav:
       - Containers: components/containers.md
       - Lists: components/lists.md
       - Navigation: components/navigation.md
+      - Media: components/media.md
       - Feedback: components/feedback.md
       - Typography: components/typography.md
   - Quality:
