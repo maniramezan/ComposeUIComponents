@@ -18,7 +18,6 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.dp
 import io.github.maniramezan.compose.theme.AppTheme
 import androidx.compose.material3.Checkbox as MaterialCheckbox
 import androidx.compose.material3.Slider as MaterialSlider
@@ -100,7 +99,7 @@ public fun Checkbox(
     Row(
         modifier =
             modifier
-                .defaultMinSize(minHeight = 48.dp)
+                .defaultMinSize(minHeight = minimumTouchTargetSize())
                 .toggleable(
                     value = checked,
                     enabled = enabled,
@@ -133,7 +132,7 @@ public fun RadioGroup(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .defaultMinSize(minHeight = 48.dp)
+                        .defaultMinSize(minHeight = minimumTouchTargetSize())
                         .selectable(
                             selected = selectedIndex == index,
                             enabled = enabled,
@@ -164,7 +163,7 @@ public fun Switch(
     Row(
         modifier =
             modifier
-                .defaultMinSize(minHeight = 48.dp)
+                .defaultMinSize(minHeight = minimumTouchTargetSize())
                 .toggleable(
                     value = checked,
                     enabled = enabled,

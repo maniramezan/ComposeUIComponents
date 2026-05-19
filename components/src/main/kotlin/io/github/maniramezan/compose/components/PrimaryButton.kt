@@ -7,7 +7,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import io.github.maniramezan.compose.theme.AppTheme
 
 @Composable
@@ -19,7 +18,7 @@ public fun PrimaryButton(
 ) {
     Button(
         onClick = onClick,
-        modifier = modifier.defaultMinSize(minHeight = 48.dp),
+        modifier = modifier.defaultMinSize(minHeight = minimumTouchTargetSize()),
         enabled = enabled,
         colors =
             ButtonDefaults.buttonColors(

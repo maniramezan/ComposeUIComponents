@@ -13,7 +13,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.theme.IconToken
 import androidx.compose.material3.IconButton as MaterialIconButton
@@ -28,7 +27,7 @@ public fun SecondaryButton(
 ) {
     OutlinedButton(
         onClick = onClick,
-        modifier = modifier.defaultMinSize(minHeight = 48.dp),
+        modifier = modifier.defaultMinSize(minHeight = minimumTouchTargetSize()),
         enabled = enabled,
         colors =
             ButtonDefaults.outlinedButtonColors(
@@ -53,7 +52,7 @@ public fun TextButton(
 ) {
     MaterialTextButton(
         onClick = onClick,
-        modifier = modifier.defaultMinSize(minHeight = 48.dp),
+        modifier = modifier.defaultMinSize(minHeight = minimumTouchTargetSize()),
         enabled = enabled,
         colors =
             ButtonDefaults.textButtonColors(
@@ -79,7 +78,7 @@ public fun IconButton(
 ) {
     MaterialIconButton(
         onClick = onClick,
-        modifier = modifier.defaultMinSize(minWidth = 48.dp, minHeight = 48.dp),
+        modifier = modifier.defaultMinSize(minWidth = minimumTouchTargetSize(), minHeight = minimumTouchTargetSize()),
         enabled = enabled,
     ) {
         Icon(
@@ -99,14 +98,14 @@ public fun FAB(
 ) {
     FloatingActionButton(
         onClick = onClick,
-        modifier = modifier.defaultMinSize(minWidth = 48.dp, minHeight = 48.dp),
+        modifier = modifier.defaultMinSize(minWidth = minimumTouchTargetSize(), minHeight = minimumTouchTargetSize()),
         containerColor = AppTheme.colors.primary,
         contentColor = AppTheme.colors.onPrimary,
     ) {
         Icon(
             imageVector = icon.imageVector,
             contentDescription = contentDescription,
-            modifier = Modifier.size(24.dp),
+            modifier = Modifier.size(standardIconSize()),
         )
     }
 }
@@ -129,7 +128,7 @@ public fun SegmentedControl(
                 Button(
                     onClick = { onOptionSelected(index) },
                     enabled = enabled,
-                    modifier = Modifier.defaultMinSize(minHeight = 48.dp),
+                    modifier = Modifier.defaultMinSize(minHeight = minimumTouchTargetSize()),
                     colors =
                         ButtonDefaults.buttonColors(
                             containerColor = AppTheme.colors.primary,
@@ -142,7 +141,7 @@ public fun SegmentedControl(
                 OutlinedButton(
                     onClick = { onOptionSelected(index) },
                     enabled = enabled,
-                    modifier = Modifier.defaultMinSize(minHeight = 48.dp),
+                    modifier = Modifier.defaultMinSize(minHeight = minimumTouchTargetSize()),
                     colors =
                         ButtonDefaults.outlinedButtonColors(
                             contentColor = AppTheme.colors.primary,

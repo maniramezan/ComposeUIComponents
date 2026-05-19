@@ -16,7 +16,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.theme.IconToken
 import androidx.compose.material3.TopAppBar as MaterialTopAppBar
@@ -66,7 +65,7 @@ public fun BottomBar(
                 onClick = { onItemSelected(index) },
                 icon = { NavigationItemIcon(item) },
                 label = { Text(text = item.label) },
-                modifier = Modifier.defaultMinSize(minHeight = 48.dp),
+                modifier = Modifier.defaultMinSize(minHeight = minimumTouchTargetSize()),
             )
         }
     }
@@ -87,7 +86,7 @@ public fun TabRow(
             Tab(
                 selected = index == selectedIndex,
                 onClick = { onTabSelected(index) },
-                modifier = Modifier.defaultMinSize(minHeight = 48.dp),
+                modifier = Modifier.defaultMinSize(minHeight = minimumTouchTargetSize()),
                 text = { Text(text = tab) },
             )
         }
@@ -108,7 +107,7 @@ public fun NavRail(
                 onClick = { onItemSelected(index) },
                 icon = { NavigationItemIcon(item) },
                 label = { Text(text = item.label) },
-                modifier = Modifier.defaultMinSize(minHeight = 48.dp),
+                modifier = Modifier.defaultMinSize(minHeight = minimumTouchTargetSize()),
             )
         }
     }
