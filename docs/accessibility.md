@@ -22,3 +22,4 @@ Run this checklist before a release and when adding components.
 - Icon-only actions are covered by semantics assertions for meaningful content descriptions.
 - `checkComponentTokenUsage` rejects nullable or null icon descriptions in component APIs and implementations.
 - Empty and error states are covered by readable text assertions so feedback is not color-only.
+- Component preview entry points include `PreviewLightDark` and `PreviewFontScale` coverage for visual review at dark mode and 200% font scale.

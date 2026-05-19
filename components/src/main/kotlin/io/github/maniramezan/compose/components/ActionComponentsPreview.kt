@@ -6,7 +6,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import io.github.maniramezan.compose.theme.AppTheme
+import io.github.maniramezan.compose.utils.PreviewFontScale
+import io.github.maniramezan.compose.utils.PreviewLightDark
 
+@PreviewLightDark
+@PreviewFontScale
 @Preview(name = "Action Components", group = "Actions")
 @Composable
 public fun ActionComponentsPreview(): Unit =

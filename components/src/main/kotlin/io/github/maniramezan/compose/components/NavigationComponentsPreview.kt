@@ -5,7 +5,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import io.github.maniramezan.compose.theme.AppTheme
+import io.github.maniramezan.compose.utils.PreviewFontScale
+import io.github.maniramezan.compose.utils.PreviewLightDark
 
+@PreviewLightDark
+@PreviewFontScale
 @Preview(name = "Navigation Components", group = "Navigation")
 @Composable
 public fun NavigationComponentsPreview(): Unit =
@@ -26,6 +30,8 @@ public fun NavigationComponentsPreview(): Unit =
         }
     }
 
+@PreviewLightDark
+@PreviewFontScale
 @Preview(name = "Nav Rail", group = "Navigation")
 @Composable
 public fun NavRailPreview(): Unit =

@@ -6,7 +6,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import io.github.maniramezan.compose.theme.AppTheme
+import io.github.maniramezan.compose.utils.PreviewFontScale
+import io.github.maniramezan.compose.utils.PreviewLightDark
 
+@PreviewLightDark
+@PreviewFontScale
 @Preview(name = "Container Components", group = "Containers")
 @Composable
 public fun ContainerComponentsPreview(): Unit =
@@ -29,6 +33,8 @@ public fun ContainerComponentsPreview(): Unit =
         }
     }
 
+@PreviewLightDark
+@PreviewFontScale
 @Preview(name = "Dialog", group = "Containers")
 @Composable
 public fun DialogPreview(): Unit =
