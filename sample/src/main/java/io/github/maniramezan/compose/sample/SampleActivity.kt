@@ -94,7 +94,7 @@ public class SampleActivity : ComponentActivity() {
                             )
                             Text("Profile")
                             TextField(value = "Mani", onValueChange = {}, label = "Name")
-                            PasswordField(value = "secret", onValueChange = {}, label = "Password")
+                            PasswordField(value = "demo-password", onValueChange = {}, label = "Password")
                             SearchField(value = "settings", onValueChange = {})
                             Checkbox(checked = true, onCheckedChange = {}, label = "Email updates")
                             RadioGroup(

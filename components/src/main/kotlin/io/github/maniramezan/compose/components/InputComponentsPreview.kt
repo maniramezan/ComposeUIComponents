@@ -21,7 +21,7 @@ public fun InputComponentsPreview(): Unit =
                 label = "Name",
             )
             PasswordField(
-                value = "secret",
+                value = "demo-password",
                 onValueChange = {},
                 label = "Password",
             )
