@@ -10,12 +10,25 @@ plugins {
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.test) apply false
     alias(libs.plugins.maven.publish) apply false
     alias(libs.plugins.roborazzi) apply false
 }
 
 apiValidation {
-    ignoredProjects.addAll(listOf("catalog", "sample", "testing", "tokens", "theme", "icons", "compose-utils", "components"))
+    ignoredProjects.addAll(
+        listOf(
+            "baselineprofile",
+            "catalog",
+            "sample",
+            "testing",
+            "tokens",
+            "theme",
+            "icons",
+            "compose-utils",
+            "components",
+        ),
+    )
 }
 
 tasks.register("composeCompilerReports") {

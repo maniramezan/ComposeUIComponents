@@ -38,6 +38,12 @@ jobs:
         with:
           name: sample-debug-apk
           path: sample/build/outputs/apk/debug/sample-debug.apk
+      - name: Assemble benchmark APK
+        run: ./gradlew :baselineprofile:assembleDebug
+      - uses: actions/upload-artifact@v7.0.1
+        with:
+          name: baselineprofile-debug-apk
+          path: baselineprofile/build/outputs/apk/debug/baselineprofile-debug.apk
       - name: Generate Compose compiler reports
         run: ./gradlew composeCompilerReports -PenableComposeCompilerReports=true
       - uses: actions/upload-artifact@v7.0.1
