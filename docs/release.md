@@ -8,6 +8,7 @@
 - Catalog and sample debug APKs assemble.
 - Component Roborazzi screenshots record successfully.
 - `publishToMavenLocal` passes before pushing a tag.
+- Baseline profile generation is reviewed when startup or sample navigation changes.
 - Accessibility checklist is complete.
 - Performance checklist is complete.
 - Maven Central publishing credentials and signing are configured outside the repository.

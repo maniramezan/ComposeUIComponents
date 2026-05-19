@@ -15,4 +15,22 @@ CI uploads `compose-compiler-reports` whenever the reports task runs. Local outp
 
 ## Baseline Profile Scope
 
-Baseline profiles should target consumer-like flows in `:sample`, not exhaustive catalog browsing.
+Baseline profiles target consumer-like flows in `:sample`, not exhaustive catalog browsing. The `:baselineprofile` module contains the startup macrobenchmark and baseline profile generator. The generated profile artifact should be reviewed and copied into `sample/src/main/baseline-prof.txt` when startup behavior changes.
+
+Build the benchmark APK locally with:
+
+```bash
+./gradlew :baselineprofile:assembleDebug
+```
+
+Generate baseline profile data on a connected device or managed emulator with:
+
+```bash
+./gradlew :baselineprofile:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.enabledRules=BaselineProfile
+```
+
+Run the startup macrobenchmark on a connected device or managed emulator with:
+
+```bash
+./gradlew :baselineprofile:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.enabledRules=Macrobenchmark
+```
