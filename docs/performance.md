@@ -3,6 +3,7 @@
 Run this checklist before a release and when adding complex components.
 
 - Run `./gradlew check dokkaGenerate :catalog:assembleDebug :sample:assembleDebug`.
+- Record component category screenshots with `./gradlew :components:recordRoborazziDebug` before reviewing visual changes.
 - Generate Compose compiler metrics with `./gradlew composeCompilerReports -PenableComposeCompilerReports=true` when investigating recomposition.
 - Keep component APIs state-hoisted and stable.
 - Prefer `LazyList` for large collections and pass stable item keys in callers.
@@ -12,6 +13,10 @@ Run this checklist before a release and when adding complex components.
 ## Compose Compiler Reports
 
 CI uploads `compose-compiler-reports` whenever the reports task runs. Local outputs are written under each Compose module's `build/compose-metrics` and `build/compose-reports` directories.
+
+## Screenshot Coverage
+
+Roborazzi captures representative previews for each Phase 1 component category plus dialog and navigation rail variants. Local PNG outputs are written to `components/build/outputs/roborazzi`, and CI uploads them as the `component-screenshots` artifact.
 
 ## Baseline Profile Scope
 
