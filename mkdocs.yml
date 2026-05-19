@@ -33,6 +33,7 @@ nav:
   - Contributing: contributing.md
   - Release: release.md
   - ADRs:
+      - Index: adr/index.md
       - Theming Model: adr/0001-theming-model.md
       - Module Boundaries: adr/0002-module-boundaries.md
       - Testing Strategy: adr/0003-testing-strategy.md
