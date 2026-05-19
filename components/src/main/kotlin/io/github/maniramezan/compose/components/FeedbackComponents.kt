@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.unit.dp
 import io.github.maniramezan.compose.theme.AppTheme
 
 @Composable
@@ -51,8 +50,8 @@ public fun Skeleton(modifier: Modifier = Modifier) {
         modifier =
             modifier
                 .fillMaxWidth()
-                .defaultMinSize(minHeight = 48.dp)
-                .clip(RoundedCornerShape(12.dp))
+                .defaultMinSize(minHeight = minimumTouchTargetSize())
+                .clip(RoundedCornerShape(containerCornerRadius()))
                 .background(AppTheme.colors.surfaceVariant),
     )
 }
@@ -68,7 +67,7 @@ public fun Toast(
         modifier =
             modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(12.dp))
+                .clip(RoundedCornerShape(containerCornerRadius()))
                 .background(AppTheme.colors.onSurface)
                 .padding(horizontal = AppTheme.spacing.lg, vertical = AppTheme.spacing.md),
         horizontalArrangement = Arrangement.SpaceBetween,

@@ -1,4 +1,5 @@
 plugins {
+    id("compose.system.check.component-token-usage")
     alias(libs.plugins.binary.compatibility.validator)
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.dokka) apply false

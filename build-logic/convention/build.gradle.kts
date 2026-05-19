@@ -30,5 +30,9 @@ gradlePlugin {
             id = "compose.system.kotlin.multiplatform.library"
             implementationClass = "KotlinMultiplatformLibraryConventionPlugin"
         }
+        register("checkComponentTokenUsage") {
+            id = "compose.system.check.component-token-usage"
+            implementationClass = "CheckComponentTokenUsagePlugin"
+        }
     }
 }
