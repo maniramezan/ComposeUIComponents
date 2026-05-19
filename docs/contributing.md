@@ -21,6 +21,7 @@ mkdocs build --strict
 - Keep APIs state-hoisted and slot-based.
 - Add or update light/dark previews, 200% font-scale previews, tests, docs, and screenshot coverage for visible changes.
 - Check accessibility: 48dp touch targets, meaningful icon descriptions, readable state text, and 200% font scale behavior.
+- Prefer `:testing` helpers for repeated Compose accessibility assertions.
 
 ## Verification
 

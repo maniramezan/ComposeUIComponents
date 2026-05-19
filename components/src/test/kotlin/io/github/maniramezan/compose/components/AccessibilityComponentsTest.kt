@@ -1,13 +1,13 @@
 package io.github.maniramezan.compose.components
 
 import androidx.compose.ui.test.assertHeightIsAtLeast
-import androidx.compose.ui.test.assertWidthIsAtLeast
 import androidx.compose.ui.test.junit4.v2.createComposeRule
-import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.maniramezan.compose.icons.defaultAppIcons
+import io.github.maniramezan.compose.testing.assertMinimumTouchTarget
+import io.github.maniramezan.compose.testing.onNodeWithRequiredContentDescription
 import io.github.maniramezan.compose.theme.AppTheme
 import org.junit.Rule
 import org.junit.Test
@@ -42,13 +42,11 @@ public class AccessibilityComponentsTest {
         composeRule.onNodeWithText("Secondary").assertHeightIsAtLeast(48.dp)
         composeRule.onNodeWithText("Text").assertHeightIsAtLeast(48.dp)
         composeRule
-            .onNodeWithContentDescription("Close")
-            .assertWidthIsAtLeast(48.dp)
-            .assertHeightIsAtLeast(48.dp)
+            .onNodeWithRequiredContentDescription("Close")
+            .assertMinimumTouchTarget()
         composeRule
-            .onNodeWithContentDescription("Create")
-            .assertWidthIsAtLeast(48.dp)
-            .assertHeightIsAtLeast(48.dp)
+            .onNodeWithRequiredContentDescription("Create")
+            .assertMinimumTouchTarget()
     }
 
     @Test
@@ -88,8 +86,8 @@ public class AccessibilityComponentsTest {
             }
         }
 
-        composeRule.onNodeWithContentDescription("Dismiss panel").assertExists()
-        composeRule.onNodeWithContentDescription("Confirm selection").assertExists()
+        composeRule.onNodeWithRequiredContentDescription("Dismiss panel").assertExists()
+        composeRule.onNodeWithRequiredContentDescription("Confirm selection").assertExists()
     }
 
     @Test

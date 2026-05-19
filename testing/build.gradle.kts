@@ -10,7 +10,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":compose-utils"))
+    api(project(":compose-utils"))
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.compose.ui.test.junit4)
+    api(libs.androidx.compose.ui.test.junit4)
 }
