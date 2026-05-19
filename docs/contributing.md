@@ -19,7 +19,7 @@ mkdocs build --strict
 
 - Use `AppTheme` tokens instead of hardcoded colors or raw `dp` literals in `:components`.
 - Keep APIs state-hoisted and slot-based.
-- Add or update previews, tests, docs, and screenshot coverage for visible changes.
+- Add or update light/dark previews, 200% font-scale previews, tests, docs, and screenshot coverage for visible changes.
 - Check accessibility: 48dp touch targets, meaningful icon descriptions, readable state text, and 200% font scale behavior.
 
 ## Verification
