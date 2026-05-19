@@ -15,7 +15,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ComposeUISystemDesign"
+rootProject.name = "ComposeUIComponents"
 
 include(":foundation")
 include(":tokens")

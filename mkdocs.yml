@@ -1,7 +1,7 @@
 site_name: Compose UI Design System
 site_description: Reusable Kotlin-first Jetpack Compose design system for Android apps.
-repo_url: https://github.com/maniramezan/ComposeUISystemDesign
-repo_name: maniramezan/ComposeUISystemDesign
+repo_url: https://github.com/maniramezan/ComposeUIComponents
+repo_name: maniramezan/ComposeUIComponents
 
 theme:
   name: material
