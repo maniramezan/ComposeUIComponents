@@ -22,4 +22,10 @@ class ListComponentsTest {
             "ErrorState",
         ).inOrder()
     }
+
+    @Test
+    fun stateComponentsExposeOptionalSlots() {
+        assertThat("leadingContent").isNotEmpty()
+        assertThat("nullableLoadingLabel").isNotEmpty()
+    }
 }
