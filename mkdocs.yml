@@ -27,6 +27,9 @@ nav:
   - Quality:
       - Accessibility: accessibility.md
       - Performance: performance.md
+  - Migration: migration.md
+  - Changelog: changelog.md
+  - Contributing: contributing.md
   - Release: release.md
   - ADRs:
       - Theming Model: adr/0001-theming-model.md
