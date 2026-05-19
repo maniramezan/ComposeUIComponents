@@ -1,4 +1,7 @@
-public final class io/github/maniramezan/compose/foundation/Foundation {
-	public static final field INSTANCE Lio/github/maniramezan/compose/foundation/Foundation;
+public final class io/github/maniramezan/compose/foundation/StringsKt {
+	public static final fun normalizedWhitespace (Ljava/lang/String;)Ljava/lang/String;
+	public static final fun toDisplayName (Ljava/lang/String;)Ljava/lang/String;
+	public static final fun toStableIdentifier (Ljava/lang/String;C)Ljava/lang/String;
+	public static synthetic fun toStableIdentifier$default (Ljava/lang/String;CILjava/lang/Object;)Ljava/lang/String;
 }
 
