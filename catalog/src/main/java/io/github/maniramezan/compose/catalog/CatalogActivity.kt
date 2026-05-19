@@ -94,7 +94,7 @@ public class CatalogActivity : ComponentActivity() {
                             )
                             Text("Inputs")
                             TextField(value = "Mani", onValueChange = {}, label = "Name")
-                            PasswordField(value = "secret", onValueChange = {}, label = "Password")
+                            PasswordField(value = "demo-password", onValueChange = {}, label = "Password")
                             SearchField(value = "compose", onValueChange = {})
                             Checkbox(checked = true, onCheckedChange = {}, label = "Email updates")
                             RadioGroup(

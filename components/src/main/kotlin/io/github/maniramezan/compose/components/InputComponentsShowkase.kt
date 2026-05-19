@@ -19,7 +19,7 @@ public fun TextFieldShowkase(): Unit =
 @Composable
 public fun PasswordFieldShowkase(): Unit =
     AppTheme {
-        PasswordField(value = "secret", onValueChange = {}, label = "Password")
+        PasswordField(value = "demo-password", onValueChange = {}, label = "Password")
     }
 
 @ShowkaseComposable(name = "Search Field", group = "Inputs")
