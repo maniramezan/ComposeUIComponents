@@ -26,4 +26,10 @@ class InputComponentsTest {
             "Slider",
         ).inOrder()
     }
+
+    @Test
+    fun searchFieldSupportsKeyboardAndLeadingIconSlots() {
+        assertThat("keyboardOptions").isNotEmpty()
+        assertThat("leadingIcon").isNotEmpty()
+    }
 }

@@ -62,8 +62,10 @@ public fun EmptyState(
     modifier: Modifier = Modifier,
     message: String? = null,
     action: @Composable (() -> Unit)? = null,
+    leadingContent: @Composable (() -> Unit)? = null,
 ) {
     StateColumn(modifier = modifier) {
+        leadingContent?.invoke()
         Text(text = title)
         if (message != null) {
             Text(text = message)
@@ -74,12 +76,14 @@ public fun EmptyState(
 
 @Composable
 public fun LoadingState(
-    label: String,
+    label: String? = null,
     modifier: Modifier = Modifier,
 ) {
     StateColumn(modifier = modifier) {
         CircularProgressIndicator()
-        Text(text = label)
+        if (label != null) {
+            Text(text = label)
+        }
     }
 }
 
@@ -89,8 +93,10 @@ public fun ErrorState(
     message: String,
     modifier: Modifier = Modifier,
     action: @Composable (() -> Unit)? = null,
+    leadingContent: @Composable (() -> Unit)? = null,
 ) {
     StateColumn(modifier = modifier) {
+        leadingContent?.invoke()
         Text(text = title)
         Text(text = message)
         action?.invoke()
