@@ -25,7 +25,6 @@ internal data class SampleComponentDemo(
 /** Ordered list of all component demos. Category grouping is derived from [SampleComponentDemo.category]. */
 internal fun sampleDemos(): List<SampleComponentDemo> =
     listOf(
-        // ── Actions ──────────────────────────────────────────────────────────
         SampleComponentDemo(
             id = "primary-button",
             title = "PrimaryButton",
@@ -68,8 +67,6 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             description = "Horizontally arranged mutually exclusive option selector.",
             content = { SegmentedControlPage() },
         ),
-
-        // ── Inputs ───────────────────────────────────────────────────────────
         SampleComponentDemo(
             id = "text-field",
             title = "TextField",
@@ -91,8 +88,6 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             description = "Search-optimised text field with leading icon slot.",
             content = { SearchFieldPage() },
         ),
-
-        // ── Controls ─────────────────────────────────────────────────────────
         SampleComponentDemo(
             id = "checkbox",
             title = "Checkbox",
@@ -121,8 +116,6 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             description = "Continuous value selector across a floating-point range.",
             content = { SliderPage() },
         ),
-
-        // ── Navigation ───────────────────────────────────────────────────────
         SampleComponentDemo(
             id = "top-app-bar",
             title = "TopAppBar",
@@ -151,8 +144,6 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             description = "Vertical rail navigation for medium and large screens.",
             content = { NavRailPage() },
         ),
-
-        // ── Pagination ───────────────────────────────────────────────────────
         SampleComponentDemo(
             id = "paginated-content",
             title = "PaginatedContent",
@@ -160,8 +151,6 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             description = "Horizontally paginated container with footer controls.",
             content = { PaginatedContentPage() },
         ),
-
-        // ── Lists ────────────────────────────────────────────────────────────
         SampleComponentDemo(
             id = "list-item",
             title = "ListItem",
@@ -197,8 +186,6 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             description = "Error message with optional retry action.",
             content = { ErrorStatePage() },
         ),
-
-        // ── Containers ───────────────────────────────────────────────────────
         SampleComponentDemo(
             id = "card",
             title = "Card",
@@ -227,8 +214,6 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             description = "Dark pill notification with optional action label.",
             content = { ToastPage() },
         ),
-
-        // ── Feedback ─────────────────────────────────────────────────────────
         SampleComponentDemo(
             id = "progress-indicator",
             title = "ProgressIndicator",
@@ -250,8 +235,6 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             description = "Sized skeleton placeholder block for ghost layouts.",
             content = { SkeletonBlockPage() },
         ),
-
-        // ── Typography ───────────────────────────────────────────────────────
         SampleComponentDemo(
             id = "app-text",
             title = "AppText",
@@ -259,8 +242,6 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             description = "Type-safe text component covering all AppTextStyle variants.",
             content = { AppTextPage() },
         ),
-
-        // ── Chips & Badges ───────────────────────────────────────────────────
         SampleComponentDemo(
             id = "pill-chip",
             title = "PillChip",

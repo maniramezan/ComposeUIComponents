@@ -312,11 +312,12 @@ internal fun BottomBarPage() {
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
         SectionHeader(title = "Interactive")
         BottomBar(
-            items = listOf(
-                NavigationItem("Home", AppTheme.icons.check),
-                NavigationItem("Tasks", AppTheme.icons.check, badge = "5"),
-                NavigationItem("Close", AppTheme.icons.close),
-            ),
+            items =
+                listOf(
+                    NavigationItem("Home", AppTheme.icons.check),
+                    NavigationItem("Tasks", AppTheme.icons.check, badge = "5"),
+                    NavigationItem("Close", AppTheme.icons.close),
+                ),
             selectedIndex = index,
             onItemSelected = { index = it },
         )
@@ -329,11 +330,12 @@ internal fun NavRailPage() {
     var index by remember { mutableIntStateOf(0) }
     Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
         NavRail(
-            items = listOf(
-                NavigationItem("Home", AppTheme.icons.check),
-                NavigationItem("Tasks", AppTheme.icons.check, badge = "3"),
-                NavigationItem("Close", AppTheme.icons.close),
-            ),
+            items =
+                listOf(
+                    NavigationItem("Home", AppTheme.icons.check),
+                    NavigationItem("Tasks", AppTheme.icons.check, badge = "3"),
+                    NavigationItem("Close", AppTheme.icons.close),
+                ),
             selectedIndex = index,
             onItemSelected = { index = it },
         )
@@ -348,19 +350,21 @@ internal fun NavRailPage() {
 // Pagination
 // ─────────────────────────────────────────────────────────────────────────────
 
-private fun demoPages() = listOf(
-    PaginationPage(title = "Popular"),
-    PaginationPage(title = "New Releases"),
-    PaginationPage(title = "Top Rated"),
-)
+private fun demoPages() =
+    listOf(
+        PaginationPage(title = "Popular"),
+        PaginationPage(title = "New Releases"),
+        PaginationPage(title = "Top Rated"),
+    )
 
 @Composable
 private fun PagerPlaceholder(title: String) {
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(80.dp)
-            .padding(AppTheme.spacing.x2),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(80.dp)
+                .padding(AppTheme.spacing.x2),
         contentAlignment = Alignment.Center,
     ) {
         Text(text = "$title content")

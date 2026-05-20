@@ -67,9 +67,10 @@ internal fun SampleBrowserApp() {
     var selectedId by rememberSaveable { mutableStateOf(demos.first().id) }
     var compactDetailVisible by rememberSaveable { mutableStateOf(false) }
 
-    val selectedDemo = remember(selectedId, demos) {
-        demos.firstOrNull { it.id == selectedId } ?: demos.first()
-    }
+    val selectedDemo =
+        remember(selectedId, demos) {
+            demos.firstOrNull { it.id == selectedId } ?: demos.first()
+        }
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         if (maxWidth >= SPLIT_BREAKPOINT) {
@@ -79,18 +80,20 @@ internal fun SampleBrowserApp() {
                     grouped = grouped,
                     selectedId = selectedId,
                     onSelect = { selectedId = it },
-                    modifier = Modifier
-                        .width(LIST_PANE_WIDTH)
-                        .fillMaxHeight(),
+                    modifier =
+                        Modifier
+                            .width(LIST_PANE_WIDTH)
+                            .fillMaxHeight(),
                 )
                 VerticalDivider()
                 SampleDetailPane(
                     demo = selectedDemo,
                     showBackButton = false,
                     onBack = {},
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight(),
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .fillMaxHeight(),
                 )
             }
         } else {
@@ -138,10 +141,11 @@ private fun SampleListPane(
         contentWindowInsets = WindowInsets.safeDrawing,
     ) { innerPadding ->
         LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .consumeWindowInsets(innerPadding),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .consumeWindowInsets(innerPadding),
         ) {
             grouped.forEach { (category, entries) ->
                 item(key = "header-$category") {
@@ -163,13 +167,14 @@ private fun SampleListPane(
 private fun CategoryHeader(category: String) {
     Column {
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(AppTheme.colors.surfaceContainer)
-                .padding(
-                    horizontal = AppTheme.spacing.lg,
-                    vertical = AppTheme.spacing.xs,
-                ),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .background(AppTheme.colors.surfaceContainer)
+                    .padding(
+                        horizontal = AppTheme.spacing.lg,
+                        vertical = AppTheme.spacing.xs,
+                    ),
         ) {
             AppText(text = category, style = AppTextStyle.Label)
         }
@@ -186,36 +191,39 @@ private fun DemoListRow(
     val backgroundColor = if (isSelected) AppTheme.colors.primaryContainer else AppTheme.colors.surface
     val textColor = if (isSelected) AppTheme.colors.onPrimaryContainer else AppTheme.colors.onSurface
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(backgroundColor)
-            .clickable(onClick = onClick),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .background(backgroundColor)
+                .clickable(onClick = onClick),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         // Selection accent bar
         Box(
-            modifier = Modifier
-                .width(3.dp)
-                .padding(vertical = 2.dp)
-                .then(
-                    if (isSelected) {
-                        Modifier
-                            .background(AppTheme.colors.primary)
-                            .padding(vertical = AppTheme.spacing.md)
-                    } else {
-                        Modifier.padding(vertical = AppTheme.spacing.md)
-                    },
-                ),
+            modifier =
+                Modifier
+                    .width(3.dp)
+                    .padding(vertical = 2.dp)
+                    .then(
+                        if (isSelected) {
+                            Modifier
+                                .background(AppTheme.colors.primary)
+                                .padding(vertical = AppTheme.spacing.md)
+                        } else {
+                            Modifier.padding(vertical = AppTheme.spacing.md)
+                        },
+                    ),
         )
         Text(
             text = demo.title,
             color = textColor,
-            modifier = Modifier
-                .weight(1f)
-                .padding(
-                    horizontal = AppTheme.spacing.md,
-                    vertical = AppTheme.spacing.md,
-                ),
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .padding(
+                        horizontal = AppTheme.spacing.md,
+                        vertical = AppTheme.spacing.md,
+                    ),
         )
     }
     HorizontalDivider(modifier = Modifier.padding(start = AppTheme.spacing.lg))
@@ -252,12 +260,13 @@ private fun SampleDetailPane(
         contentWindowInsets = WindowInsets.safeDrawing,
     ) { innerPadding ->
         Surface(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .consumeWindowInsets(innerPadding)
-                .imePadding()
-                .verticalScroll(rememberScrollState()),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .consumeWindowInsets(innerPadding)
+                    .imePadding()
+                    .verticalScroll(rememberScrollState()),
         ) {
             Column(
                 modifier = Modifier.padding(AppTheme.spacing.lg),
@@ -270,12 +279,13 @@ private fun SampleDetailPane(
 
                 // Demo surface
                 Box(
-                    modifier = Modifier
-                        .padding(top = AppTheme.spacing.x2)
-                        .fillMaxWidth()
-                        .clip(AppTheme.shapes.large)
-                        .background(AppTheme.colors.surfaceContainer)
-                        .padding(AppTheme.spacing.lg),
+                    modifier =
+                        Modifier
+                            .padding(top = AppTheme.spacing.x2)
+                            .fillMaxWidth()
+                            .clip(AppTheme.shapes.large)
+                            .background(AppTheme.colors.surfaceContainer)
+                            .padding(AppTheme.spacing.lg),
                 ) {
                     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
                         AppText(text = "Demo", style = AppTextStyle.Label)
