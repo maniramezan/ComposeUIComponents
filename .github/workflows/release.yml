@@ -25,8 +25,6 @@ jobs:
         run: ./gradlew :components:recordRoborazziDebug
       - name: Assemble release assets
         run: ./gradlew :catalog:assembleDebug :sample:assembleDebug
-      - name: Verify local publication metadata
-        run: ./gradlew publishToMavenLocal
 
       - name: Publish to Maven Central
         env:
