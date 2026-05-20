@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -17,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.github.maniramezan.compose.components.AppText
 import io.github.maniramezan.compose.components.AppTextStyle
@@ -61,81 +64,148 @@ import io.github.maniramezan.compose.components.TopAppBar
 import io.github.maniramezan.compose.theme.AppTheme
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Shared helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Horizontal divider between the live preview and the controls panel. */
+@Composable
+private fun ControlsDivider() {
+    HorizontalDivider(modifier = Modifier.padding(vertical = AppTheme.spacing.sm))
+    AppText(text = "Controls", style = AppTextStyle.Label)
+}
+
+/** A labelled toggle row used throughout the controls panels. */
+@Composable
+private fun ControlSwitch(
+    label: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+) {
+    Switch(checked = checked, onCheckedChange = onCheckedChange, label = label)
+}
+
+/** A labelled segmented-control row used throughout the controls panels. */
+@Composable
+private fun ControlSegmented(
+    label: String,
+    options: List<String>,
+    selectedIndex: Int,
+    onOptionSelected: (Int) -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs)) {
+        Text(text = label)
+        SegmentedControl(
+            options = options,
+            selectedIndex = selectedIndex,
+            onOptionSelected = onOptionSelected,
+        )
+    }
+}
+
+/** A labelled slider row used throughout the controls panels. */
+@Composable
+private fun ControlSlider(
+    label: String,
+    value: Float,
+    onValueChange: (Float) -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs)) {
+        Text(text = label)
+        Slider(value = value, onValueChange = onValueChange)
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Actions
 // ─────────────────────────────────────────────────────────────────────────────
 
 @Composable
 internal fun PrimaryButtonPage() {
+    var enabled by remember { mutableStateOf(true) }
+
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        SectionHeader(title = "Variants")
-        PrimaryButton(text = "Primary Button", onClick = {})
-        PrimaryButton(text = "Primary (disabled)", onClick = {}, enabled = false)
+        PrimaryButton(text = "Primary Button", onClick = {}, enabled = enabled)
+        ControlsDivider()
+        ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
     }
 }
 
 @Composable
 internal fun SecondaryButtonPage() {
+    var enabled by remember { mutableStateOf(true) }
+
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        SectionHeader(title = "Variants")
-        SecondaryButton(text = "Secondary Button", onClick = {})
-        SecondaryButton(text = "Secondary (disabled)", onClick = {}, enabled = false)
+        SecondaryButton(text = "Secondary Button", onClick = {}, enabled = enabled)
+        ControlsDivider()
+        ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
     }
 }
 
 @Composable
 internal fun TextButtonPage() {
+    var enabled by remember { mutableStateOf(true) }
+
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        SectionHeader(title = "Variants")
-        TextButton(text = "Text Button", onClick = {})
-        TextButton(text = "Text (disabled)", onClick = {}, enabled = false)
+        TextButton(text = "Text Button", onClick = {}, enabled = enabled)
+        ControlsDivider()
+        ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
     }
 }
 
 @Composable
 internal fun IconButtonPage() {
+    var enabled by remember { mutableStateOf(true) }
+    val iconOptions = listOf("Check", "Close")
+    var iconIndex by remember { mutableIntStateOf(0) }
+    val icon = if (iconIndex == 0) AppTheme.icons.check else AppTheme.icons.close
+
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        SectionHeader(title = "Variants")
-        Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-            IconButton(icon = AppTheme.icons.check, contentDescription = "Confirm", onClick = {})
-            IconButton(icon = AppTheme.icons.close, contentDescription = "Dismiss", onClick = {})
-            IconButton(
-                icon = AppTheme.icons.check,
-                contentDescription = "Disabled",
-                onClick = {},
-                enabled = false,
-            )
-        }
+        IconButton(icon = icon, contentDescription = iconOptions[iconIndex], onClick = {}, enabled = enabled)
+        ControlsDivider()
+        ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
+        ControlSegmented(
+            label = "Icon",
+            options = iconOptions,
+            selectedIndex = iconIndex,
+            onOptionSelected = { iconIndex = it },
+        )
     }
 }
 
 @Composable
 internal fun FabPage() {
+    val iconOptions = listOf("Check", "Close")
+    var iconIndex by remember { mutableIntStateOf(0) }
+    val icon = if (iconIndex == 0) AppTheme.icons.check else AppTheme.icons.close
+
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        SectionHeader(title = "Variants")
-        Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-            FAB(icon = AppTheme.icons.check, contentDescription = "Save", onClick = {})
-            FAB(icon = AppTheme.icons.close, contentDescription = "Cancel", onClick = {})
-        }
+        FAB(icon = icon, contentDescription = iconOptions[iconIndex], onClick = {})
+        ControlsDivider()
+        ControlSegmented(
+            label = "Icon",
+            options = iconOptions,
+            selectedIndex = iconIndex,
+            onOptionSelected = { iconIndex = it },
+        )
     }
 }
 
 @Composable
 internal fun SegmentedControlPage() {
     var selected by remember { mutableIntStateOf(0) }
+    var enabled by remember { mutableStateOf(true) }
+    val options = listOf("Free", "Plus", "Pro")
+
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        SectionHeader(title = "Interactive")
         SegmentedControl(
-            options = listOf("Free", "Plus", "Pro"),
+            options = options,
             selectedIndex = selected,
             onOptionSelected = { selected = it },
+            enabled = enabled,
         )
-        SectionHeader(title = "Disabled")
-        SegmentedControl(
-            options = listOf("A", "B", "C"),
-            selectedIndex = 0,
-            onOptionSelected = {},
-            enabled = false,
-        )
+        Text(text = "Selected: ${options[selected]}")
+        ControlsDivider()
+        ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
     }
 }
 
@@ -145,53 +215,60 @@ internal fun SegmentedControlPage() {
 
 @Composable
 internal fun TextFieldPage() {
-    var name by remember { mutableStateOf("Mani") }
-    var required by remember { mutableStateOf("") }
+    var value by remember { mutableStateOf("Mani") }
+    var enabled by remember { mutableStateOf(true) }
+    var isError by remember { mutableStateOf(false) }
+    var showSupporting by remember { mutableStateOf(false) }
+
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        SectionHeader(title = "Normal")
-        TextField(value = name, onValueChange = { name = it }, label = "Name")
-        SectionHeader(title = "Error state")
         TextField(
-            value = required,
-            onValueChange = { required = it },
-            label = "Required Field",
-            isError = required.isEmpty(),
-            supportingText = if (required.isEmpty()) "This field is required" else null,
+            value = value,
+            onValueChange = { value = it },
+            label = "Name",
+            enabled = enabled,
+            isError = isError,
+            supportingText = if (showSupporting) "Supporting text" else null,
         )
-        SectionHeader(title = "Disabled")
-        TextField(value = "Read-only", onValueChange = {}, label = "Disabled", enabled = false)
+        ControlsDivider()
+        ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
+        ControlSwitch(label = "Error state", checked = isError, onCheckedChange = { isError = it })
+        ControlSwitch(
+            label = "Supporting text",
+            checked = showSupporting,
+            onCheckedChange = { showSupporting = it },
+        )
     }
 }
 
 @Composable
 internal fun PasswordFieldPage() {
-    var password by remember { mutableStateOf("secret123") }
+    var value by remember { mutableStateOf("secret123") }
+    var revealed by remember { mutableStateOf(false) }
+    var enabled by remember { mutableStateOf(true) }
+
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        SectionHeader(title = "Hidden")
-        PasswordField(value = password, onValueChange = { password = it }, label = "Password")
-        SectionHeader(title = "Revealed")
         PasswordField(
-            value = "revealed",
-            onValueChange = {},
-            label = "Password (revealed)",
-            revealPassword = true,
+            value = value,
+            onValueChange = { value = it },
+            label = "Password",
+            enabled = enabled,
+            revealPassword = revealed,
         )
+        ControlsDivider()
+        ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
+        ControlSwitch(label = "Reveal password", checked = revealed, onCheckedChange = { revealed = it })
     }
 }
 
 @Composable
 internal fun SearchFieldPage() {
     var query by remember { mutableStateOf("") }
+    var enabled by remember { mutableStateOf(true) }
+
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        SectionHeader(title = "Interactive")
-        SearchField(value = query, onValueChange = { query = it })
-        SectionHeader(title = "Disabled")
-        SearchField(
-            value = "",
-            onValueChange = {},
-            enabled = false,
-            placeholder = "Disabled search",
-        )
+        SearchField(value = query, onValueChange = { query = it }, enabled = enabled)
+        ControlsDivider()
+        ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
     }
 }
 
@@ -201,60 +278,59 @@ internal fun SearchFieldPage() {
 
 @Composable
 internal fun CheckboxPage() {
-    var a by remember { mutableStateOf(true) }
-    var b by remember { mutableStateOf(false) }
+    var checked by remember { mutableStateOf(true) }
+    var enabled by remember { mutableStateOf(true) }
+
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        SectionHeader(title = "Interactive")
-        Checkbox(checked = a, onCheckedChange = { a = it }, label = "Email updates")
-        Checkbox(checked = b, onCheckedChange = { b = it }, label = "Push notifications")
-        SectionHeader(title = "Disabled")
-        Checkbox(checked = true, onCheckedChange = {}, label = "Disabled (checked)", enabled = false)
-        Checkbox(checked = false, onCheckedChange = {}, label = "Disabled (unchecked)", enabled = false)
+        Checkbox(checked = checked, onCheckedChange = { checked = it }, label = "Email updates", enabled = enabled)
+        ControlsDivider()
+        ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
+        ControlSwitch(label = "Checked", checked = checked, onCheckedChange = { checked = it })
     }
 }
 
 @Composable
 internal fun RadioGroupPage() {
-    var index by remember { mutableIntStateOf(1) }
+    val options = listOf("Compact", "Comfortable", "Spacious")
+    var selectedIndex by remember { mutableIntStateOf(1) }
+    var enabled by remember { mutableStateOf(true) }
+
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        SectionHeader(title = "Interactive")
         RadioGroup(
-            options = listOf("Compact", "Comfortable", "Spacious"),
-            selectedIndex = index,
-            onOptionSelected = { index = it },
+            options = options,
+            selectedIndex = selectedIndex,
+            onOptionSelected = { selectedIndex = it },
+            enabled = enabled,
         )
-        SectionHeader(title = "Disabled")
-        RadioGroup(
-            options = listOf("On", "Off"),
-            selectedIndex = 0,
-            onOptionSelected = {},
-            enabled = false,
-        )
+        Text(text = "Selected: ${options[selectedIndex]}")
+        ControlsDivider()
+        ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
     }
 }
 
 @Composable
 internal fun SwitchPage() {
-    var a by remember { mutableStateOf(true) }
-    var b by remember { mutableStateOf(false) }
+    var checked by remember { mutableStateOf(true) }
+    var enabled by remember { mutableStateOf(true) }
+
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        SectionHeader(title = "Interactive")
-        Switch(checked = a, onCheckedChange = { a = it }, label = "Notifications")
-        Switch(checked = b, onCheckedChange = { b = it }, label = "Dark mode")
-        SectionHeader(title = "Disabled")
-        Switch(checked = false, onCheckedChange = {}, label = "Disabled switch", enabled = false)
+        Switch(checked = checked, onCheckedChange = { checked = it }, label = "Notifications", enabled = enabled)
+        ControlsDivider()
+        ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
+        ControlSwitch(label = "Checked", checked = checked, onCheckedChange = { checked = it })
     }
 }
 
 @Composable
 internal fun SliderPage() {
     var value by remember { mutableFloatStateOf(0.45f) }
+    var enabled by remember { mutableStateOf(true) }
+
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        SectionHeader(title = "Interactive")
         Text("Volume: ${(value * 100).toInt()}%")
-        Slider(value = value, onValueChange = { value = it })
-        SectionHeader(title = "Disabled")
-        Slider(value = 0.7f, onValueChange = {}, enabled = false)
+        Slider(value = value, onValueChange = { value = it }, enabled = enabled)
+        ControlsDivider()
+        ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
     }
 }
 
@@ -264,85 +340,84 @@ internal fun SliderPage() {
 
 @Composable
 internal fun TopAppBarPage() {
+    var showNavIcon by remember { mutableStateOf(false) }
+    var showAction by remember { mutableStateOf(false) }
+
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        SectionHeader(title = "Title only")
-        TopAppBar(title = "Profile")
-        SectionHeader(title = "With nav icon")
         TopAppBar(
-            title = "Settings",
+            title = "Screen Title",
             navigationIcon = {
-                IconButton(
-                    icon = AppTheme.icons.close,
-                    contentDescription = "Back",
-                    onClick = {},
-                )
+                if (showNavIcon) {
+                    IconButton(icon = AppTheme.icons.close, contentDescription = "Back", onClick = {})
+                }
             },
-        )
-        SectionHeader(title = "With actions")
-        TopAppBar(
-            title = "Dashboard",
             actions = {
-                IconButton(
-                    icon = AppTheme.icons.check,
-                    contentDescription = "Save",
-                    onClick = {},
-                )
+                if (showAction) {
+                    IconButton(icon = AppTheme.icons.check, contentDescription = "Save", onClick = {})
+                }
             },
         )
+        ControlsDivider()
+        ControlSwitch(
+            label = "Navigation icon",
+            checked = showNavIcon,
+            onCheckedChange = { showNavIcon = it },
+        )
+        ControlSwitch(label = "Action icon", checked = showAction, onCheckedChange = { showAction = it })
     }
 }
 
 @Composable
 internal fun TabRowPage() {
     var index by remember { mutableIntStateOf(0) }
+    val tabs = listOf("General", "Billing", "Security")
+
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        SectionHeader(title = "Interactive")
-        TabRow(
-            tabs = listOf("General", "Billing", "Security"),
-            selectedIndex = index,
-            onTabSelected = { index = it },
-        )
-        Text("Selected: ${listOf("General", "Billing", "Security")[index]}")
+        TabRow(tabs = tabs, selectedIndex = index, onTabSelected = { index = it })
+        Text("Selected: ${tabs[index]}")
     }
 }
 
 @Composable
 internal fun BottomBarPage() {
     var index by remember { mutableIntStateOf(0) }
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        SectionHeader(title = "Interactive")
-        BottomBar(
-            items =
-                listOf(
-                    NavigationItem("Home", AppTheme.icons.check),
-                    NavigationItem("Tasks", AppTheme.icons.check, badge = "5"),
-                    NavigationItem("Close", AppTheme.icons.close),
-                ),
-            selectedIndex = index,
-            onItemSelected = { index = it },
+    var showBadge by remember { mutableStateOf(true) }
+    val items =
+        listOf(
+            NavigationItem("Home", AppTheme.icons.check),
+            NavigationItem("Tasks", AppTheme.icons.check, badge = if (showBadge) "5" else null),
+            NavigationItem("Close", AppTheme.icons.close),
         )
-        Text("Selected: ${listOf("Home", "Tasks", "Close")[index]}")
+
+    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
+        BottomBar(items = items, selectedIndex = index, onItemSelected = { index = it })
+        Text("Selected: ${items[index].label}")
+        ControlsDivider()
+        ControlSwitch(label = "Show badge", checked = showBadge, onCheckedChange = { showBadge = it })
     }
 }
 
 @Composable
 internal fun NavRailPage() {
     var index by remember { mutableIntStateOf(0) }
-    Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        NavRail(
-            items =
-                listOf(
-                    NavigationItem("Home", AppTheme.icons.check),
-                    NavigationItem("Tasks", AppTheme.icons.check, badge = "3"),
-                    NavigationItem("Close", AppTheme.icons.close),
-                ),
-            selectedIndex = index,
-            onItemSelected = { index = it },
+    var showBadge by remember { mutableStateOf(true) }
+    val items =
+        listOf(
+            NavigationItem("Home", AppTheme.icons.check),
+            NavigationItem("Tasks", AppTheme.icons.check, badge = if (showBadge) "3" else null),
+            NavigationItem("Close", AppTheme.icons.close),
         )
-        Column {
-            SectionHeader(title = "NavRail")
-            Text("Selected: ${listOf("Home", "Tasks", "Close")[index]}")
+
+    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
+            NavRail(items = items, selectedIndex = index, onItemSelected = { index = it })
+            Column {
+                SectionHeader(title = "NavRail")
+                Text("Selected: ${items[index].label}")
+            }
         }
+        ControlsDivider()
+        ControlSwitch(label = "Show badge", checked = showBadge, onCheckedChange = { showBadge = it })
     }
 }
 
@@ -350,7 +425,7 @@ internal fun NavRailPage() {
 // Pagination
 // ─────────────────────────────────────────────────────────────────────────────
 
-private fun demoPages() =
+private val demoPaginationPages =
     listOf(
         PaginationPage(title = "Popular"),
         PaginationPage(title = "New Releases"),
@@ -373,40 +448,58 @@ private fun PagerPlaceholder(title: String) {
 
 @Composable
 internal fun PaginatedContentPage() {
-    var lastPage by remember { mutableStateOf(0) }
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.x2)) {
-        SectionHeader(title = "Leading · Bidirectional")
-        PaginatedContent(
-            pages = demoPages(),
-            titleAlignment = PageTitleAlignment.Leading,
-            direction = PageDirection.Bidirectional,
-        ) { _, page -> PagerPlaceholder(page.title) }
+    val alignments = listOf("Leading", "Center", "Trailing")
+    var alignmentIndex by remember { mutableIntStateOf(0) }
+    val titleAlignment =
+        when (alignmentIndex) {
+            1 -> PageTitleAlignment.Center
+            2 -> PageTitleAlignment.Trailing
+            else -> PageTitleAlignment.Leading
+        }
 
-        SectionHeader(title = "Center · Unidirectional")
-        PaginatedContent(
-            pages = demoPages(),
-            titleAlignment = PageTitleAlignment.Center,
-            direction = PageDirection.Unidirectional,
-        ) { _, page -> PagerPlaceholder(page.title) }
+    val directions = listOf("Bidirectional", "Unidirectional")
+    var directionIndex by remember { mutableIntStateOf(0) }
+    val direction = if (directionIndex == 0) PageDirection.Bidirectional else PageDirection.Unidirectional
 
-        SectionHeader(title = "Progress footer")
-        PaginatedContent(
-            pages = demoPages(),
-            footerStyle = PageFooterStyle.Progress,
-        ) { _, page -> PagerPlaceholder(page.title) }
+    val footers = listOf("Dots", "Progress", "None")
+    var footerIndex by remember { mutableIntStateOf(0) }
+    val footerStyle =
+        when (footerIndex) {
+            1 -> PageFooterStyle.Progress
+            2 -> PageFooterStyle.None
+            else -> PageFooterStyle.Dots
+        }
 
-        SectionHeader(title = "No footer")
-        PaginatedContent(
-            pages = demoPages(),
-            footerStyle = PageFooterStyle.None,
-        ) { _, page -> PagerPlaceholder(page.title) }
+    var lastPage by remember { mutableIntStateOf(0) }
 
-        SectionHeader(title = "onPageChanged callback")
-        Text("Last page index: $lastPage")
+    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
+        Text(text = "Current page: $lastPage")
         PaginatedContent(
-            pages = demoPages(),
+            pages = demoPaginationPages,
+            titleAlignment = titleAlignment,
+            direction = direction,
+            footerStyle = footerStyle,
             onPageChanged = { lastPage = it },
         ) { _, page -> PagerPlaceholder(page.title) }
+        ControlsDivider()
+        ControlSegmented(
+            label = "Title alignment",
+            options = alignments,
+            selectedIndex = alignmentIndex,
+            onOptionSelected = { alignmentIndex = it },
+        )
+        ControlSegmented(
+            label = "Direction",
+            options = directions,
+            selectedIndex = directionIndex,
+            onOptionSelected = { directionIndex = it },
+        )
+        ControlSegmented(
+            label = "Footer",
+            options = footers,
+            selectedIndex = footerIndex,
+            onOptionSelected = { footerIndex = it },
+        )
     }
 }
 
@@ -416,77 +509,109 @@ internal fun PaginatedContentPage() {
 
 @Composable
 internal fun ListItemPage() {
+    var showSupporting by remember { mutableStateOf(true) }
+    var showTrailing by remember { mutableStateOf(true) }
+
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        SectionHeader(title = "Variants")
         ListItem(
             headline = "Workspace",
-            supportingText = "Personal",
-            trailingContent = { Text("Open") },
+            supportingText = if (showSupporting) "Personal" else null,
+            trailingContent = if (showTrailing) ({ Text("Open") }) else null,
         )
-        ListItem(headline = "Settings", supportingText = "App preferences")
-        ListItem(headline = "Simple item")
+        ControlsDivider()
+        ControlSwitch(
+            label = "Supporting text",
+            checked = showSupporting,
+            onCheckedChange = { showSupporting = it },
+        )
+        ControlSwitch(
+            label = "Trailing content",
+            checked = showTrailing,
+            onCheckedChange = { showTrailing = it },
+        )
     }
 }
 
 @Composable
 internal fun ContentRowPage() {
+    var tappable by remember { mutableStateOf(true) }
+    var showSecondary by remember { mutableStateOf(true) }
+    var showSupporting by remember { mutableStateOf(true) }
+    var showTrailing by remember { mutableStateOf(true) }
+
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        SectionHeader(title = "Tappable with badge")
         ContentRow(
             title = "ephemeral",
-            secondaryText = "/əˈfemərəl/",
-            supportingText = "Lasting for a very short time.",
-            onClick = {},
-            trailingContent = {
-                LevelBadge(label = "C1", tier = AppTheme.colors.levels.tier(2))
-            },
+            secondaryText = if (showSecondary) "/əˈfemərəl/" else null,
+            supportingText = if (showSupporting) "Lasting for a very short time." else null,
+            onClick = if (tappable) ({}) else null,
+            trailingContent =
+                if (showTrailing) {
+                    { LevelBadge(label = "C1", tier = AppTheme.colors.levels.tier(2)) }
+                } else {
+                    null
+                },
         )
-        SectionHeader(title = "Read-only")
-        ContentRow(title = "Read-only row", supportingText = "No click handler")
+        ControlsDivider()
+        ControlSwitch(label = "Tappable", checked = tappable, onCheckedChange = { tappable = it })
+        ControlSwitch(
+            label = "Secondary text",
+            checked = showSecondary,
+            onCheckedChange = { showSecondary = it },
+        )
+        ControlSwitch(
+            label = "Supporting text",
+            checked = showSupporting,
+            onCheckedChange = { showSupporting = it },
+        )
+        ControlSwitch(
+            label = "Trailing badge",
+            checked = showTrailing,
+            onCheckedChange = { showTrailing = it },
+        )
     }
 }
 
 @Composable
 internal fun EmptyStatePage() {
+    var showMessage by remember { mutableStateOf(true) }
+    var showAction by remember { mutableStateOf(false) }
+
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        SectionHeader(title = "Without action")
         EmptyState(
             title = "No projects",
-            message = "Create your first project to get started.",
+            message = if (showMessage) "Create your first project to get started." else null,
+            action = if (showAction) ({ TextButton(text = "Browse all", onClick = {}) }) else null,
         )
-        SectionHeader(title = "With action")
-        EmptyState(
-            title = "No recent files",
-            message = "Recent projects will appear here.",
-            action = { TextButton(text = "Browse all", onClick = {}) },
-        )
+        ControlsDivider()
+        ControlSwitch(label = "Message", checked = showMessage, onCheckedChange = { showMessage = it })
+        ControlSwitch(label = "Action", checked = showAction, onCheckedChange = { showAction = it })
     }
 }
 
 @Composable
 internal fun LoadingStatePage() {
+    var showLabel by remember { mutableStateOf(true) }
+
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        SectionHeader(title = "With label")
-        LoadingState(label = "Loading projects…")
-        SectionHeader(title = "Without label")
-        LoadingState()
+        LoadingState(label = if (showLabel) "Loading projects…" else null)
+        ControlsDivider()
+        ControlSwitch(label = "Label", checked = showLabel, onCheckedChange = { showLabel = it })
     }
 }
 
 @Composable
 internal fun ErrorStatePage() {
+    var showAction by remember { mutableStateOf(false) }
+
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        SectionHeader(title = "Without action")
         ErrorState(
             title = "Could not load",
             message = "Check your connection and retry.",
+            action = if (showAction) ({ TextButton(text = "Retry", onClick = {}) }) else null,
         )
-        SectionHeader(title = "With action")
-        ErrorState(
-            title = "Something went wrong",
-            message = "An unexpected error occurred.",
-            action = { TextButton(text = "Retry", onClick = {}) },
-        )
+        ControlsDivider()
+        ControlSwitch(label = "Action", checked = showAction, onCheckedChange = { showAction = it })
     }
 }
 
@@ -496,48 +621,72 @@ internal fun ErrorStatePage() {
 
 @Composable
 internal fun CardPage() {
+    var multiLine by remember { mutableStateOf(false) }
+
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        SectionHeader(title = "Single line")
-        Card { Text("Card content") }
-        SectionHeader(title = "Multi-line")
         Card {
             Text("Plan")
-            Text("Compose Pro")
-            Text("Active since January 2024")
+            if (multiLine) {
+                Text("Compose Pro")
+                Text("Active since January 2024")
+            }
         }
+        ControlsDivider()
+        ControlSwitch(
+            label = "Multi-line content",
+            checked = multiLine,
+            onCheckedChange = { multiLine = it },
+        )
     }
 }
 
 @Composable
 internal fun OverlayCardPage() {
+    var multiLine by remember { mutableStateOf(false) }
+
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        SectionHeader(title = "Default")
-        OverlayCard { Text("Overlay card — floats over media") }
-        SectionHeader(title = "Multi-line")
         OverlayCard {
-            Text("Title text")
-            Text("Supporting description below the title")
+            Text("Overlay card")
+            if (multiLine) {
+                Text("Supporting description below the title")
+            }
         }
+        ControlsDivider()
+        ControlSwitch(
+            label = "Multi-line content",
+            checked = multiLine,
+            onCheckedChange = { multiLine = it },
+        )
     }
 }
 
 @Composable
 internal fun SnackbarPage() {
+    var showAction by remember { mutableStateOf(false) }
+
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        SectionHeader(title = "Message only")
-        Snackbar(message = "Profile saved")
-        SectionHeader(title = "With action")
-        Snackbar(message = "Item deleted", actionLabel = "Undo", onAction = {})
+        Snackbar(
+            message = "Item deleted",
+            actionLabel = if (showAction) "Undo" else null,
+            onAction = if (showAction) ({}) else null,
+        )
+        ControlsDivider()
+        ControlSwitch(label = "Action", checked = showAction, onCheckedChange = { showAction = it })
     }
 }
 
 @Composable
 internal fun ToastPage() {
+    var showAction by remember { mutableStateOf(false) }
+
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        SectionHeader(title = "Message only")
-        Toast(message = "Toast message")
-        SectionHeader(title = "With action")
-        Toast(message = "Toast with action", actionLabel = "View", onAction = {})
+        Toast(
+            message = "Toast message",
+            actionLabel = if (showAction) "View" else null,
+            onAction = if (showAction) ({}) else null,
+        )
+        ControlsDivider()
+        ControlSwitch(label = "Action", checked = showAction, onCheckedChange = { showAction = it })
     }
 }
 
@@ -547,40 +696,73 @@ internal fun ToastPage() {
 
 @Composable
 internal fun ProgressIndicatorPage() {
+    var determinate by remember { mutableStateOf(true) }
+    var progress by remember { mutableFloatStateOf(0.45f) }
+    var showLabel by remember { mutableStateOf(true) }
+
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        SectionHeader(title = "Determinate")
-        ProgressIndicator(progress = 0.45f, label = "Storage: 45%")
-        ProgressIndicator(progress = 1.0f, label = "Complete")
-        SectionHeader(title = "Indeterminate")
-        ProgressIndicator(label = "Syncing…")
-        SectionHeader(title = "No label")
-        ProgressIndicator(progress = 0.65f)
+        ProgressIndicator(
+            progress = if (determinate) progress else null,
+            label =
+                if (showLabel) {
+                    if (determinate) "Progress: ${(progress * 100).toInt()}%" else "Loading…"
+                } else {
+                    null
+                },
+        )
+        ControlsDivider()
+        ControlSwitch(
+            label = "Determinate",
+            checked = determinate,
+            onCheckedChange = { determinate = it },
+        )
+        if (determinate) {
+            ControlSlider(
+                label = "Progress: ${(progress * 100).toInt()}%",
+                value = progress,
+                onValueChange = { progress = it },
+            )
+        }
+        ControlSwitch(label = "Label", checked = showLabel, onCheckedChange = { showLabel = it })
     }
 }
 
 @Composable
 internal fun SkeletonPage() {
+    var count by remember { mutableIntStateOf(1) }
+
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        SectionHeader(title = "Full-width")
-        Skeleton()
-        Skeleton()
-        Skeleton()
+        repeat(count) { Skeleton() }
+        ControlsDivider()
+        ControlSegmented(
+            label = "Count",
+            options = listOf("1", "2", "3"),
+            selectedIndex = count - 1,
+            onOptionSelected = { count = it + 1 },
+        )
     }
 }
 
 @Composable
 internal fun SkeletonBlockPage() {
+    var heightFraction by remember { mutableFloatStateOf(0.5f) }
+    var widthFraction by remember { mutableFloatStateOf(0.5f) }
+    val height: Dp = (40 + (heightFraction * 120)).dp
+    val width: Dp = (40 + (widthFraction * 200)).dp
+
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        SectionHeader(title = "Various sizes")
-        Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-            SkeletonBlock(height = 40.dp, width = 80.dp)
-            SkeletonBlock(height = 40.dp, width = 120.dp)
-            SkeletonBlock(height = 40.dp, width = 60.dp)
-        }
-        Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-            SkeletonBlock(height = 80.dp, width = 80.dp)
-            SkeletonBlock(height = 80.dp, width = 80.dp)
-        }
+        SkeletonBlock(height = height, width = width)
+        ControlsDivider()
+        ControlSlider(
+            label = "Height: ${height.value.toInt()} dp",
+            value = heightFraction,
+            onValueChange = { heightFraction = it },
+        )
+        ControlSlider(
+            label = "Width: ${width.value.toInt()} dp",
+            value = widthFraction,
+            onValueChange = { widthFraction = it },
+        )
     }
 }
 
@@ -590,12 +772,28 @@ internal fun SkeletonBlockPage() {
 
 @Composable
 internal fun AppTextPage() {
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
-        SectionHeader(title = "All styles")
-        AppText(text = "Display", style = AppTextStyle.Display)
-        AppText(text = "Title", style = AppTextStyle.Title)
-        AppText(text = "Body — the quick brown fox jumps over the lazy dog.", style = AppTextStyle.Body)
-        AppText(text = "Label", style = AppTextStyle.Label)
+    val styles = listOf("Display", "Title", "Body", "Label")
+    var styleIndex by remember { mutableIntStateOf(2) }
+    val style =
+        when (styleIndex) {
+            0 -> AppTextStyle.Display
+            1 -> AppTextStyle.Title
+            3 -> AppTextStyle.Label
+            else -> AppTextStyle.Body
+        }
+
+    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
+        AppText(
+            text = "The quick brown fox jumps over the lazy dog.",
+            style = style,
+        )
+        ControlsDivider()
+        ControlSegmented(
+            label = "Style",
+            options = styles,
+            selectedIndex = styleIndex,
+            onOptionSelected = { styleIndex = it },
+        )
     }
 }
 
@@ -606,31 +804,42 @@ internal fun AppTextPage() {
 @Composable
 internal fun PillChipPage() {
     var selected by remember { mutableIntStateOf(0) }
+    val options = listOf("All", "Beginner", "Intermediate", "Advanced")
+
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        SectionHeader(title = "Selectable row")
         Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
-            listOf("All", "Beginner", "Intermediate", "Advanced").forEachIndexed { i, label ->
-                PillChip(
-                    label = label,
-                    isSelected = i == selected,
-                    onClick = { selected = i },
-                )
+            options.forEachIndexed { i, label ->
+                PillChip(label = label, isSelected = i == selected, onClick = { selected = i })
             }
         }
+        Text(text = "Selected: ${options[selected]}")
     }
 }
 
 @Composable
 internal fun LevelBadgePage() {
+    val tiers = listOf("Tier 0", "Tier 1", "Tier 2")
+    var tierIndex by remember { mutableIntStateOf(0) }
+    val labels = listOf("A1", "A2", "B1", "B2", "C1", "C2")
+    var labelIndex by remember { mutableIntStateOf(0) }
+
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        SectionHeader(title = "Tier colours")
-        Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
-            LevelBadge(label = "A1", tier = AppTheme.colors.levels.tier(0))
-            LevelBadge(label = "A2", tier = AppTheme.colors.levels.tier(0))
-            LevelBadge(label = "B1", tier = AppTheme.colors.levels.tier(1))
-            LevelBadge(label = "B2", tier = AppTheme.colors.levels.tier(1))
-            LevelBadge(label = "C1", tier = AppTheme.colors.levels.tier(2))
-            LevelBadge(label = "C2", tier = AppTheme.colors.levels.tier(2))
-        }
+        LevelBadge(
+            label = labels[labelIndex],
+            tier = AppTheme.colors.levels.tier(tierIndex),
+        )
+        ControlsDivider()
+        ControlSegmented(
+            label = "Tier",
+            options = tiers,
+            selectedIndex = tierIndex,
+            onOptionSelected = { tierIndex = it },
+        )
+        ControlSegmented(
+            label = "Label",
+            options = labels,
+            selectedIndex = labelIndex,
+            onOptionSelected = { labelIndex = it },
+        )
     }
 }
