@@ -1,8 +1,25 @@
+.DS_Store
 .claude/settings.local.json
 .gradle/
+**/.gradle/
 .kotlin/
+**/.kotlin/
 build/
 **/build/
 local.properties
 site/
 *.tar.gz
+
+# IDE
+.idea/
+*.iml
+
+# Android Studio captures & profiling
+captures/
+*.hprof
+*.profdata
+*.profm
+
+# Lint reports
+lint-results*.xml
+lint-results*.html
