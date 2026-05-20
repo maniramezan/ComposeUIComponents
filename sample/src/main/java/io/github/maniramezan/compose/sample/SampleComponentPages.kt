@@ -62,6 +62,7 @@ import io.github.maniramezan.compose.components.TextField
 import io.github.maniramezan.compose.components.Toast
 import io.github.maniramezan.compose.components.TopAppBar
 import io.github.maniramezan.compose.theme.AppTheme
+import kotlin.math.roundToInt
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Shared helpers
@@ -108,10 +109,11 @@ private fun ControlSlider(
     label: String,
     value: Float,
     onValueChange: (Float) -> Unit,
+    valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs)) {
         Text(text = label)
-        Slider(value = value, onValueChange = onValueChange)
+        Slider(value = value, onValueChange = onValueChange, valueRange = valueRange)
     }
 }
 
@@ -425,11 +427,14 @@ internal fun NavRailPage() {
 // Pagination
 // ─────────────────────────────────────────────────────────────────────────────
 
-private val demoPaginationPages =
+private val allDemoPaginationPages =
     listOf(
         PaginationPage(title = "Popular"),
         PaginationPage(title = "New Releases"),
         PaginationPage(title = "Top Rated"),
+        PaginationPage(title = "Trending"),
+        PaginationPage(title = "Staff Picks"),
+        PaginationPage(title = "Coming Soon"),
     )
 
 @Composable
@@ -470,18 +475,30 @@ internal fun PaginatedContentPage() {
             else -> PageFooterStyle.Dots
         }
 
+    val minPages = 2
+    val maxPages = allDemoPaginationPages.size
+    var pageCountSlider by remember { mutableFloatStateOf(3f) }
+    val pageCount = pageCountSlider.roundToInt().coerceIn(minPages, maxPages)
+    val pages = allDemoPaginationPages.take(pageCount)
+
     var lastPage by remember { mutableIntStateOf(0) }
 
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
         Text(text = "Current page: $lastPage")
         PaginatedContent(
-            pages = demoPaginationPages,
+            pages = pages,
             titleAlignment = titleAlignment,
             direction = direction,
             footerStyle = footerStyle,
             onPageChanged = { lastPage = it },
         ) { _, page -> PagerPlaceholder(page.title) }
         ControlsDivider()
+        ControlSlider(
+            label = "Pages: $pageCount",
+            value = pageCountSlider,
+            onValueChange = { pageCountSlider = it },
+            valueRange = minPages.toFloat()..maxPages.toFloat(),
+        )
         ControlSegmented(
             label = "Title alignment",
             options = alignments,

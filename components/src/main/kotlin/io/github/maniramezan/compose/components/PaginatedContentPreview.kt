@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.utils.PreviewFontScale
 import io.github.maniramezan.compose.utils.PreviewLightDark
@@ -98,7 +97,7 @@ private fun PagePlaceholder(title: String) {
         modifier =
             Modifier
                 .fillMaxWidth()
-                .height(160.dp)
+                .height(AppTheme.spacing.xl * 5f)
                 .padding(AppTheme.spacing.x2),
         contentAlignment = Alignment.Center,
     ) {

@@ -30,10 +30,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.Velocity
 import io.github.maniramezan.compose.theme.AppTheme
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlin.math.abs
@@ -67,7 +67,10 @@ public enum class PageTitleAlignment {
     Trailing,
 
     /**
-     * Current title centered. No adjacent titles peek.
+     * Current title centered. Adjacent titles are leading-aligned and slide
+     * into center as they become the current page; the outgoing title slides
+     * from center back to leading. Cancelling a swipe snaps the adjacent
+     * title back to its leading position.
      */
     Center,
 }
@@ -183,7 +186,6 @@ public fun PaginatedContent(
             pages = pages,
             pagerState = pagerState,
             titleAlignment = titleAlignment,
-            direction = direction,
             pageTitle = pageTitle,
             modifier = Modifier.fillMaxWidth(),
         )
@@ -275,19 +277,25 @@ private class ForwardOnlyNestedScrollConnection : NestedScrollConnection {
 /**
  * Title row that scrolls titles in sync with the pager.
  *
- * Strategy: We always measure and place three titles (prev, current, next)
- * when they exist. All three are offset by the same `continuousOffset` which
- * represents the total scroll position = (currentPage + offsetFraction) * containerWidth.
- * Each title has a "home" position at `pageIndex * containerWidth + anchorOffset`.
- * The visible x = homeX - scrollOffset, where scrollOffset = continuousPage * containerWidth.
- * This simplifies to: visibleX = (pageIndex - continuousPage) * containerWidth + anchorOffset.
+ * **Leading / Trailing alignment** — standard slot-based layout:
+ * Each title lives in a slot of width `containerWidth`. The viewport scrolls
+ * by `continuousPage * containerWidth`, so:
+ *   `visibleX = (index - continuousPage) * containerWidth + anchorInSlot`
+ *
+ * **Center alignment** — animated anchor layout:
+ * Adjacent titles are leading-aligned (anchor = 0) and the current title is
+ * center-aligned (anchor = (containerWidth - width) / 2). During a swipe the
+ * anchor interpolates continuously with `progress = 1 - |index - continuousPage|`,
+ * so the incoming title slides from leading to center while the outgoing title
+ * slides from center to leading. Titles still travel a full `containerWidth`
+ * per page so their scroll stays perfectly in sync with the pager content.
+ *   `visibleX = (index - continuousPage) * containerWidth + lerp(0, centerAnchor, progress)`
  */
 @Composable
 private fun ScrollingTitleRow(
     pages: List<PaginationPage>,
     pagerState: PagerState,
     titleAlignment: PageTitleAlignment,
-    direction: PageDirection,
     pageTitle: @Composable (pageIndex: Int, page: PaginationPage, progress: Float) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -330,30 +338,27 @@ private fun ScrollingTitleRow(
             val rtlMul = if (isRtl) -1f else 1f
 
             for ((index, placeable) in measured) {
-                // Each title's anchor within its own "slot"
-                val anchorInSlot =
-                    when (titleAlignment) {
-                        PageTitleAlignment.Leading -> 0
-                        PageTitleAlignment.Trailing -> containerWidth - placeable.width
-                        PageTitleAlignment.Center -> (containerWidth - placeable.width) / 2
-                    }
-
-                // The title's position relative to the viewport:
-                // It lives at slot `index`, viewport is scrolled to `continuousPage`.
-                // For Leading/Trailing: titles are spaced containerWidth apart (full page).
-                // For Center: titles are spaced closer so adjacent titles peek at edges.
                 val pageOffset = index - continuousPage
-                val titleSpacing = when (titleAlignment) {
-                    PageTitleAlignment.Center -> {
-                        // Space titles so the adjacent one's near edge peeks at ~half
-                        // its width from the container edge. This gives a nice peek
-                        // while still scrolling in sync with the pager.
-                        val avgWidth = measured.values.sumOf { it.width } / measured.size.coerceAtLeast(1)
-                        containerWidth - avgWidth / 2
+
+                val visibleX: Int =
+                    when (titleAlignment) {
+                        PageTitleAlignment.Leading -> {
+                            val anchor = 0
+                            (pageOffset * containerWidth * rtlMul).roundToInt() + anchor
+                        }
+                        PageTitleAlignment.Trailing -> {
+                            val anchor = containerWidth - placeable.width
+                            (pageOffset * containerWidth * rtlMul).roundToInt() + anchor
+                        }
+                        PageTitleAlignment.Center -> {
+                            // progress = 1 at current page, 0 at adjacent pages.
+                            // anchor interpolates between leading (0) and center.
+                            val progress = (1f - abs(pageOffset)).coerceIn(0f, 1f)
+                            val centerAnchor = (containerWidth - placeable.width) / 2f
+                            val anchor = centerAnchor * progress
+                            (pageOffset * containerWidth * rtlMul + anchor).roundToInt()
+                        }
                     }
-                    else -> containerWidth
-                }
-                val visibleX = (pageOffset * titleSpacing * rtlMul).roundToInt() + anchorInSlot
 
                 placeable.placeRelative(
                     x = visibleX,
