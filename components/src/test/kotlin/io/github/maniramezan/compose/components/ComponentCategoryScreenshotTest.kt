@@ -115,4 +115,11 @@ public class ComponentCategoryScreenshotTest {
             LevelBadgePreview()
         }
     }
+
+    @Test
+    public fun paginatedContentMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/paginated-content.png") {
+            PaginatedContentPreview()
+        }
+    }
 }
