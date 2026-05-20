@@ -47,6 +47,9 @@ import io.github.maniramezan.compose.components.ListItem
 import io.github.maniramezan.compose.components.LoadingState
 import io.github.maniramezan.compose.components.NavigationItem
 import io.github.maniramezan.compose.components.OverlayCard
+import io.github.maniramezan.compose.components.PageDirection
+import io.github.maniramezan.compose.components.PageFooterStyle
+import io.github.maniramezan.compose.components.PageTitleAlignment
 import io.github.maniramezan.compose.components.PaginatedContent
 import io.github.maniramezan.compose.components.PaginationPage
 import io.github.maniramezan.compose.components.PasswordField
@@ -295,44 +298,107 @@ private fun NavigationSection() {
 @Composable
 private fun PaginatedContentSection() {
     SectionHeader(title = "Paginated Content")
-    PaginatedContent(
-        pages =
-            listOf(
-                PaginationPage(title = "Popular"),
-                PaginationPage(title = "New"),
-                PaginationPage(title = "Top Rated"),
-            ),
-    ) { _, page ->
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(120.dp)
-                    .padding(AppTheme.spacing.x2),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(text = "${page.title} apps go here")
+    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.x2)) {
+        // Leading + Bidirectional (default)
+        Text("Leading · Bidirectional")
+        PaginatedContent(
+            pages = samplePagerPages(),
+            titleAlignment = PageTitleAlignment.Leading,
+            direction = PageDirection.Bidirectional,
+        ) { _, page ->
+            PagerPagePlaceholder(page.title)
+        }
+
+        // Trailing + Bidirectional
+        Text("Trailing · Bidirectional")
+        PaginatedContent(
+            pages = samplePagerPages(),
+            titleAlignment = PageTitleAlignment.Trailing,
+            direction = PageDirection.Bidirectional,
+        ) { _, page ->
+            PagerPagePlaceholder(page.title)
+        }
+
+        // Center + Bidirectional
+        Text("Center · Bidirectional")
+        PaginatedContent(
+            pages = samplePagerPages(),
+            titleAlignment = PageTitleAlignment.Center,
+            direction = PageDirection.Bidirectional,
+        ) { _, page ->
+            PagerPagePlaceholder(page.title)
+        }
+
+        // Leading + Unidirectional (forward only)
+        Text("Leading · Unidirectional")
+        PaginatedContent(
+            pages = samplePagerPages(),
+            titleAlignment = PageTitleAlignment.Leading,
+            direction = PageDirection.Unidirectional,
+        ) { _, page ->
+            PagerPagePlaceholder(page.title)
+        }
+
+        // Trailing + Unidirectional
+        Text("Trailing · Unidirectional")
+        PaginatedContent(
+            pages = samplePagerPages(),
+            titleAlignment = PageTitleAlignment.Trailing,
+            direction = PageDirection.Unidirectional,
+        ) { _, page ->
+            PagerPagePlaceholder(page.title)
+        }
+
+        // Progress footer
+        Text("Progress Footer")
+        PaginatedContent(
+            pages = samplePagerPages(),
+            titleAlignment = PageTitleAlignment.Leading,
+            footerStyle = PageFooterStyle.Progress,
+        ) { _, page ->
+            PagerPagePlaceholder(page.title)
+        }
+
+        // onPageChanged callback demo
+        var lastPage by remember { mutableStateOf("Page 0") }
+        Text("onPageChanged: $lastPage")
+        PaginatedContent(
+            pages = samplePagerPages(),
+            titleAlignment = PageTitleAlignment.Leading,
+            onPageChanged = { lastPage = "Page $it" },
+        ) { _, page ->
+            PagerPagePlaceholder(page.title)
+        }
+
+        // No footer
+        Text("No footer")
+        PaginatedContent(
+            pages = samplePagerPages(),
+            footerStyle = PageFooterStyle.None,
+        ) { _, page ->
+            PagerPagePlaceholder(page.title)
         }
     }
+}
 
-    // Without indicator
-    PaginatedContent(
-        pages =
-            listOf(
-                PaginationPage(title = "Tab A"),
-                PaginationPage(title = "Tab B"),
-            ),
-        showPageIndicator = false,
-    ) { _, page ->
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(80.dp),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(text = page.title)
-        }
+private fun samplePagerPages() =
+    listOf(
+        PaginationPage(title = "Popular"),
+        PaginationPage(title = "New Releases"),
+        PaginationPage(title = "Top Rated"),
+    )
+
+@Composable
+private fun PagerPagePlaceholder(title: String) {
+    Box(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+                .padding(AppTheme.spacing.x2),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(text = "$title content")
     }
 }
 
