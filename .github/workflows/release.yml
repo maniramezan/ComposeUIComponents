@@ -7,15 +7,10 @@ on:
 
 permissions:
   contents: write
-  id-token: write
-  pages: write
 
 jobs:
   release:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.pages-deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -33,6 +28,39 @@ jobs:
       - name: Verify local publication metadata
         run: ./gradlew publishToMavenLocal
 
+      - name: Publish to Maven Central
+        env:
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_IN_MEMORY_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_IN_MEMORY_KEY_PASSWORD }}
+        run: ./gradlew publish
+
+      - name: Package component screenshots
+        run: tar -czf component-screenshots.tar.gz -C components/build outputs/roborazzi reports/roborazzi
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            catalog/build/outputs/apk/debug/catalog-debug.apk
+            sample/build/outputs/apk/debug/sample-debug.apk
+            component-screenshots.tar.gz
+
+  deploy-docs:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      pages: write
+    environment:
+      name: github-pages
+      url: ${{ steps.pages-deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
@@ -43,27 +71,5 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site
-
-      - name: Publish to Maven Central
-        env:
-          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
-          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
-          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_IN_MEMORY_KEY }}
-          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_IN_MEMORY_KEY_PASSWORD }}
-        run: ./gradlew publish
-
-      - name: Package docs site
-        run: tar -czf docs-site.tar.gz site
-      - name: Package component screenshots
-        run: tar -czf component-screenshots.tar.gz -C components/build outputs/roborazzi reports/roborazzi
-
-      - uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            catalog/build/outputs/apk/debug/catalog-debug.apk
-            sample/build/outputs/apk/debug/sample-debug.apk
-            docs-site.tar.gz
-            component-screenshots.tar.gz
-
       - id: pages-deployment
         uses: actions/deploy-pages@v4
