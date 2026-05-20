@@ -45,31 +45,3 @@ jobs:
             catalog/build/outputs/apk/debug/catalog-debug.apk
             sample/build/outputs/apk/debug/sample-debug.apk
             component-screenshots.tar.gz
-
-  deploy-docs:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      pages: write
-    environment:
-      name: github-pages
-      url: ${{ steps.pages-deployment.outputs.page_url }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
-      - uses: gradle/actions/setup-gradle@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.13'
-      - name: Install docs dependencies
-        run: python -m pip install -r requirements-docs.txt
-      - name: Build docs site
-        run: mkdocs build --strict
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: site
-      - id: pages-deployment
-        uses: actions/deploy-pages@v4
