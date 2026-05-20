@@ -3,6 +3,7 @@ package io.github.maniramezan.compose.sample
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -20,7 +21,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -31,11 +36,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import io.github.maniramezan.compose.components.AppText
 import io.github.maniramezan.compose.components.AppTextStyle
-import io.github.maniramezan.compose.components.IconButton
 import io.github.maniramezan.compose.components.TopAppBar
 import io.github.maniramezan.compose.theme.AppTheme
 
@@ -177,24 +183,39 @@ private fun DemoListRow(
     isSelected: Boolean,
     onClick: () -> Unit,
 ) {
-    val background = if (isSelected) {
-        AppTheme.colors.primaryContainer
-    } else {
-        AppTheme.colors.surface
-    }
-    Column(
+    val backgroundColor = if (isSelected) AppTheme.colors.primaryContainer else AppTheme.colors.surface
+    val textColor = if (isSelected) AppTheme.colors.onPrimaryContainer else AppTheme.colors.onSurface
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(background)
-            .clickable(onClick = onClick)
-            .padding(
-                horizontal = AppTheme.spacing.lg,
-                vertical = AppTheme.spacing.md,
-            ),
+            .background(backgroundColor)
+            .clickable(onClick = onClick),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
+        // Selection accent bar
+        Box(
+            modifier = Modifier
+                .width(3.dp)
+                .padding(vertical = 2.dp)
+                .then(
+                    if (isSelected) {
+                        Modifier
+                            .background(AppTheme.colors.primary)
+                            .padding(vertical = AppTheme.spacing.md)
+                    } else {
+                        Modifier.padding(vertical = AppTheme.spacing.md)
+                    },
+                ),
+        )
         Text(
             text = demo.title,
-            color = if (isSelected) AppTheme.colors.onPrimaryContainer else AppTheme.colors.onSurface,
+            color = textColor,
+            modifier = Modifier
+                .weight(1f)
+                .padding(
+                    horizontal = AppTheme.spacing.md,
+                    vertical = AppTheme.spacing.md,
+                ),
         )
     }
     HorizontalDivider(modifier = Modifier.padding(start = AppTheme.spacing.lg))
@@ -218,11 +239,12 @@ private fun SampleDetailPane(
                 title = demo.title,
                 navigationIcon = {
                     if (showBackButton) {
-                        IconButton(
-                            icon = AppTheme.icons.close,
-                            contentDescription = "Back",
-                            onClick = onBack,
-                        )
+                        IconButton(onClick = onBack) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back",
+                            )
+                        }
                     }
                 },
             )
@@ -240,12 +262,25 @@ private fun SampleDetailPane(
             Column(
                 modifier = Modifier.padding(AppTheme.spacing.lg),
             ) {
+                // Description header
                 AppText(
                     text = demo.description,
                     style = AppTextStyle.Body,
                 )
-                Box(modifier = Modifier.padding(top = AppTheme.spacing.x2)) {
-                    demo.content()
+
+                // Demo surface
+                Box(
+                    modifier = Modifier
+                        .padding(top = AppTheme.spacing.x2)
+                        .fillMaxWidth()
+                        .clip(AppTheme.shapes.large)
+                        .background(AppTheme.colors.surfaceContainer)
+                        .padding(AppTheme.spacing.lg),
+                ) {
+                    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
+                        AppText(text = "Demo", style = AppTextStyle.Label)
+                        demo.content()
+                    }
                 }
             }
         }
