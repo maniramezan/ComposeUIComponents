@@ -14,64 +14,97 @@ import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.utils.PreviewFontScale
 import io.github.maniramezan.compose.utils.PreviewLightDark
 
+private val samplePages =
+    listOf(
+        PaginationPage(title = "Popular"),
+        PaginationPage(title = "New Releases"),
+        PaginationPage(title = "Top Rated"),
+    )
+
 @PreviewLightDark
 @PreviewFontScale
-@Preview(name = "Paginated Content", group = "Navigation")
+@Preview(name = "PaginatedContent – Leading", group = "Navigation")
 @Composable
 public fun PaginatedContentPreview(): Unit =
     AppTheme {
         PaginatedContent(
-            pages =
-                listOf(
-                    PaginationPage(title = "Popular"),
-                    PaginationPage(title = "New"),
-                    PaginationPage(title = "Top Rated"),
-                ),
-        ) { pageIndex, page ->
-            Box(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .padding(AppTheme.spacing.x2),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = "${page.title} content (page $pageIndex)",
-                    style = AppTheme.typography.titleSmall,
-                )
-            }
+            pages = samplePages,
+            titleAlignment = PageTitleAlignment.Leading,
+            direction = PageDirection.Bidirectional,
+        ) { _, page ->
+            PagePlaceholder(page.title)
         }
     }
 
 @PreviewLightDark
-@Preview(name = "Paginated Content - Custom Title", group = "Navigation")
+@Preview(name = "PaginatedContent – Trailing Bidirectional", group = "Navigation")
 @Composable
-public fun PaginatedContentCustomTitlePreview(): Unit =
+public fun PaginatedContentTrailingPreview(): Unit =
     AppTheme {
         PaginatedContent(
-            pages =
-                listOf(
-                    PaginationPage(title = "Games"),
-                    PaginationPage(title = "Apps"),
-                ),
-            pageTitle = { _, page, selected ->
-                Text(
-                    text = if (selected) "★ ${page.title}" else page.title,
-                    style = AppTheme.typography.labelLarge,
-                    color = if (selected) AppTheme.colors.primary else AppTheme.colors.onSurfaceVariant,
-                )
-            },
+            pages = samplePages,
+            titleAlignment = PageTitleAlignment.Trailing,
+            direction = PageDirection.Bidirectional,
         ) { _, page ->
-            Box(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .height(160.dp)
-                        .padding(AppTheme.spacing.x2),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(text = "${page.title} section")
-            }
+            PagePlaceholder(page.title)
         }
     }
+
+@PreviewLightDark
+@Preview(name = "PaginatedContent – Center", group = "Navigation")
+@Composable
+public fun PaginatedContentCenterPreview(): Unit =
+    AppTheme {
+        PaginatedContent(
+            pages = samplePages,
+            titleAlignment = PageTitleAlignment.Center,
+            direction = PageDirection.Bidirectional,
+        ) { _, page ->
+            PagePlaceholder(page.title)
+        }
+    }
+
+@PreviewLightDark
+@Preview(name = "PaginatedContent – Unidirectional", group = "Navigation")
+@Composable
+public fun PaginatedContentUnidirectionalPreview(): Unit =
+    AppTheme {
+        PaginatedContent(
+            pages = samplePages,
+            titleAlignment = PageTitleAlignment.Leading,
+            direction = PageDirection.Unidirectional,
+        ) { _, page ->
+            PagePlaceholder(page.title)
+        }
+    }
+
+@PreviewLightDark
+@Preview(name = "PaginatedContent – Progress Footer", group = "Navigation")
+@Composable
+public fun PaginatedContentProgressPreview(): Unit =
+    AppTheme {
+        PaginatedContent(
+            pages = samplePages,
+            titleAlignment = PageTitleAlignment.Leading,
+            footerStyle = PageFooterStyle.Progress,
+        ) { _, page ->
+            PagePlaceholder(page.title)
+        }
+    }
+
+@Composable
+private fun PagePlaceholder(title: String) {
+    Box(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(160.dp)
+                .padding(AppTheme.spacing.x2),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = "$title content",
+            style = AppTheme.typography.titleSmall,
+        )
+    }
+}
