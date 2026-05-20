@@ -1,0 +1,253 @@
+package io.github.maniramezan.compose.sample
+
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import io.github.maniramezan.compose.components.AppText
+import io.github.maniramezan.compose.components.AppTextStyle
+import io.github.maniramezan.compose.components.IconButton
+import io.github.maniramezan.compose.components.TopAppBar
+import io.github.maniramezan.compose.theme.AppTheme
+
+/** Width threshold (dp) above which the expanded split-pane layout is shown. */
+private val SPLIT_BREAKPOINT = 840.dp
+
+/** Fixed width of the list pane in split mode. */
+private val LIST_PANE_WIDTH = 280.dp
+
+/**
+ * Root of the sample component browser.
+ *
+ * Renders an adaptive layout:
+ * - Compact  (< 840 dp): list pane first; tapping an item pushes the detail
+ *   pane; system/back button returns to the list.
+ * - Expanded (≥ 840 dp): permanent side-by-side split; detail updates in place.
+ */
+@Composable
+internal fun SampleBrowserApp() {
+    val demos = remember { sampleDemos() }
+    val grouped = remember(demos) { demos.groupedByCategory() }
+
+    var selectedId by rememberSaveable { mutableStateOf(demos.first().id) }
+    var compactDetailVisible by rememberSaveable { mutableStateOf(false) }
+
+    val selectedDemo = remember(selectedId, demos) {
+        demos.firstOrNull { it.id == selectedId } ?: demos.first()
+    }
+
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        if (maxWidth >= SPLIT_BREAKPOINT) {
+            // ── Expanded: permanent split layout ────────────────────────────
+            Row(modifier = Modifier.fillMaxSize()) {
+                SampleListPane(
+                    grouped = grouped,
+                    selectedId = selectedId,
+                    onSelect = { selectedId = it },
+                    modifier = Modifier
+                        .width(LIST_PANE_WIDTH)
+                        .fillMaxHeight(),
+                )
+                VerticalDivider()
+                SampleDetailPane(
+                    demo = selectedDemo,
+                    showBackButton = false,
+                    onBack = {},
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
+                )
+            }
+        } else {
+            // ── Compact: list → detail navigation ───────────────────────────
+            BackHandler(enabled = compactDetailVisible) {
+                compactDetailVisible = false
+            }
+
+            if (compactDetailVisible) {
+                SampleDetailPane(
+                    demo = selectedDemo,
+                    showBackButton = true,
+                    onBack = { compactDetailVisible = false },
+                    modifier = Modifier.fillMaxSize(),
+                )
+            } else {
+                SampleListPane(
+                    grouped = grouped,
+                    selectedId = selectedId,
+                    onSelect = { id ->
+                        selectedId = id
+                        compactDetailVisible = true
+                    },
+                    modifier = Modifier.fillMaxSize(),
+                )
+            }
+        }
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// List pane
+// ─────────────────────────────────────────────────────────────────────────────
+
+@Composable
+private fun SampleListPane(
+    grouped: Map<String, List<SampleComponentDemo>>,
+    selectedId: String,
+    onSelect: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Scaffold(
+        modifier = modifier,
+        topBar = { TopAppBar(title = "Components") },
+        contentWindowInsets = WindowInsets.safeDrawing,
+    ) { innerPadding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .consumeWindowInsets(innerPadding),
+        ) {
+            grouped.forEach { (category, entries) ->
+                item(key = "header-$category") {
+                    CategoryHeader(category = category)
+                }
+                items(entries, key = { it.id }) { demo ->
+                    DemoListRow(
+                        demo = demo,
+                        isSelected = demo.id == selectedId,
+                        onClick = { onSelect(demo.id) },
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CategoryHeader(category: String) {
+    Column {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(AppTheme.colors.surfaceContainer)
+                .padding(
+                    horizontal = AppTheme.spacing.lg,
+                    vertical = AppTheme.spacing.xs,
+                ),
+        ) {
+            AppText(text = category, style = AppTextStyle.Label)
+        }
+        HorizontalDivider()
+    }
+}
+
+@Composable
+private fun DemoListRow(
+    demo: SampleComponentDemo,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+) {
+    val background = if (isSelected) {
+        AppTheme.colors.primaryContainer
+    } else {
+        AppTheme.colors.surface
+    }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(background)
+            .clickable(onClick = onClick)
+            .padding(
+                horizontal = AppTheme.spacing.lg,
+                vertical = AppTheme.spacing.md,
+            ),
+    ) {
+        Text(
+            text = demo.title,
+            color = if (isSelected) AppTheme.colors.onPrimaryContainer else AppTheme.colors.onSurface,
+        )
+    }
+    HorizontalDivider(modifier = Modifier.padding(start = AppTheme.spacing.lg))
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Detail pane
+// ─────────────────────────────────────────────────────────────────────────────
+
+@Composable
+private fun SampleDetailPane(
+    demo: SampleComponentDemo,
+    showBackButton: Boolean,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            TopAppBar(
+                title = demo.title,
+                navigationIcon = {
+                    if (showBackButton) {
+                        IconButton(
+                            icon = AppTheme.icons.close,
+                            contentDescription = "Back",
+                            onClick = onBack,
+                        )
+                    }
+                },
+            )
+        },
+        contentWindowInsets = WindowInsets.safeDrawing,
+    ) { innerPadding ->
+        Surface(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .consumeWindowInsets(innerPadding)
+                .imePadding()
+                .verticalScroll(rememberScrollState()),
+        ) {
+            Column(
+                modifier = Modifier.padding(AppTheme.spacing.lg),
+            ) {
+                AppText(
+                    text = demo.description,
+                    style = AppTextStyle.Body,
+                )
+                Box(modifier = Modifier.padding(top = AppTheme.spacing.x2)) {
+                    demo.content()
+                }
+            }
+        }
+    }
+}

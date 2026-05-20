@@ -1,0 +1,282 @@
+package io.github.maniramezan.compose.sample
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
+
+/**
+ * Describes a single component demo entry in the sample browser.
+ *
+ * Keep all registry state private to :sample — this is never a public API.
+ */
+@Stable
+internal data class SampleComponentDemo(
+    /** Unique identifier used as stable key for navigation state. */
+    val id: String,
+    /** Short display name shown in the list pane. */
+    val title: String,
+    /** Category label used to group entries in the list pane. */
+    val category: String,
+    /** One-line description rendered in the detail pane header. */
+    val description: String,
+    /** Composable that renders the interactive demo surface. */
+    val content: @Composable () -> Unit,
+)
+
+/** Ordered list of all component demos. Category grouping is derived from [SampleComponentDemo.category]. */
+internal fun sampleDemos(): List<SampleComponentDemo> =
+    listOf(
+        // ── Actions ──────────────────────────────────────────────────────────
+        SampleComponentDemo(
+            id = "primary-button",
+            title = "PrimaryButton",
+            category = "Actions",
+            description = "Filled high-emphasis button for primary actions.",
+            content = { PrimaryButtonPage() },
+        ),
+        SampleComponentDemo(
+            id = "secondary-button",
+            title = "SecondaryButton",
+            category = "Actions",
+            description = "Outlined medium-emphasis button for secondary actions.",
+            content = { SecondaryButtonPage() },
+        ),
+        SampleComponentDemo(
+            id = "text-button",
+            title = "TextButton",
+            category = "Actions",
+            description = "Text-only low-emphasis button for tertiary actions.",
+            content = { TextButtonPage() },
+        ),
+        SampleComponentDemo(
+            id = "icon-button",
+            title = "IconButton",
+            category = "Actions",
+            description = "Icon-only button with a 48 dp touch target.",
+            content = { IconButtonPage() },
+        ),
+        SampleComponentDemo(
+            id = "fab",
+            title = "FAB",
+            category = "Actions",
+            description = "Floating action button for the primary screen action.",
+            content = { FabPage() },
+        ),
+        SampleComponentDemo(
+            id = "segmented-control",
+            title = "SegmentedControl",
+            category = "Actions",
+            description = "Horizontally arranged mutually exclusive option selector.",
+            content = { SegmentedControlPage() },
+        ),
+
+        // ── Inputs ───────────────────────────────────────────────────────────
+        SampleComponentDemo(
+            id = "text-field",
+            title = "TextField",
+            category = "Inputs",
+            description = "Single-line outlined text field with label and error state.",
+            content = { TextFieldPage() },
+        ),
+        SampleComponentDemo(
+            id = "password-field",
+            title = "PasswordField",
+            category = "Inputs",
+            description = "Password field with optional visibility toggle.",
+            content = { PasswordFieldPage() },
+        ),
+        SampleComponentDemo(
+            id = "search-field",
+            title = "SearchField",
+            category = "Inputs",
+            description = "Search-optimised text field with leading icon slot.",
+            content = { SearchFieldPage() },
+        ),
+
+        // ── Controls ─────────────────────────────────────────────────────────
+        SampleComponentDemo(
+            id = "checkbox",
+            title = "Checkbox",
+            category = "Controls",
+            description = "Binary on/off control with a text label.",
+            content = { CheckboxPage() },
+        ),
+        SampleComponentDemo(
+            id = "radio-group",
+            title = "RadioGroup",
+            category = "Controls",
+            description = "Mutually exclusive vertical list of radio options.",
+            content = { RadioGroupPage() },
+        ),
+        SampleComponentDemo(
+            id = "switch",
+            title = "Switch",
+            category = "Controls",
+            description = "Toggle switch for enabling or disabling a setting.",
+            content = { SwitchPage() },
+        ),
+        SampleComponentDemo(
+            id = "slider",
+            title = "Slider",
+            category = "Controls",
+            description = "Continuous value selector across a floating-point range.",
+            content = { SliderPage() },
+        ),
+
+        // ── Navigation ───────────────────────────────────────────────────────
+        SampleComponentDemo(
+            id = "top-app-bar",
+            title = "TopAppBar",
+            category = "Navigation",
+            description = "Screen-level header bar with title, nav icon, and actions.",
+            content = { TopAppBarPage() },
+        ),
+        SampleComponentDemo(
+            id = "tab-row",
+            title = "TabRow",
+            category = "Navigation",
+            description = "Horizontal row of primary tabs.",
+            content = { TabRowPage() },
+        ),
+        SampleComponentDemo(
+            id = "bottom-bar",
+            title = "BottomBar",
+            category = "Navigation",
+            description = "Bottom navigation bar for top-level destinations.",
+            content = { BottomBarPage() },
+        ),
+        SampleComponentDemo(
+            id = "nav-rail",
+            title = "NavRail",
+            category = "Navigation",
+            description = "Vertical rail navigation for medium and large screens.",
+            content = { NavRailPage() },
+        ),
+
+        // ── Pagination ───────────────────────────────────────────────────────
+        SampleComponentDemo(
+            id = "paginated-content",
+            title = "PaginatedContent",
+            category = "Pagination",
+            description = "Horizontally paginated container with footer controls.",
+            content = { PaginatedContentPage() },
+        ),
+
+        // ── Lists ────────────────────────────────────────────────────────────
+        SampleComponentDemo(
+            id = "list-item",
+            title = "ListItem",
+            category = "Lists",
+            description = "Single-row list item with headline, supporting text, and slots.",
+            content = { ListItemPage() },
+        ),
+        SampleComponentDemo(
+            id = "content-row",
+            title = "ContentRow",
+            category = "Lists",
+            description = "Tappable content row with title, secondary text, and trailing slot.",
+            content = { ContentRowPage() },
+        ),
+        SampleComponentDemo(
+            id = "empty-state",
+            title = "EmptyState",
+            category = "Lists",
+            description = "Placeholder shown when a list has no items.",
+            content = { EmptyStatePage() },
+        ),
+        SampleComponentDemo(
+            id = "loading-state",
+            title = "LoadingState",
+            category = "Lists",
+            description = "Centred spinner shown while data is loading.",
+            content = { LoadingStatePage() },
+        ),
+        SampleComponentDemo(
+            id = "error-state",
+            title = "ErrorState",
+            category = "Lists",
+            description = "Error message with optional retry action.",
+            content = { ErrorStatePage() },
+        ),
+
+        // ── Containers ───────────────────────────────────────────────────────
+        SampleComponentDemo(
+            id = "card",
+            title = "Card",
+            category = "Containers",
+            description = "Elevated surface card with padded column content.",
+            content = { CardPage() },
+        ),
+        SampleComponentDemo(
+            id = "overlay-card",
+            title = "OverlayCard",
+            category = "Containers",
+            description = "Translucent card intended to float over media content.",
+            content = { OverlayCardPage() },
+        ),
+        SampleComponentDemo(
+            id = "snackbar",
+            title = "Snackbar",
+            category = "Containers",
+            description = "Brief message bar with optional action.",
+            content = { SnackbarPage() },
+        ),
+        SampleComponentDemo(
+            id = "toast",
+            title = "Toast",
+            category = "Containers",
+            description = "Dark pill notification with optional action label.",
+            content = { ToastPage() },
+        ),
+
+        // ── Feedback ─────────────────────────────────────────────────────────
+        SampleComponentDemo(
+            id = "progress-indicator",
+            title = "ProgressIndicator",
+            category = "Feedback",
+            description = "Linear or circular progress with optional label.",
+            content = { ProgressIndicatorPage() },
+        ),
+        SampleComponentDemo(
+            id = "skeleton",
+            title = "Skeleton",
+            category = "Feedback",
+            description = "Full-width shimmer placeholder for loading content.",
+            content = { SkeletonPage() },
+        ),
+        SampleComponentDemo(
+            id = "skeleton-block",
+            title = "SkeletonBlock",
+            category = "Feedback",
+            description = "Sized skeleton placeholder block for ghost layouts.",
+            content = { SkeletonBlockPage() },
+        ),
+
+        // ── Typography ───────────────────────────────────────────────────────
+        SampleComponentDemo(
+            id = "app-text",
+            title = "AppText",
+            category = "Typography",
+            description = "Type-safe text component covering all AppTextStyle variants.",
+            content = { AppTextPage() },
+        ),
+
+        // ── Chips & Badges ───────────────────────────────────────────────────
+        SampleComponentDemo(
+            id = "pill-chip",
+            title = "PillChip",
+            category = "Chips & Badges",
+            description = "Selectable pill-shaped filter chip.",
+            content = { PillChipPage() },
+        ),
+        SampleComponentDemo(
+            id = "level-badge",
+            title = "LevelBadge",
+            category = "Chips & Badges",
+            description = "Coloured tier badge for proficiency or level indicators.",
+            content = { LevelBadgePage() },
+        ),
+    )
+
+/** Returns demo entries grouped by [SampleComponentDemo.category] in insertion order. */
+internal fun List<SampleComponentDemo>.groupedByCategory(): Map<String, List<SampleComponentDemo>> =
+    groupByTo(LinkedHashMap()) { it.category }
