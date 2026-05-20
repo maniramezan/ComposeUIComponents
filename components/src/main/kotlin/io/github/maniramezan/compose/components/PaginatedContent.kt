@@ -30,6 +30,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
@@ -251,11 +252,22 @@ private class ForwardOnlyNestedScrollConnection : NestedScrollConnection {
         available: Offset,
         source: NestedScrollSource,
     ): Offset {
-        // Consume backward scroll (positive x = dragging content right = going back)
-        return if (available.x > 0f) {
-            Offset(available.x, 0f) // consume it, don't let pager see it
+        // Only block user-initiated backward scroll (drag); allow the pager's
+        // internal settle/snap animations through so titles animate smoothly
+        // back to their resting position when a swipe doesn't cross threshold.
+        return if (available.x > 0f && source == NestedScrollSource.UserInput) {
+            Offset(available.x, 0f)
         } else {
-            Offset.Zero // let forward scroll through
+            Offset.Zero
+        }
+    }
+
+    override suspend fun onPreFling(available: Velocity): Velocity {
+        // Consume backward fling velocity so the pager can't fling to prev page
+        return if (available.x > 0f) {
+            Velocity(available.x, 0f)
+        } else {
+            Velocity.Zero
         }
     }
 }
@@ -328,23 +340,20 @@ private fun ScrollingTitleRow(
 
                 // The title's position relative to the viewport:
                 // It lives at slot `index`, viewport is scrolled to `continuousPage`.
-                // Visible X = (index - continuousPage) * containerWidth + anchorInSlot
+                // For Leading/Trailing: titles are spaced containerWidth apart (full page).
+                // For Center: titles are spaced closer so adjacent titles peek at edges.
                 val pageOffset = index - continuousPage
-                val visibleX = (pageOffset * containerWidth * rtlMul).roundToInt() + anchorInSlot
-
-                // For Center alignment: only show current page title (no peek)
-                if (titleAlignment == PageTitleAlignment.Center && index != currentPage) {
-                    // Only show during active scroll (within half a page)
-                    if (abs(pageOffset) > 0.5f) continue
+                val titleSpacing = when (titleAlignment) {
+                    PageTitleAlignment.Center -> {
+                        // Space titles so the adjacent one's near edge peeks at ~half
+                        // its width from the container edge. This gives a nice peek
+                        // while still scrolling in sync with the pager.
+                        val avgWidth = measured.values.sumOf { it.width } / measured.size.coerceAtLeast(1)
+                        containerWidth - avgWidth / 2
+                    }
+                    else -> containerWidth
                 }
-
-                // For Trailing + Unidirectional: don't show previous
-                if (titleAlignment == PageTitleAlignment.Trailing &&
-                    direction == PageDirection.Unidirectional &&
-                    index < currentPage
-                ) {
-                    continue
-                }
+                val visibleX = (pageOffset * titleSpacing * rtlMul).roundToInt() + anchorInSlot
 
                 placeable.placeRelative(
                     x = visibleX,
