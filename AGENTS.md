@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This repo owns a reusable Kotlin-first Jetpack Compose design system for Android apps. Keep the library product-agnostic, reusable across projects, and aligned with the public module boundaries in `spec.md`.
+This repo owns a reusable Kotlin-first Jetpack Compose design system for Android apps. Keep the library product-agnostic, reusable across projects, and aligned with the accepted ADRs in `docs/adr/`, the module graph in `settings.gradle.kts`, and the current implementation in the module build files.
 
 `AGENTS.md` is the source of truth for agent guidance. Keep `CLAUDE.md` thin and point back to this file.
 
@@ -34,6 +34,21 @@ When adding or updating dependencies, check the latest stable version online fir
 - `docs/` — MkDocs site content and ADRs.
 - `build-logic/` — Gradle convention plugins and custom checks.
 
+## Current Architecture Decisions
+
+- The theming model is defined by ADR 0001: extend Material 3 with immutable semantic token bundles exposed through `AppTheme` and `CompositionLocal`s.
+- The module boundary model is defined by ADR 0002: keep pure Kotlin helpers, tokens, theme contracts, icons, Compose utilities, components, testing, catalog, sample, and benchmark concerns separate.
+- The testing model is defined by ADR 0003: use JVM/domain tests for pure logic, Compose UI tests for semantics and interaction, and Roborazzi for screenshot verification.
+- Treat `docs/adr/*.md`, `docs/theming.md`, `docs/accessibility.md`, `docs/performance.md`, and `docs/contributing.md` as the current design and process references when behavior or architecture questions come up.
+- The library is approaching `1.0.0`; prefer additive, stable API evolution and avoid casual churn in public names, file names referenced by docs/Showkase, and module boundaries.
+
+## Build Logic And Dependency Shape
+
+- Shared Gradle behavior lives in `build-logic/` and the custom `compose.system.*` convention plugins. Reuse those conventions instead of duplicating Android/Compose/Kotlin setup in module build files.
+- Module inclusion lives in `settings.gradle.kts`; update that file when module topology changes.
+- Version pins live in `gradle/libs.versions.toml`; when changing dependencies, update the catalog instead of hardcoding versions in build scripts.
+- Root build logic also enforces token-usage checks and shared verification tasks such as `composeCompilerReports`; preserve those conventions unless there is an explicit reason to change them.
+
 ## Component Rules
 
 - Keep components generic; never introduce product-specific names, strings, analytics, networking, or business rules.
@@ -43,14 +58,23 @@ When adding or updating dependencies, check the latest stable version online fir
 - Use `public` explicitly for public APIs to match the repo style.
 - Add KDoc for public components and non-obvious public types.
 - Add or update light/dark previews, font-scale previews, Showkase entries, docs, and tests for visible component changes.
-- Keep accessibility first: meaningful content descriptions, 48dp touch targets, readable states, and 200% font-scale behavior.
+- Keep accessibility first: meaningful content descriptions, readable states, RTL-safe layout, and 200% font-scale behavior.
+- Keep actual interactive components at a 48dp minimum touch target in UI behavior and tests. The theme token `AppTheme.spacing.minTapTarget` currently defaults to 44dp for token/back-compat reasons, so do not assume the token alone fully expresses the accessibility bar.
 - For media/network-backed components, keep the public API independent of implementation-library types unless exposing that type is the explicit design goal.
+- Preserve the current extraction posture: extract patterns from product apps, but strip branding, product strings, analytics, and app-specific dependencies before they enter this repo.
+
+## API And Naming Guardrails
+
+- Public component/file names may be referenced by docs, previews, tests, and Showkase entries. Renames need explicit migration consideration instead of casual cleanup.
+- Avoid introducing app-specific terminology, feature flows, or business-state models into reusable component APIs.
+- Prefer extending existing token bundles, component APIs, or docs categories over adding near-duplicate concepts.
 
 ## Documentation Rules
 
 - Update `docs/components/*.md` and `mkdocs.yml` when adding a new component category or public component.
 - Record non-obvious architectural decisions in `docs/adr/`.
 - Keep `README.md` high-level; put detailed contributor guidance in `docs/contributing.md`.
+- If instructions or docs mention `spec.md`, treat that as stale; the repo currently uses ADRs, docs pages, and the checked-in Gradle/module configuration as the living source of truth.
 - If docs dependencies are available, validate docs with `mkdocs build --strict` after docs changes.
 
 ## Build And Verification
@@ -60,19 +84,36 @@ Use focused checks first, then broader checks when the change is significant.
 ```bash
 ./gradlew :components:testDebugUnitTest
 ./gradlew :components:ktlintCheck :components:detekt :components:lintDebug
+./gradlew composeCompilerReports -PenableComposeCompilerReports=true
 ./gradlew check
 ./gradlew ktlintCheck detekt check :components:recordRoborazziDebug :catalog:assembleDebug :sample:assembleDebug :baselineprofile:assembleDebug
+./gradlew check dokkaGenerate :components:recordRoborazziDebug :catalog:assembleDebug :sample:assembleDebug :baselineprofile:assembleDebug
 mkdocs build --strict
 ```
 
 For dependency/build-logic changes, also run the affected module assemble/test tasks and inspect generated dependency or build failures before broadening scope.
 
+For release-oriented changes, also account for:
+
+- `apiCheck` and Dokka generation.
+- Roborazzi screenshot output under `components/build/outputs/roborazzi`.
+- Baseline profile review when startup or sample navigation changes.
+- `publishToMavenLocal` when local signing credentials are configured; otherwise rely on the tag-triggered release workflow for the publish step.
+
 ## Release Hygiene
 
 - Releases are tag-driven with tags matching `vX.Y.Z`.
+- Bump `VERSION_NAME` in `gradle.properties` before creating the release tag; published artifact versions come from Gradle properties, not from the Git tag itself.
+- Pushing a matching release tag runs `.github/workflows/release.yml`, publishes to Maven Central, and creates the GitHub Release automatically.
 - Do not commit signing keys, Maven credentials, local SDK paths, generated build outputs, or personal IDE files.
 - Keep `.claude/settings.local.json` ignored.
 - Do not update binary compatibility baselines or screenshots casually; only update them when the API/visual change is intentional.
+
+## Accessibility And UX Notes
+
+- Follow `docs/accessibility.md` for manual audit expectations across TalkBack, RTL, edge-to-edge/IME, and 200% font scale.
+- Catalog and sample are validation surfaces, not just demos; keep them aligned with reusable-component behavior and edge-to-edge expectations.
+- For input-heavy screens in sample/catalog, preserve IME-safe layout behavior and safe-drawing inset handling.
 
 ## Extraction From Apps
 

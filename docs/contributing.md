@@ -35,4 +35,9 @@ mkdocs build --strict
 
 ## Releases
 
-Releases are tag-driven with tags matching `vX.Y.Z`. Do not commit signing keys or Maven credentials; configure them as repository secrets.
+Releases are tag-driven with tags matching `vX.Y.Z`.
+
+- Bump `VERSION_NAME` in `gradle.properties` first so the published Maven coordinates match the release version in the tag you plan to push.
+- Push the version bump to `main` before pushing the release tag.
+- Pushing the tag runs `.github/workflows/release.yml`, publishes to Maven Central, and creates the GitHub Release automatically.
+- Do not commit signing keys or Maven credentials; configure them as repository secrets.
