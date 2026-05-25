@@ -12,12 +12,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6.0.2
-      - uses: actions/setup-java@v5.2.0
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
-      - uses: gradle/actions/setup-gradle@v6.1.0
+      - uses: gradle/actions/setup-gradle@v6
       - name: Check
         run: ./gradlew check
       - name: Record component screenshots
@@ -55,7 +55,7 @@ jobs:
           path: |
             **/build/compose-metrics
             **/build/compose-reports
-      - uses: actions/setup-python@v6.2.0
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.13'
       - name: Install docs dependencies
@@ -66,7 +66,7 @@ jobs:
         with:
           name: docs-site
           path: site
-      - uses: actions/upload-pages-artifact@v5.0.0
+      - uses: actions/upload-pages-artifact@v5
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         with:
           path: site
@@ -83,4 +83,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v5.0.0
+        uses: actions/deploy-pages@v5
