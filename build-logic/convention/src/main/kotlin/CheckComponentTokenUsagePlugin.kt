@@ -10,6 +10,11 @@ public class CheckComponentTokenUsagePlugin : Plugin<Project> {
                 sourceFiles.from(
                     fileTree("components/src/main/kotlin") {
                         include("**/*.kt")
+                        // Preview and Showkase files are demo scaffolding, not the
+                        // public component surface this guard protects. They may
+                        // legitimately use decorative icons (contentDescription = null)
+                        // and illustrative raw values.
+                        exclude("**/*Preview.kt", "**/*Showkase.kt")
                     },
                 )
             }

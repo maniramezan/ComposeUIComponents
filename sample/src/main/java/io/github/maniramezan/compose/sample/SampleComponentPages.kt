@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -54,7 +56,11 @@ import io.github.maniramezan.compose.components.RadioGroup
 import io.github.maniramezan.compose.components.SearchField
 import io.github.maniramezan.compose.components.SecondaryButton
 import io.github.maniramezan.compose.components.SectionHeader
+import io.github.maniramezan.compose.components.SegmentFitMode
+import io.github.maniramezan.compose.components.SegmentSelectionIndicator
+import io.github.maniramezan.compose.components.SegmentedContent
 import io.github.maniramezan.compose.components.SegmentedControl
+import io.github.maniramezan.compose.components.SegmentedItem
 import io.github.maniramezan.compose.components.Skeleton
 import io.github.maniramezan.compose.components.SkeletonBlock
 import io.github.maniramezan.compose.components.Slider
@@ -538,6 +544,155 @@ internal fun PaginatedContentPage() {
             options = footers,
             selectedIndex = footerIndex,
             onOptionSelected = { footerIndex = it },
+        )
+    }
+}
+
+private val allDemoSegmentedItems =
+    listOf(
+        SegmentedItem(title = "Overview"),
+        SegmentedItem(title = "Activity"),
+        SegmentedItem(title = "Settings"),
+        SegmentedItem(title = "Notifications"),
+        SegmentedItem(title = "Permissions"),
+        SegmentedItem(title = "Integrations"),
+        SegmentedItem(title = "Billing"),
+    )
+
+@Composable
+private fun SegmentPlaceholder(title: String) {
+    Box(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(120.dp)
+                .padding(AppTheme.spacing.x2),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = "$title content",
+            style = AppTheme.typography.titleSmall,
+        )
+    }
+}
+
+@Composable
+private fun PlainSegmentTitle(
+    title: String,
+    isSelected: Boolean,
+    indicator: SegmentSelectionIndicator,
+) {
+    val color =
+        when {
+            isSelected && indicator == SegmentSelectionIndicator.Pill -> AppTheme.colors.onPrimary
+            isSelected -> AppTheme.colors.primary
+            else -> AppTheme.colors.onSurfaceVariant
+        }
+    Text(
+        text = title,
+        style = AppTheme.typography.labelLarge,
+        color = color,
+        maxLines = 1,
+    )
+}
+
+@Composable
+private fun IconSegmentTitle(
+    title: String,
+    isSelected: Boolean,
+    indicator: SegmentSelectionIndicator,
+) {
+    val color =
+        if (isSelected) {
+            if (indicator == SegmentSelectionIndicator.Pill) AppTheme.colors.onPrimary else AppTheme.colors.primary
+        } else {
+            AppTheme.colors.onSurfaceVariant
+        }
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.half),
+    ) {
+        Icon(
+            imageVector = AppTheme.icons.check.imageVector,
+            contentDescription = null,
+            tint = color,
+            modifier = Modifier.size(AppTheme.spacing.x2),
+        )
+        Text(
+            text = title,
+            style = AppTheme.typography.labelLarge,
+            color = color,
+            maxLines = 1,
+        )
+    }
+}
+
+@Composable
+internal fun SegmentedContentPage() {
+    val indicatorOptions = listOf("Pill", "Underline", "None")
+    var indicatorIndex by remember { mutableIntStateOf(0) }
+    val indicator =
+        when (indicatorIndex) {
+            1 -> SegmentSelectionIndicator.Underline
+            2 -> SegmentSelectionIndicator.None
+            else -> SegmentSelectionIndicator.Pill
+        }
+
+    val fitOptions = listOf("EvenWhenFits", "Intrinsic")
+    var fitIndex by remember { mutableIntStateOf(0) }
+    val fitMode = if (fitIndex == 0) SegmentFitMode.EvenWhenFits else SegmentFitMode.Intrinsic
+
+    val minSegments = 2
+    val maxSegments = allDemoSegmentedItems.size
+    var segmentCountSlider by remember { mutableFloatStateOf(3f) }
+    val segmentCount = segmentCountSlider.roundToInt().coerceIn(minSegments, maxSegments)
+    val items = allDemoSegmentedItems.take(segmentCount)
+
+    var useIconTitle by remember { mutableStateOf(false) }
+    var selectedIndex by remember { mutableIntStateOf(0) }
+
+    // Keep the selection valid when the segment count shrinks below it.
+    val safeSelectedIndex = selectedIndex.coerceIn(0, items.lastIndex)
+
+    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
+        Text(text = "Selected: ${items[safeSelectedIndex].title}")
+        SegmentedContent(
+            items = items,
+            selectedIndex = safeSelectedIndex,
+            onSelectionChanged = { selectedIndex = it },
+            indicator = indicator,
+            fitMode = fitMode,
+            segmentTitle = { _, item, isSelected ->
+                if (useIconTitle) {
+                    IconSegmentTitle(item.title, isSelected, indicator)
+                } else {
+                    PlainSegmentTitle(item.title, isSelected, indicator)
+                }
+            },
+        ) { _, item -> SegmentPlaceholder(item.title) }
+        ControlsDivider()
+        ControlSlider(
+            label = "Segments: $segmentCount",
+            value = segmentCountSlider,
+            onValueChange = { segmentCountSlider = it },
+            valueRange = minSegments.toFloat()..maxSegments.toFloat(),
+        )
+        ControlSegmented(
+            label = "Indicator",
+            options = indicatorOptions,
+            selectedIndex = indicatorIndex,
+            onOptionSelected = { indicatorIndex = it },
+        )
+        ControlSegmented(
+            label = "Fit mode",
+            options = fitOptions,
+            selectedIndex = fitIndex,
+            onOptionSelected = { fitIndex = it },
+        )
+        ControlSwitch(
+            label = "Custom title slot (icon + label)",
+            checked = useIconTitle,
+            onCheckedChange = { useIconTitle = it },
         )
     }
 }

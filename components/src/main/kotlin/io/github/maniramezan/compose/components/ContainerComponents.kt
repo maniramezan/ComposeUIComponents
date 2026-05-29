@@ -15,6 +15,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import io.github.maniramezan.compose.theme.AppTheme
 import androidx.compose.material3.Card as MaterialCard
 import androidx.compose.material3.Snackbar as MaterialSnackbar
@@ -70,7 +74,7 @@ public fun Section(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Text(text = title)
+            Text(text = title, modifier = Modifier.semantics { heading() })
             actions()
         }
         content()
@@ -136,7 +140,9 @@ public fun Snackbar(
     onAction: (() -> Unit)? = null,
 ) {
     MaterialSnackbar(
-        modifier = modifier,
+        // Announce when shown standalone (outside a SnackbarHost, which would
+        // otherwise supply the live region) without stealing focus.
+        modifier = modifier.semantics { liveRegion = LiveRegionMode.Polite },
         action =
             if (actionLabel != null && onAction != null) {
                 {
