@@ -44,3 +44,16 @@ AppTheme {
 ```
 
 Custom title slots are supported via the `pageTitle` parameter. For external page control, pass a caller-owned `PagerState`.
+
+On first composition `PaginatedContent` plays a brief peek-and-return animation to signal that the content is horizontally scrollable. Suppress it with `showScrollHint = false` when scrollability is already obvious:
+
+```kotlin
+PaginatedContent(
+    pages = pages,
+    showScrollHint = false,
+) { _, page ->
+    Text(text = page.title)
+}
+```
+
+Inactive page titles are dimmed using the theme `outline` color to match the de-emphasis level of the dot indicators, and the title row mirrors correctly under right-to-left layout direction.

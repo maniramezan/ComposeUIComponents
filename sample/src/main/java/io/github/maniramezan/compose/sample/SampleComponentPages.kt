@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -19,7 +21,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import io.github.maniramezan.compose.components.AppText
 import io.github.maniramezan.compose.components.AppTextStyle
@@ -482,17 +486,35 @@ internal fun PaginatedContentPage() {
     val pages = allDemoPaginationPages.take(pageCount)
 
     var lastPage by remember { mutableIntStateOf(0) }
+    var hintResetKey by remember { mutableIntStateOf(0) }
+    var rtlMode by remember { mutableStateOf(false) }
+    val layoutDirection = if (rtlMode) LayoutDirection.Rtl else LayoutDirection.Ltr
 
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
         Text(text = "Current page: $lastPage")
-        PaginatedContent(
-            pages = pages,
-            titleAlignment = titleAlignment,
-            direction = direction,
-            footerStyle = footerStyle,
-            onPageChanged = { lastPage = it },
-        ) { _, page -> PagerPlaceholder(page.title) }
+        CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
+            key(hintResetKey) {
+                PaginatedContent(
+                    pages = pages,
+                    titleAlignment = titleAlignment,
+                    direction = direction,
+                    footerStyle = footerStyle,
+                    showScrollHint = true,
+                    onPageChanged = { lastPage = it },
+                ) { _, page -> PagerPlaceholder(page.title) }
+            }
+        }
         ControlsDivider()
+        SecondaryButton(
+            text = "Replay scroll hint",
+            onClick = { hintResetKey++ },
+            modifier = Modifier.fillMaxWidth(),
+        )
+        ControlSwitch(
+            label = "RTL layout",
+            checked = rtlMode,
+            onCheckedChange = { rtlMode = it },
+        )
         ControlSlider(
             label = "Pages: $pageCount",
             value = pageCountSlider,
