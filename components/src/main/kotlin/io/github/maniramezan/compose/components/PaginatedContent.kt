@@ -35,6 +35,10 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.SubcomposeLayout
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Velocity
 import io.github.maniramezan.compose.theme.AppTheme
 import kotlinx.coroutines.delay
@@ -115,6 +119,10 @@ public enum class PageFooterStyle {
  * @param showScrollHint When `true`, plays a brief peek-and-return animation on
  *   first composition to signal that the content is horizontally scrollable.
  *   Set to `false` to suppress the hint (e.g. when onboarding is already clear).
+ * @param pagePositionDescription Builds the accessibility announcement for the
+ *   footer (e.g. `{ index, count -> "Page ${index + 1} of $count" }`). Supply a
+ *   localized string from the caller; when `null` the footer stays decorative
+ *   and is not announced. Ignored when [footerStyle] is [PageFooterStyle.None].
  */
 @Composable
 public fun PaginatedContent(
@@ -126,6 +134,7 @@ public fun PaginatedContent(
     footerStyle: PageFooterStyle = PageFooterStyle.Dots,
     showScrollHint: Boolean = true,
     onPageChanged: ((Int) -> Unit)? = null,
+    pagePositionDescription: ((pageIndex: Int, pageCount: Int) -> String)? = null,
     pageTitle: @Composable (pageIndex: Int, page: PaginationPage, progress: Float) -> Unit =
         { _, page, progress -> DefaultPageTitle(title = page.title, progress = progress) },
     pageContent: @Composable PagerScope.(pageIndex: Int, page: PaginationPage) -> Unit,
@@ -144,6 +153,7 @@ public fun PaginatedContent(
         footerStyle = footerStyle,
         showScrollHint = showScrollHint,
         onPageChanged = onPageChanged,
+        pagePositionDescription = pagePositionDescription,
         pageTitle = pageTitle,
         pageContent = pageContent,
     )
@@ -158,6 +168,10 @@ public fun PaginatedContent(
  * @param showScrollHint When `true`, plays a brief peek-and-return animation on
  *   first composition to signal that the content is horizontally scrollable.
  *   Set to `false` to suppress the hint (e.g. when onboarding is already clear).
+ * @param pagePositionDescription Builds the accessibility announcement for the
+ *   footer (e.g. `{ index, count -> "Page ${index + 1} of $count" }`). Supply a
+ *   localized string from the caller; when `null` the footer stays decorative
+ *   and is not announced. Ignored when [footerStyle] is [PageFooterStyle.None].
  */
 @Composable
 public fun PaginatedContent(
@@ -169,6 +183,7 @@ public fun PaginatedContent(
     footerStyle: PageFooterStyle = PageFooterStyle.Dots,
     showScrollHint: Boolean = true,
     onPageChanged: ((Int) -> Unit)? = null,
+    pagePositionDescription: ((pageIndex: Int, pageCount: Int) -> String)? = null,
     pageTitle: @Composable (pageIndex: Int, page: PaginationPage, progress: Float) -> Unit =
         { _, page, progress -> DefaultPageTitle(title = page.title, progress = progress) },
     pageContent: @Composable PagerScope.(pageIndex: Int, page: PaginationPage) -> Unit,
@@ -240,6 +255,7 @@ public fun PaginatedContent(
                     PageDotIndicator(
                         pageCount = pages.size,
                         pagerState = pagerState,
+                        pagePositionDescription = pagePositionDescription,
                         modifier =
                             Modifier
                                 .align(Alignment.CenterHorizontally)
@@ -252,6 +268,7 @@ public fun PaginatedContent(
                     PageProgressFooter(
                         pageCount = pages.size,
                         pagerState = pagerState,
+                        pagePositionDescription = pagePositionDescription,
                         modifier =
                             Modifier
                                 .fillMaxWidth()
@@ -438,12 +455,24 @@ private fun PageDotIndicator(
     pageCount: Int,
     pagerState: PagerState,
     modifier: Modifier = Modifier,
+    pagePositionDescription: ((Int, Int) -> String)? = null,
 ) {
     // Read currentPage here so recomposition is scoped to PageDotIndicator,
     // not to PaginatedContent. currentPage changes only when the page settles.
     val currentPage = pagerState.currentPage
+    // The dots themselves are color-only; expose the position as a single
+    // spoken node (and announce changes) when the caller supplies a formatter.
+    val positionDescription = pagePositionDescription?.invoke(currentPage, pageCount)
     Row(
-        modifier = modifier,
+        modifier =
+            if (positionDescription != null) {
+                modifier.semantics {
+                    contentDescription = positionDescription
+                    liveRegion = LiveRegionMode.Polite
+                }
+            } else {
+                modifier
+            },
         horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.x1),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -473,6 +502,7 @@ private fun PageProgressFooter(
     pageCount: Int,
     pagerState: PagerState,
     modifier: Modifier = Modifier,
+    pagePositionDescription: ((Int, Int) -> String)? = null,
 ) {
     // Read both values here so per-frame recomposition during scroll is
     // scoped to PageProgressFooter alone, not to PaginatedContent.
@@ -484,9 +514,20 @@ private fun PageProgressFooter(
         } else {
             ((currentPage + offsetFraction) / (pageCount - 1)).coerceIn(0f, 1f)
         }
+    // The bar is a visual position cue; expose the settled page as a spoken
+    // node (and announce changes) when the caller supplies a formatter.
+    val positionDescription = pagePositionDescription?.invoke(currentPage, pageCount)
     LinearProgressIndicator(
         progress = { progress },
-        modifier = modifier.clip(CircleShape),
+        modifier =
+            if (positionDescription != null) {
+                modifier.clip(CircleShape).semantics {
+                    contentDescription = positionDescription
+                    liveRegion = LiveRegionMode.Polite
+                }
+            } else {
+                modifier.clip(CircleShape)
+            },
         color = AppTheme.colors.primary,
         trackColor = AppTheme.colors.onSurfaceVariant.copy(alpha = 0.12f),
     )
