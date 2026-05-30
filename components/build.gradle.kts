@@ -43,13 +43,13 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     testImplementation(libs.truth)
     testRuntimeOnly(libs.junit.platform.launcher)
+    // Vintage engine lets the JUnit Platform also run the JUnit 4 / Robolectric
+    // Compose UI tests, so Jupiter (API-stability) and JUnit 4 (interaction +
+    // screenshot) tests run together in a single testDebugUnitTest pass.
+    testRuntimeOnly(libs.junit.vintage.engine)
 }
 
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
     systemProperty("robolectric.pixelCopyRenderMode", "hardware")
-}
-
-tasks.matching { it.name == "testDebugUnitTest" }.configureEach {
-    (this as Test).useJUnit()
 }

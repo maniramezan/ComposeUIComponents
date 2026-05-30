@@ -10,6 +10,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
 import io.github.maniramezan.compose.theme.AppTheme
 
 /**
@@ -33,7 +35,7 @@ public fun ContentRow(
     val rowModifier =
         modifier
             .fillMaxWidth()
-            .let { if (onClick != null) it.clickable(onClick = onClick) else it }
+            .let { if (onClick != null) it.clickable(role = Role.Button, onClick = onClick) else it }
             .padding(horizontal = AppTheme.spacing.x2, vertical = AppTheme.spacing.x1_5)
 
     Row(
@@ -45,7 +47,9 @@ public fun ContentRow(
             leadingContent()
         }
         Column(
-            modifier = Modifier.weight(1f),
+            // Read the title/secondary/supporting block as one focus stop
+            // instead of three separate ones.
+            modifier = Modifier.weight(1f).semantics(mergeDescendants = true) {},
             verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.half),
         ) {
             Row(

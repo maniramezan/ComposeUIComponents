@@ -1,6 +1,8 @@
 package io.github.maniramezan.compose.components
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,7 +21,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -31,10 +35,13 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.SubcomposeLayout
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Velocity
 import io.github.maniramezan.compose.theme.AppTheme
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -109,6 +116,13 @@ public enum class PageFooterStyle {
  *
  * @param onPageChanged Called when the settled page changes. Use this to react
  *   to page transitions (analytics, loading data, etc.).
+ * @param showScrollHint When `true`, plays a brief peek-and-return animation on
+ *   first composition to signal that the content is horizontally scrollable.
+ *   Set to `false` to suppress the hint (e.g. when onboarding is already clear).
+ * @param pagePositionDescription Builds the accessibility announcement for the
+ *   footer (e.g. `{ index, count -> "Page ${index + 1} of $count" }`). Supply a
+ *   localized string from the caller; when `null` the footer stays decorative
+ *   and is not announced. Ignored when [footerStyle] is [PageFooterStyle.None].
  */
 @Composable
 public fun PaginatedContent(
@@ -118,7 +132,9 @@ public fun PaginatedContent(
     titleAlignment: PageTitleAlignment = PageTitleAlignment.Leading,
     direction: PageDirection = PageDirection.Bidirectional,
     footerStyle: PageFooterStyle = PageFooterStyle.Dots,
+    showScrollHint: Boolean = true,
     onPageChanged: ((Int) -> Unit)? = null,
+    pagePositionDescription: ((pageIndex: Int, pageCount: Int) -> String)? = null,
     pageTitle: @Composable (pageIndex: Int, page: PaginationPage, progress: Float) -> Unit =
         { _, page, progress -> DefaultPageTitle(title = page.title, progress = progress) },
     pageContent: @Composable PagerScope.(pageIndex: Int, page: PaginationPage) -> Unit,
@@ -135,7 +151,9 @@ public fun PaginatedContent(
         titleAlignment = titleAlignment,
         direction = direction,
         footerStyle = footerStyle,
+        showScrollHint = showScrollHint,
         onPageChanged = onPageChanged,
+        pagePositionDescription = pagePositionDescription,
         pageTitle = pageTitle,
         pageContent = pageContent,
     )
@@ -147,6 +165,13 @@ public fun PaginatedContent(
  *
  * @param onPageChanged Called when the settled page changes. Use this to react
  *   to page transitions (analytics, loading data, etc.).
+ * @param showScrollHint When `true`, plays a brief peek-and-return animation on
+ *   first composition to signal that the content is horizontally scrollable.
+ *   Set to `false` to suppress the hint (e.g. when onboarding is already clear).
+ * @param pagePositionDescription Builds the accessibility announcement for the
+ *   footer (e.g. `{ index, count -> "Page ${index + 1} of $count" }`). Supply a
+ *   localized string from the caller; when `null` the footer stays decorative
+ *   and is not announced. Ignored when [footerStyle] is [PageFooterStyle.None].
  */
 @Composable
 public fun PaginatedContent(
@@ -156,7 +181,9 @@ public fun PaginatedContent(
     titleAlignment: PageTitleAlignment = PageTitleAlignment.Leading,
     direction: PageDirection = PageDirection.Bidirectional,
     footerStyle: PageFooterStyle = PageFooterStyle.Dots,
+    showScrollHint: Boolean = true,
     onPageChanged: ((Int) -> Unit)? = null,
+    pagePositionDescription: ((pageIndex: Int, pageCount: Int) -> String)? = null,
     pageTitle: @Composable (pageIndex: Int, page: PaginationPage, progress: Float) -> Unit =
         { _, page, progress -> DefaultPageTitle(title = page.title, progress = progress) },
     pageContent: @Composable PagerScope.(pageIndex: Int, page: PaginationPage) -> Unit,
@@ -169,6 +196,24 @@ public fun PaginatedContent(
             snapshotFlow { pagerState.settledPage }
                 .distinctUntilChanged()
                 .collect { page -> onPageChanged(page) }
+        }
+    }
+
+    // Peek-and-return animation hinting the content is scrollable
+    if (showScrollHint && pages.size > 1) {
+        LaunchedEffect(pagerState) {
+            delay(600L)
+            if (pagerState.currentPage < pages.lastIndex) {
+                pagerState.animateScrollToPage(
+                    page = pagerState.currentPage,
+                    pageOffsetFraction = 0.25f,
+                    animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing),
+                )
+                pagerState.animateScrollToPage(
+                    page = pagerState.currentPage,
+                    animationSpec = tween(durationMillis = 400, easing = FastOutSlowInEasing),
+                )
+            }
         }
     }
 
@@ -202,13 +247,15 @@ public fun PaginatedContent(
             pageContent(pageIndex, pages[pageIndex])
         }
 
-        // Footer
+        // Footer — pass pagerState directly so state reads are scoped to each
+        // footer composable, not to PaginatedContent's recomposition scope.
         when (footerStyle) {
             PageFooterStyle.Dots -> {
                 if (pages.size > 1) {
                     PageDotIndicator(
                         pageCount = pages.size,
-                        currentPage = pagerState.currentPage,
+                        pagerState = pagerState,
+                        pagePositionDescription = pagePositionDescription,
                         modifier =
                             Modifier
                                 .align(Alignment.CenterHorizontally)
@@ -220,8 +267,8 @@ public fun PaginatedContent(
                 if (pages.size > 1) {
                     PageProgressFooter(
                         pageCount = pages.size,
-                        currentPage = pagerState.currentPage,
-                        offsetFraction = pagerState.currentPageOffsetFraction,
+                        pagerState = pagerState,
+                        pagePositionDescription = pagePositionDescription,
                         modifier =
                             Modifier
                                 .fillMaxWidth()
@@ -299,7 +346,12 @@ private fun ScrollingTitleRow(
     pageTitle: @Composable (pageIndex: Int, page: PaginationPage, progress: Float) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+    // One stable MutableFloatState per page index so the subcompose lambda
+    // captures a stable reference instead of a raw Float that changes every
+    // frame. Updating the state value during the layout phase is safe here
+    // because the owning SubcomposeLayout re-measures before the next draw,
+    // preventing composition → layout → composition loops.
+    val progressStates = remember { mutableMapOf<Int, MutableFloatState>() }
 
     SubcomposeLayout(
         modifier =
@@ -327,28 +379,37 @@ private fun ScrollingTitleRow(
             visibleIndices.associateWith { index ->
                 val distFromCurrent = abs(index - continuousPage)
                 val titleProgress = (1f - distFromCurrent).coerceIn(0f, 1f)
+
+                // Write progress into a stable state so the subcompose lambda
+                // below does not capture the raw Float. Without this, Compose
+                // sees a new lambda every frame and re-composes each title slot
+                // on every scroll frame even when the visual output is unchanged.
+                val progressState =
+                    progressStates.getOrPut(index) { mutableFloatStateOf(titleProgress) }
+                progressState.floatValue = titleProgress
+
                 subcompose("title_$index") {
-                    pageTitle(index, pages[index], titleProgress)
+                    val progress by progressState
+                    pageTitle(index, pages[index], progress)
                 }.first().measure(constraints.copy(minWidth = 0))
             }
 
         val totalHeight = measured.values.maxOfOrNull { it.height } ?: 0
 
         layout(containerWidth, totalHeight) {
-            val rtlMul = if (isRtl) -1f else 1f
-
             for ((index, placeable) in measured) {
                 val pageOffset = index - continuousPage
 
+                // placeRelative() mirrors x automatically in RTL — no manual
+                // rtlMul needed; applying one here would double-invert the axis.
                 val visibleX: Int =
                     when (titleAlignment) {
                         PageTitleAlignment.Leading -> {
-                            val anchor = 0
-                            (pageOffset * containerWidth * rtlMul).roundToInt() + anchor
+                            (pageOffset * containerWidth).roundToInt()
                         }
                         PageTitleAlignment.Trailing -> {
                             val anchor = containerWidth - placeable.width
-                            (pageOffset * containerWidth * rtlMul).roundToInt() + anchor
+                            (pageOffset * containerWidth).roundToInt() + anchor
                         }
                         PageTitleAlignment.Center -> {
                             // progress = 1 at current page, 0 at adjacent pages.
@@ -356,7 +417,7 @@ private fun ScrollingTitleRow(
                             val progress = (1f - abs(pageOffset)).coerceIn(0f, 1f)
                             val centerAnchor = (containerWidth - placeable.width) / 2f
                             val anchor = centerAnchor * progress
-                            (pageOffset * containerWidth * rtlMul + anchor).roundToInt()
+                            (pageOffset * containerWidth + anchor).roundToInt()
                         }
                     }
 
@@ -379,7 +440,7 @@ internal fun DefaultPageTitle(
     progress: Float,
 ) {
     val color by animateColorAsState(
-        targetValue = if (progress > 0.5f) AppTheme.colors.primary else AppTheme.colors.onSurfaceVariant,
+        targetValue = if (progress > 0.5f) AppTheme.colors.primary else AppTheme.colors.outline,
         label = "pageTitleColor",
     )
     Text(
@@ -392,11 +453,26 @@ internal fun DefaultPageTitle(
 @Composable
 private fun PageDotIndicator(
     pageCount: Int,
-    currentPage: Int,
+    pagerState: PagerState,
     modifier: Modifier = Modifier,
+    pagePositionDescription: ((Int, Int) -> String)? = null,
 ) {
+    // Read currentPage here so recomposition is scoped to PageDotIndicator,
+    // not to PaginatedContent. currentPage changes only when the page settles.
+    val currentPage = pagerState.currentPage
+    // The dots themselves are color-only; expose the position as a single
+    // spoken node (and announce changes) when the caller supplies a formatter.
+    val positionDescription = pagePositionDescription?.invoke(currentPage, pageCount)
     Row(
-        modifier = modifier,
+        modifier =
+            if (positionDescription != null) {
+                modifier.semantics {
+                    contentDescription = positionDescription
+                    liveRegion = LiveRegionMode.Polite
+                }
+            } else {
+                modifier
+            },
         horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.x1),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -424,19 +500,34 @@ private fun PageDotIndicator(
 @Composable
 private fun PageProgressFooter(
     pageCount: Int,
-    currentPage: Int,
-    offsetFraction: Float,
+    pagerState: PagerState,
     modifier: Modifier = Modifier,
+    pagePositionDescription: ((Int, Int) -> String)? = null,
 ) {
+    // Read both values here so per-frame recomposition during scroll is
+    // scoped to PageProgressFooter alone, not to PaginatedContent.
+    val currentPage = pagerState.currentPage
+    val offsetFraction = pagerState.currentPageOffsetFraction
     val progress =
         if (pageCount <= 1) {
             1f
         } else {
             ((currentPage + offsetFraction) / (pageCount - 1)).coerceIn(0f, 1f)
         }
+    // The bar is a visual position cue; expose the settled page as a spoken
+    // node (and announce changes) when the caller supplies a formatter.
+    val positionDescription = pagePositionDescription?.invoke(currentPage, pageCount)
     LinearProgressIndicator(
         progress = { progress },
-        modifier = modifier.clip(CircleShape),
+        modifier =
+            if (positionDescription != null) {
+                modifier.clip(CircleShape).semantics {
+                    contentDescription = positionDescription
+                    liveRegion = LiveRegionMode.Polite
+                }
+            } else {
+                modifier.clip(CircleShape)
+            },
         color = AppTheme.colors.primary,
         trackColor = AppTheme.colors.onSurfaceVariant.copy(alpha = 0.12f),
     )

@@ -15,6 +15,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -189,6 +192,14 @@ public fun Switch(
     }
 }
 
+/**
+ * A single-value slider.
+ *
+ * A bare slider only announces a raw percentage to screen readers. Pass [label]
+ * to describe what the slider controls and [valueDescription] to announce a
+ * meaningful current value (e.g. `"Volume, 50%"`); both should be localized by
+ * the caller. When omitted, the platform default value announcement is used.
+ */
 @Composable
 public fun Slider(
     value: Float,
@@ -196,11 +207,19 @@ public fun Slider(
     modifier: Modifier = Modifier,
     valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
     enabled: Boolean = true,
+    label: String? = null,
+    valueDescription: String? = null,
 ) {
     MaterialSlider(
         value = value,
         onValueChange = onValueChange,
-        modifier = modifier.fillMaxWidth(),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .semantics {
+                    label?.let { contentDescription = it }
+                    valueDescription?.let { stateDescription = it }
+                },
         valueRange = valueRange,
         enabled = enabled,
     )

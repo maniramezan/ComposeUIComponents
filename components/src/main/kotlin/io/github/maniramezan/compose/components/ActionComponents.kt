@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FloatingActionButton
@@ -12,6 +13,8 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.theme.IconToken
 import io.github.maniramezan.compose.utils.minimumTouchTarget
@@ -120,16 +123,20 @@ public fun SegmentedControl(
     enabled: Boolean = true,
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier.selectableGroup(),
         horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs),
     ) {
         options.forEachIndexed { index, option ->
             val selected = index == selectedIndex
+            val segmentModifier =
+                Modifier
+                    .minimumTouchTargetHeight(minimumTouchTargetSize())
+                    .semantics { this.selected = selected }
             if (selected) {
                 Button(
                     onClick = { onOptionSelected(index) },
                     enabled = enabled,
-                    modifier = Modifier.minimumTouchTargetHeight(minimumTouchTargetSize()),
+                    modifier = segmentModifier,
                     colors =
                         ButtonDefaults.buttonColors(
                             containerColor = AppTheme.colors.primary,
@@ -142,7 +149,7 @@ public fun SegmentedControl(
                 OutlinedButton(
                     onClick = { onOptionSelected(index) },
                     enabled = enabled,
-                    modifier = Modifier.minimumTouchTargetHeight(minimumTouchTargetSize()),
+                    modifier = segmentModifier,
                     colors =
                         ButtonDefaults.outlinedButtonColors(
                             contentColor = AppTheme.colors.primary,

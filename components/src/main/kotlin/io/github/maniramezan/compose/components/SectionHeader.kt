@@ -9,6 +9,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import io.github.maniramezan.compose.theme.AppTheme
 
 /**
@@ -33,6 +35,7 @@ public fun SectionHeader(
     ) {
         Text(
             text = title,
+            modifier = Modifier.semantics { heading() },
             style = AppTheme.typography.titleSmall,
             color = AppTheme.colors.onSurface,
         )

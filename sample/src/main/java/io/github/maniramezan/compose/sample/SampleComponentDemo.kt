@@ -152,6 +152,13 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             content = { PaginatedContentPage() },
         ),
         SampleComponentDemo(
+            id = "segmented-content",
+            title = "SegmentedContent",
+            category = "Pagination",
+            description = "Tap-driven segmented picker with scrolling overflow and edge fades.",
+            content = { SegmentedContentPage() },
+        ),
+        SampleComponentDemo(
             id = "list-item",
             title = "ListItem",
             category = "Lists",

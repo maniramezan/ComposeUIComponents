@@ -39,12 +39,32 @@ Record results here before cutting a release. Use a physical device when possibl
 - Increase font scale to 200%, repeat core flows, and confirm all content is reachable by scrolling instead of clipped.
 - Enable RTL and confirm horizontal layouts use start/end spacing and mirror-aware icons behave correctly.
 
+## Component Accessibility Contracts
+
+Some components require the caller to supply localized accessibility text, so the
+library stays string-free and product-agnostic:
+
+- `Slider` announces only a raw percentage by default. Pass `label` (what it
+  controls) and `valueDescription` (a meaningful current value) for context.
+- `PaginatedContent` exposes page position only when given `pagePositionDescription`
+  (e.g. `{ index, count -> "Page ${index + 1} of $count" }`); the footer is
+  decorative and silent otherwise.
+- `NavigationItem.badgeContentDescription` gives a badge a meaningful spoken label
+  (e.g. `"5 unread"`) instead of the bare badge text.
+- `PillChip` and `SegmentedControl` expose selected state to screen readers; the
+  active option announces as "selected", not just a tinted button.
+- `Toast`, `Snackbar`, `LoadingState`, and `ErrorState` are polite live regions, so
+  they are announced when they appear without stealing focus.
+- `Skeleton` / `SkeletonBlock` are removed from the accessibility tree (decorative
+  loading placeholders carry no information).
+- `Section` and `SectionHeader` titles are marked as headings for heading navigation.
+
 ## Automated Coverage
 
-- `AccessibilityComponentsTest` verifies representative action and input components keep at least a 48dp touch target.
+- `AccessibilityComponentsTest` verifies representative action and input components keep at least a 48dp touch target, and that `PillChip`, `SegmentedControl`, and `Slider` expose selection state and accessibility labels.
 - `:testing` exposes `assertMinimumTouchTarget` and `onNodeWithRequiredContentDescription` helpers for downstream app tests.
 - `:compose-utils` exposes `minimumTouchTarget` and `minimumTouchTargetHeight` modifiers for shared component sizing.
 - Icon-only actions are covered by semantics assertions for meaningful content descriptions.
-- `checkComponentTokenUsage` rejects nullable or null icon descriptions in component APIs and implementations.
+- `checkComponentTokenUsage` rejects nullable or null icon descriptions in the public component surface (`*Preview.kt`/`*Showkase.kt` demo files are excluded, since decorative icons there legitimately use `contentDescription = null`).
 - Empty and error states are covered by readable text assertions so feedback is not color-only.
 - Component preview entry points include `PreviewLightDark` and `PreviewFontScale` coverage for visual review at dark mode and 200% font scale.

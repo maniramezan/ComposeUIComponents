@@ -15,6 +15,8 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.theme.IconToken
 import io.github.maniramezan.compose.utils.minimumTouchTargetHeight
@@ -26,6 +28,12 @@ public data class NavigationItem(
     public val icon: IconToken,
     public val contentDescription: String = label,
     public val badge: String? = null,
+    /**
+     * Spoken description for the [badge], so screen readers announce something
+     * meaningful (e.g. `"5 unread"`) instead of the bare badge text. Supply a
+     * localized string; when `null` the badge text itself is read.
+     */
+    public val badgeContentDescription: String? = null,
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -116,7 +124,21 @@ public fun NavRail(
 @Composable
 private fun NavigationItemIcon(item: NavigationItem) {
     if (item.badge != null) {
-        BadgedBox(badge = { Badge { Text(text = item.badge) } }) {
+        val badgeDescription = item.badgeContentDescription
+        BadgedBox(
+            badge = {
+                Badge(
+                    modifier =
+                        if (badgeDescription != null) {
+                            Modifier.clearAndSetSemantics { contentDescription = badgeDescription }
+                        } else {
+                            Modifier
+                        },
+                ) {
+                    Text(text = item.badge)
+                }
+            },
+        ) {
             Icon(
                 imageVector = item.icon.imageVector,
                 contentDescription = item.contentDescription,
