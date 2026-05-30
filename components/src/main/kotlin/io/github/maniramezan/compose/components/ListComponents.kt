@@ -14,6 +14,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import io.github.maniramezan.compose.theme.AppTheme
 
 @Composable
@@ -33,7 +36,10 @@ public fun ListItem(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         leadingContent?.invoke()
-        Column(modifier = Modifier.weight(1f)) {
+        Column(
+            // Headline + supporting text read as a single focus stop.
+            modifier = Modifier.weight(1f).semantics(mergeDescendants = true) {},
+        ) {
             Text(text = headline)
             if (supportingText != null) {
                 Text(text = supportingText)
@@ -79,7 +85,10 @@ public fun LoadingState(
     label: String? = null,
     modifier: Modifier = Modifier,
 ) {
-    StateColumn(modifier = modifier) {
+    StateColumn(
+        // Announce the transition into the loading state.
+        modifier = modifier.semantics { liveRegion = LiveRegionMode.Polite },
+    ) {
         CircularProgressIndicator()
         if (label != null) {
             Text(text = label)
@@ -95,7 +104,10 @@ public fun ErrorState(
     action: @Composable (() -> Unit)? = null,
     leadingContent: @Composable (() -> Unit)? = null,
 ) {
-    StateColumn(modifier = modifier) {
+    StateColumn(
+        // Announce the transition into the error state.
+        modifier = modifier.semantics { liveRegion = LiveRegionMode.Polite },
+    ) {
         leadingContent?.invoke()
         Text(text = title)
         Text(text = message)

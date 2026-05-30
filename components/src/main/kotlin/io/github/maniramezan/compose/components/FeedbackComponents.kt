@@ -20,6 +20,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.utils.minimumTouchTargetHeight
@@ -55,9 +59,13 @@ public fun Skeleton(modifier: Modifier = Modifier) {
         modifier =
             modifier
                 .fillMaxWidth()
+                // Default block height; this is decorative, not a tap target.
                 .minimumTouchTargetHeight(minimumTouchTargetSize())
                 .clip(RoundedCornerShape(containerCornerRadius()))
-                .background(AppTheme.colors.surfaceVariant),
+                .background(AppTheme.colors.surfaceVariant)
+                // Loading placeholder carries no information; keep it out of the
+                // a11y tree so screen readers don't stop on an empty node.
+                .clearAndSetSemantics {},
     )
 }
 
@@ -86,7 +94,9 @@ public fun SkeletonBlock(
             modifier
                 .then(sizeModifier)
                 .clip(shape)
-                .background(background),
+                .background(background)
+                // Decorative loading placeholder; hide from screen readers.
+                .clearAndSetSemantics {},
     )
 }
 
@@ -103,7 +113,9 @@ public fun Toast(
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(containerCornerRadius()))
                 .background(AppTheme.colors.onSurface)
-                .padding(horizontal = AppTheme.spacing.lg, vertical = AppTheme.spacing.md),
+                .padding(horizontal = AppTheme.spacing.lg, vertical = AppTheme.spacing.md)
+                // Transient message: announce when it appears without stealing focus.
+                .semantics { liveRegion = LiveRegionMode.Polite },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {

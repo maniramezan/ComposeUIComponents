@@ -1,7 +1,10 @@
 package io.github.maniramezan.compose.components
 
 import androidx.compose.ui.test.assertHeightIsAtLeast
+import androidx.compose.ui.test.assertIsNotSelected
+import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -103,5 +106,51 @@ public class AccessibilityComponentsTest {
         composeRule.onNodeWithText("Try a different filter.").assertExists()
         composeRule.onNodeWithText("Could not load").assertExists()
         composeRule.onNodeWithText("Check your connection.").assertExists()
+    }
+
+    @Test
+    public fun pillChipExposesSelectionState() {
+        composeRule.setContent {
+            AppTheme {
+                PillChip(label = "All", isSelected = true, onClick = {})
+                PillChip(label = "Unread", isSelected = false, onClick = {})
+            }
+        }
+
+        composeRule.onNodeWithText("All").assertIsSelected()
+        composeRule.onNodeWithText("Unread").assertIsNotSelected()
+    }
+
+    @Test
+    public fun segmentedControlExposesSelectionState() {
+        composeRule.setContent {
+            AppTheme {
+                SegmentedControl(
+                    options = listOf("Day", "Week", "Month"),
+                    selectedIndex = 1,
+                    onOptionSelected = {},
+                )
+            }
+        }
+
+        composeRule.onNodeWithText("Day").assertIsNotSelected()
+        composeRule.onNodeWithText("Week").assertIsSelected()
+        composeRule.onNodeWithText("Month").assertIsNotSelected()
+    }
+
+    @Test
+    public fun sliderExposesLabelAndValueDescription() {
+        composeRule.setContent {
+            AppTheme {
+                Slider(
+                    value = 0.5f,
+                    onValueChange = {},
+                    label = "Volume",
+                    valueDescription = "50 percent",
+                )
+            }
+        }
+
+        composeRule.onNodeWithContentDescription("Volume").assertExists()
     }
 }
