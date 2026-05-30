@@ -20,10 +20,14 @@ jobs:
       - uses: gradle/actions/setup-gradle@v6
       - name: Check
         run: ./gradlew check
+      # Screenshot recording (~11 min of Robolectric/Compose rendering) is the
+      # dominant CI cost and is inherently non-cacheable. It only regenerates
+      # goldens, so run it on pushes to main, not on every pull request.
       - name: Record component screenshots
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         run: ./gradlew :components:recordRoborazziDebug
       - uses: actions/upload-artifact@v7.0.1
-        if: ${{ always() }}
+        if: ${{ always() && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         with:
           name: component-screenshots
           path: |
