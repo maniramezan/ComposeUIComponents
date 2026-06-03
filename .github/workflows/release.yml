@@ -19,6 +19,19 @@ jobs:
           java-version: '17'
       - uses: gradle/actions/setup-gradle@v6
 
+      # Fail fast if the pushed tag (e.g. v0.3.0) doesn't match VERSION_NAME in
+      # gradle.properties. Without this, a tag whose version is already on Maven
+      # Central re-publishes an existing version and fails late during upload.
+      - name: Verify tag matches VERSION_NAME
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          VER="$(grep '^VERSION_NAME=' gradle.properties | cut -d= -f2)"
+          echo "Tag version: $TAG | VERSION_NAME: $VER"
+          if [ "$TAG" != "$VER" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match VERSION_NAME=$VER. Bump VERSION_NAME and re-tag."
+            exit 1
+          fi
+
       - name: Check
         run: ./gradlew check
       - name: Record component screenshots
