@@ -1,5 +1,9 @@
 package io.github.maniramezan.compose.components
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -9,17 +13,21 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.PrimaryTabRow
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.theme.IconToken
 import io.github.maniramezan.compose.utils.minimumTouchTargetHeight
+import androidx.compose.material3.LargeTopAppBar as MaterialLargeTopAppBar
+import androidx.compose.material3.MediumTopAppBar as MaterialMediumTopAppBar
 import androidx.compose.material3.TopAppBar as MaterialTopAppBar
 
 @Immutable
@@ -117,6 +125,97 @@ public fun NavRail(
                 label = { Text(text = item.label) },
                 modifier = Modifier.minimumTouchTargetHeight(minimumTouchTargetSize()),
             )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+public fun MediumTopAppBar(
+    title: String,
+    modifier: Modifier = Modifier,
+    navigationIcon: @Composable () -> Unit = {},
+    actions: @Composable () -> Unit = {},
+) {
+    MaterialMediumTopAppBar(
+        title = { Text(text = title) },
+        modifier = modifier,
+        navigationIcon = navigationIcon,
+        actions = { actions() },
+        colors =
+            TopAppBarDefaults.topAppBarColors(
+                containerColor = AppTheme.colors.surface,
+                titleContentColor = AppTheme.colors.onSurface,
+                navigationIconContentColor = AppTheme.colors.primary,
+                actionIconContentColor = AppTheme.colors.primary,
+            ),
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+public fun LargeTopAppBar(
+    title: String,
+    modifier: Modifier = Modifier,
+    navigationIcon: @Composable () -> Unit = {},
+    actions: @Composable () -> Unit = {},
+) {
+    MaterialLargeTopAppBar(
+        title = { Text(text = title) },
+        modifier = modifier,
+        navigationIcon = navigationIcon,
+        actions = { actions() },
+        colors =
+            TopAppBarDefaults.topAppBarColors(
+                containerColor = AppTheme.colors.surface,
+                titleContentColor = AppTheme.colors.onSurface,
+                navigationIconContentColor = AppTheme.colors.primary,
+                actionIconContentColor = AppTheme.colors.primary,
+            ),
+    )
+}
+
+/**
+ * An adaptive navigation scaffold that shows a [BottomBar] on compact screens
+ * (< 600 dp wide) and a [NavRail] on medium/expanded screens. Use the [topBar]
+ * slot for a [TopAppBar], [MediumTopAppBar], or [LargeTopAppBar].
+ */
+@Composable
+public fun AdaptiveNavScaffold(
+    items: List<NavigationItem>,
+    selectedIndex: Int,
+    onItemSelected: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+    topBar: @Composable () -> Unit = {},
+    content: @Composable (PaddingValues) -> Unit,
+) {
+    val isExpandedWidth = LocalConfiguration.current.screenWidthDp >= 600
+    if (isExpandedWidth) {
+        Scaffold(topBar = topBar, modifier = modifier) { innerPadding ->
+            Row(modifier = Modifier.padding(innerPadding)) {
+                NavRail(
+                    items = items,
+                    selectedIndex = selectedIndex,
+                    onItemSelected = onItemSelected,
+                )
+                Box(modifier = Modifier.weight(1f)) {
+                    content(PaddingValues())
+                }
+            }
+        }
+    } else {
+        Scaffold(
+            modifier = modifier,
+            topBar = topBar,
+            bottomBar = {
+                BottomBar(
+                    items = items,
+                    selectedIndex = selectedIndex,
+                    onItemSelected = onItemSelected,
+                )
+            },
+        ) { innerPadding ->
+            content(innerPadding)
         }
     }
 }

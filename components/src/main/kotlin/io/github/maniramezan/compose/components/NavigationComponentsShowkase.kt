@@ -41,6 +41,14 @@ public fun TabRowShowkase(): Unit =
 @Composable
 public fun NavRailShowkase(): Unit = NavRailPreview()
 
+@ShowkaseComposable(name = "Medium Top App Bar", group = "Navigation")
+@Composable
+public fun MediumTopAppBarShowkase(): Unit = MediumTopAppBarPreview()
+
+@ShowkaseComposable(name = "Large Top App Bar", group = "Navigation")
+@Composable
+public fun LargeTopAppBarShowkase(): Unit = LargeTopAppBarPreview()
+
 @Composable
 private fun showkaseNavigationItems(): List<NavigationItem> =
     listOf(

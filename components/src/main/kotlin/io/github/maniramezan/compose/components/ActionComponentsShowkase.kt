@@ -54,3 +54,26 @@ public fun SegmentedControlShowkase(): Unit =
             onOptionSelected = {},
         )
     }
+
+@ShowkaseComposable(name = "Single Choice Segmented Button Row", group = "Actions")
+@Composable
+public fun SingleChoiceSegmentedButtonRowShowkase(): Unit =
+    AppTheme {
+        SingleChoiceSegmentedButtonRow(
+            options = listOf("Day", "Week", "Month"),
+            selectedIndex = 1,
+            onOptionSelected = {},
+        )
+    }
+
+@ShowkaseComposable(name = "Extended FAB", group = "Actions")
+@Composable
+public fun ExtendedFABShowkase(): Unit =
+    AppTheme {
+        ExtendedFloatingActionButton(
+            text = "Create",
+            icon = AppTheme.icons.check,
+            contentDescription = "Create",
+            onClick = {},
+        )
+    }

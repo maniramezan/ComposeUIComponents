@@ -9,15 +9,21 @@ class NavigationComponentsTest {
         assertThat(
             listOf(
                 "TopAppBar",
+                "MediumTopAppBar",
+                "LargeTopAppBar",
                 "BottomBar",
                 "TabRow",
                 "NavRail",
+                "AdaptiveNavScaffold",
             ),
         ).containsExactly(
             "TopAppBar",
+            "MediumTopAppBar",
+            "LargeTopAppBar",
             "BottomBar",
             "TabRow",
             "NavRail",
+            "AdaptiveNavScaffold",
         ).inOrder()
     }
 }

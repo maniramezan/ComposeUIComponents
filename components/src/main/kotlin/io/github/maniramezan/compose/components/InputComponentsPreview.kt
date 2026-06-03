@@ -48,5 +48,16 @@ public fun InputComponentsPreview(): Unit =
                 value = 0.65f,
                 onValueChange = {},
             )
+            Switch(
+                checked = true,
+                onCheckedChange = {},
+                label = "With icon",
+                thumbContent = {
+                    androidx.compose.material3.Icon(
+                        imageVector = AppTheme.icons.check.imageVector,
+                        contentDescription = null,
+                    )
+                },
+            )
         }
     }

@@ -19,6 +19,15 @@ public fun CardShowkase(): Unit =
         }
     }
 
+@ShowkaseComposable(name = "Clickable Card", group = "Containers")
+@Composable
+public fun ClickableCardShowkase(): Unit =
+    AppTheme {
+        Card(onClick = {}) {
+            Text(text = "Tap me")
+        }
+    }
+
 @ShowkaseComposable(name = "Surface", group = "Containers")
 @Composable
 public fun SurfaceShowkase(): Unit =

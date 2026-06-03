@@ -43,6 +43,22 @@ public fun NavRailPreview(): Unit =
         )
     }
 
+@PreviewLightDark
+@Preview(name = "Medium Top App Bar", group = "Navigation")
+@Composable
+public fun MediumTopAppBarPreview(): Unit =
+    AppTheme {
+        MediumTopAppBar(title = "Dashboard")
+    }
+
+@PreviewLightDark
+@Preview(name = "Large Top App Bar", group = "Navigation")
+@Composable
+public fun LargeTopAppBarPreview(): Unit =
+    AppTheme {
+        LargeTopAppBar(title = "Dashboard")
+    }
+
 @Composable
 private fun previewNavigationItems(): List<NavigationItem> =
     listOf(
