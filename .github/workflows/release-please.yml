@@ -1,9 +1,10 @@
 name: Release Please
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
 
 permissions:
   contents: write
@@ -11,6 +12,8 @@ permissions:
 
 jobs:
   release-please:
+    # Only run when CI passes — prevents tagging broken code
+    if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
       - uses: googleapis/release-please-action@v5
