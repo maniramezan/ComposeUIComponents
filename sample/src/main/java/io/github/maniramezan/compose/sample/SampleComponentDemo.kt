@@ -117,6 +117,13 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             content = { SliderPage() },
         ),
         SampleComponentDemo(
+            id = "selection-sheet",
+            title = "SelectionSheet",
+            category = "Selection",
+            description = "Single/multiple-choice picker in a bottom sheet with inline two-level disclosure.",
+            content = { SelectionSheetPage() },
+        ),
+        SampleComponentDemo(
             id = "top-app-bar",
             title = "TopAppBar",
             category = "Navigation",
