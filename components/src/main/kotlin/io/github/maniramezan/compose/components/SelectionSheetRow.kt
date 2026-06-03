@@ -25,6 +25,12 @@ import io.github.maniramezan.compose.utils.minimumTouchTargetHeight
  * indicator. When [expanded] is non-null the row is an expandable parent and shows a
  * disclosure chevron (rotated when expanded); when [expanded] is null it is a selectable
  * leaf/child and shows a checkmark when [isSelected].
+ *
+ * @param expandedDescription localized label for the chevron icon when the row is expanded
+ *   (e.g. `"expanded"`). TalkBack reads this as the icon's content description. When blank,
+ *   the chevron is decorative and the state is not announced. Ignored for leaf rows.
+ * @param collapsedDescription localized label for the chevron icon when the row is collapsed
+ *   (e.g. `"collapsed"`). When blank, the chevron is decorative. Ignored for leaf rows.
  */
 @Composable
 internal fun SelectionSheetRow(
@@ -35,6 +41,8 @@ internal fun SelectionSheetRow(
     isIndented: Boolean,
     expanded: Boolean?,
     onClick: () -> Unit,
+    expandedDescription: String = "",
+    collapsedDescription: String = "",
 ) {
     val interaction =
         if (expanded == null) {
@@ -78,17 +86,24 @@ internal fun SelectionSheetRow(
             }
         }
         when {
-            expanded != null ->
+            expanded != null -> {
+                val chevronDescription =
+                    if (expanded) {
+                        expandedDescription.ifBlank { null }
+                    } else {
+                        collapsedDescription.ifBlank { null }
+                    }
                 Icon(
                     imageVector = AppTheme.icons.expand.imageVector,
-                    contentDescription = if (expanded) "Collapse" else "Expand",
+                    contentDescription = chevronDescription,
                     tint = AppTheme.colors.onSurfaceVariant,
                     modifier = Modifier.rotate(if (expanded) 180f else 0f),
                 )
+            }
             isSelected ->
                 Icon(
                     imageVector = AppTheme.icons.check.imageVector,
-                    contentDescription = "Selected",
+                    contentDescription = null, // @check:suppress — decorative; selected state is in selectable() on the row
                     tint = AppTheme.colors.primary,
                 )
         }

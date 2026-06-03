@@ -41,8 +41,30 @@ Record results here before cutting a release. Use a physical device when possibl
 
 ## Component Accessibility Contracts
 
-Some components require the caller to supply localized accessibility text, so the
-library stays string-free and product-agnostic:
+All user-visible and accessibility strings are caller-supplied. The library ships no
+Android string resources and uses no English defaults. See
+[ADR 0004](adr/0004-localization-and-a11y-string-contract.md) for the full rationale.
+
+Caller-supplied string parameters default to `""` or `null`. An empty/null value is a
+safe fallback — the node is omitted or stays decorative — but callers should always
+provide localized strings for a finished experience.
+
+### Input components
+
+- `SearchField.placeholder` — hint shown when the field is empty. Defaults to `""` (no
+  placeholder). Pass a localized string such as `stringResource(R.string.search)`.
+
+### Selection sheet
+
+- `SelectionSheet.searchPlaceholder` — hint in the search field. Defaults to `""`.
+- `SelectionSheet.noResultsText` — message shown when a search returns zero rows.
+  Defaults to `""` (nothing rendered). Pass a localized string.
+- `SelectionSheet.expandedDescription` / `collapsedDescription` — `stateDescription`
+  announced by TalkBack when a parent row is expanded or collapsed. Defaults to `""`
+  (no state announcement). Pass e.g. `stringResource(R.string.expanded)` /
+  `stringResource(R.string.collapsed)`.
+
+### Other components
 
 - `Slider` announces only a raw percentage by default. Pass `label` (what it
   controls) and `valueDescription` (a meaningful current value) for context.
