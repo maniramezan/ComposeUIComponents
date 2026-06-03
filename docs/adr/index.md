@@ -7,6 +7,7 @@ ADRs capture decisions that shape the design system and are expected to outlive 
 - [ADR 0001: Theming Model](0001-theming-model.md): extend Material 3 with immutable semantic tokens and `CompositionLocal`s.
 - [ADR 0002: Module Boundaries](0002-module-boundaries.md): keep pure Kotlin helpers, tokens, theme contracts, icons, utilities, components, testing, catalog, and sample modules separate.
 - [ADR 0003: Testing Strategy](0003-testing-strategy.md): combine JVM/domain tests, Compose UI tests, and Roborazzi screenshot coverage.
+- [ADR 0004: Localization and A11y String Contract](0004-localization-and-a11y-string-contract.md): all user-visible and accessibility strings are caller-supplied; the library ships no string resources and uses no English defaults.
 
 ## Writing New ADRs
 

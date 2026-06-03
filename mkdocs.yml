@@ -53,6 +53,7 @@ nav:
       - Theming Model: adr/0001-theming-model.md
       - Module Boundaries: adr/0002-module-boundaries.md
       - Testing Strategy: adr/0003-testing-strategy.md
+      - Localization and A11y String Contract: adr/0004-localization-and-a11y-string-contract.md
 
 markdown_extensions:
   - admonition

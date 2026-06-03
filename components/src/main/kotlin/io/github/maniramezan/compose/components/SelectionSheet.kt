@@ -35,6 +35,8 @@ import androidx.compose.ui.Modifier
  * @param onSelect invoked with the tapped leaf or child identifier; just update your selection — dismissal is handled per [confirmButton].
  * @param onDismissRequest invoked when the sheet is dismissed by scrim tap, drag, back, item tap (when there is no [confirmButton]), or the confirm control.
  * @param confirmButton optional slot for a confirm/close control shown at the trailing edge of the header — supply your own localized text button, icon, or image and wire its `onClick` (e.g. to [onDismissRequest]). When provided, item taps no longer dismiss; only the confirm control does.
+ * @param expandedDescription localized state label announced by accessibility services when a parent row is expanded (e.g. `"expanded"`). When blank, no expand state is announced.
+ * @param collapsedDescription localized state label announced when a parent row is collapsed (e.g. `"collapsed"`). When blank, no collapse state is announced.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,8 +48,10 @@ public fun <ID : Any> SelectionSheet(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     isSearchable: Boolean = false,
-    searchPlaceholder: String = "Search",
-    noResultsText: String = "No results",
+    searchPlaceholder: String = "",
+    noResultsText: String = "",
+    expandedDescription: String = "",
+    collapsedDescription: String = "",
     confirmButton: (@Composable () -> Unit)? = null,
 ) {
     SelectionSheet(
@@ -70,6 +74,8 @@ public fun <ID : Any> SelectionSheet(
         isSearchable = isSearchable,
         searchPlaceholder = searchPlaceholder,
         noResultsText = noResultsText,
+        expandedDescription = expandedDescription,
+        collapsedDescription = collapsedDescription,
         confirmButton = confirmButton,
     )
 }
@@ -103,8 +109,10 @@ public fun <ID : Any> SelectionSheet(
  * @param onSelect invoked with the tapped leaf or child identifier; toggle membership yourself.
  * @param onDismissRequest invoked when the sheet is dismissed by scrim tap, drag, or back.
  * @param isSearchable when `true`, shows a search field that filters across both levels.
- * @param searchPlaceholder hint shown in the search field when it is empty.
- * @param noResultsText shown when a search matches nothing.
+ * @param searchPlaceholder hint shown in the search field when it is empty; supply a localized string. Defaults to no hint.
+ * @param noResultsText shown when a search matches nothing; supply a localized string. Defaults to no message.
+ * @param expandedDescription localized state label announced by accessibility services when a parent row is expanded (e.g. `"expanded"`). When blank, no expand state is announced.
+ * @param collapsedDescription localized state label announced when a parent row is collapsed (e.g. `"collapsed"`). When blank, no collapse state is announced.
  * @param confirmButton optional slot for a confirm/close control shown at the trailing edge of the header — supply your own localized text button, icon, or image and wire its `onClick` (e.g. to [onDismissRequest]). Recommended for multiple choice, which does not dismiss on tap.
  */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -117,8 +125,10 @@ public fun <ID : Any> SelectionSheet(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     isSearchable: Boolean = false,
-    searchPlaceholder: String = "Search",
-    noResultsText: String = "No results",
+    searchPlaceholder: String = "",
+    noResultsText: String = "",
+    expandedDescription: String = "",
+    collapsedDescription: String = "",
     confirmButton: (@Composable () -> Unit)? = null,
 ) {
     ModalBottomSheet(
@@ -134,6 +144,8 @@ public fun <ID : Any> SelectionSheet(
             isSearchable = isSearchable,
             searchPlaceholder = searchPlaceholder,
             noResultsText = noResultsText,
+            expandedDescription = expandedDescription,
+            collapsedDescription = collapsedDescription,
             confirmButton = confirmButton,
             modifier = Modifier.weight(1f, fill = false),
         )

@@ -39,6 +39,7 @@ When adding or updating dependencies, check the latest stable version online fir
 - The theming model is defined by ADR 0001: extend Material 3 with immutable semantic token bundles exposed through `AppTheme` and `CompositionLocal`s.
 - The module boundary model is defined by ADR 0002: keep pure Kotlin helpers, tokens, theme contracts, icons, Compose utilities, components, testing, catalog, sample, and benchmark concerns separate.
 - The testing model is defined by ADR 0003: use JVM/domain tests for pure logic, Compose UI tests for semantics and interaction, and Roborazzi for screenshot verification.
+- The localization and a11y string contract is defined by ADR 0004: all user-visible and accessibility strings are caller-supplied; the library ships no Android string resources and uses no English defaults.
 - Treat `docs/adr/*.md`, `docs/theming.md`, `docs/accessibility.md`, `docs/performance.md`, and `docs/contributing.md` as the current design and process references when behavior or architecture questions come up.
 - The library is approaching `1.0.0`; prefer additive, stable API evolution and avoid casual churn in public names, file names referenced by docs/Showkase, and module boundaries.
 
@@ -52,6 +53,8 @@ When adding or updating dependencies, check the latest stable version online fir
 ## Component Rules
 
 - Keep components generic; never introduce product-specific names, strings, analytics, networking, or business rules.
+- **Localization and a11y strings**: every `String` or `String?` parameter that contributes text to the UI or the accessibility tree must be caller-supplied with no English default. Use `String = ""` when blank is safe; use `String? = null` (or guard on `isNotBlank()`) when a blank value would produce a visible empty node. Never ship `strings.xml` resources in `:components`. See [ADR 0004](docs/adr/0004-localization-and-a11y-string-contract.md).
+- **Decorative icons**: set `contentDescription = null` on icons whose state is already conveyed by an adjacent text node or a semantic property (`selected`, `stateDescription`, `heading`). Use `semantics { stateDescription = … }` (with a caller-supplied string) to communicate expand/collapse and other custom interactive states to TalkBack.
 - Use `AppTheme` tokens for colors, spacing, typography, shapes, and motion.
 - Do not hardcode raw colors or raw `dp` values in `:components`; add semantic tokens first when needed.
 - Prefer state-hoisted, slot-based APIs over inheritance or app-specific callbacks.
