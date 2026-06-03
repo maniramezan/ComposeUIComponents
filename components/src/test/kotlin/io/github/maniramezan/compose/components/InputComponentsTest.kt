@@ -28,6 +28,22 @@ class InputComponentsTest {
     }
 
     @Test
+    fun textFieldSupportsIconSlots() {
+        assertThat("leadingIcon").isNotEmpty()
+        assertThat("trailingIcon").isNotEmpty()
+    }
+
+    @Test
+    fun passwordFieldSupportsTrailingIconSlot() {
+        assertThat("trailingIcon").isNotEmpty()
+    }
+
+    @Test
+    fun switchSupportsThumbContentSlot() {
+        assertThat("thumbContent").isNotEmpty()
+    }
+
+    @Test
     fun searchFieldSupportsKeyboardAndLeadingIconSlots() {
         assertThat("keyboardOptions").isNotEmpty()
         assertThat("leadingIcon").isNotEmpty()

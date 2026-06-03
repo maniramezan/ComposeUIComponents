@@ -10,6 +10,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -19,7 +21,9 @@ import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.theme.IconToken
 import io.github.maniramezan.compose.utils.minimumTouchTarget
 import io.github.maniramezan.compose.utils.minimumTouchTargetHeight
+import androidx.compose.material3.ExtendedFloatingActionButton as MaterialExtendedFloatingActionButton
 import androidx.compose.material3.IconButton as MaterialIconButton
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow as MaterialSingleChoiceSegmentedButtonRow
 import androidx.compose.material3.TextButton as MaterialTextButton
 
 @Composable
@@ -157,6 +161,53 @@ public fun SegmentedControl(
                 ) {
                     Text(text = option)
                 }
+            }
+        }
+    }
+}
+
+@Composable
+public fun ExtendedFloatingActionButton(
+    text: String,
+    icon: IconToken,
+    contentDescription: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    MaterialExtendedFloatingActionButton(
+        onClick = onClick,
+        modifier = modifier,
+        containerColor = AppTheme.colors.primary,
+        contentColor = AppTheme.colors.onPrimary,
+        icon = {
+            Icon(
+                imageVector = icon.imageVector,
+                contentDescription = contentDescription,
+                modifier = Modifier.size(standardIconSize()),
+            )
+        },
+        text = { Text(text = text) },
+    )
+}
+
+@Composable
+public fun SingleChoiceSegmentedButtonRow(
+    options: List<String>,
+    selectedIndex: Int,
+    onOptionSelected: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+) {
+    MaterialSingleChoiceSegmentedButtonRow(modifier = modifier) {
+        options.forEachIndexed { index, option ->
+            SegmentedButton(
+                selected = index == selectedIndex,
+                onClick = { onOptionSelected(index) },
+                shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
+                enabled = enabled,
+                icon = { SegmentedButtonDefaults.Icon(active = index == selectedIndex) },
+            ) {
+                Text(text = option)
             }
         }
     }

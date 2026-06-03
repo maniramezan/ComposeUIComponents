@@ -36,6 +36,8 @@ public fun TextField(
     enabled: Boolean = true,
     isError: Boolean = false,
     supportingText: String? = null,
+    leadingIcon: (@Composable () -> Unit)? = null,
+    trailingIcon: (@Composable () -> Unit)? = null,
 ) {
     OutlinedTextField(
         value = value,
@@ -46,6 +48,8 @@ public fun TextField(
         label = { Text(text = label) },
         supportingText = supportingText?.let { { Text(text = it) } },
         singleLine = true,
+        leadingIcon = leadingIcon,
+        trailingIcon = trailingIcon,
     )
 }
 
@@ -59,6 +63,7 @@ public fun PasswordField(
     isError: Boolean = false,
     supportingText: String? = null,
     revealPassword: Boolean = false,
+    trailingIcon: (@Composable () -> Unit)? = null,
 ) {
     OutlinedTextField(
         value = value,
@@ -71,6 +76,7 @@ public fun PasswordField(
         singleLine = true,
         visualTransformation = if (revealPassword) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+        trailingIcon = trailingIcon,
     )
 }
 
@@ -169,6 +175,7 @@ public fun Switch(
     label: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    thumbContent: (@Composable () -> Unit)? = null,
 ) {
     Row(
         modifier =
@@ -187,6 +194,7 @@ public fun Switch(
             checked = checked,
             onCheckedChange = null,
             enabled = enabled,
+            thumbContent = thumbContent,
         )
         Text(text = label)
     }

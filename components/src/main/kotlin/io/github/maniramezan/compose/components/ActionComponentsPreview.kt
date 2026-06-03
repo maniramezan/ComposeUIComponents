@@ -36,5 +36,16 @@ public fun ActionComponentsPreview(): Unit =
                 selectedIndex = 1,
                 onOptionSelected = {},
             )
+            SingleChoiceSegmentedButtonRow(
+                options = listOf("Day", "Week", "Month"),
+                selectedIndex = 1,
+                onOptionSelected = {},
+            )
+            ExtendedFloatingActionButton(
+                text = "Create",
+                icon = AppTheme.icons.check,
+                contentDescription = "Create",
+                onClick = {},
+            )
         }
     }

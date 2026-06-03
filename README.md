@@ -3,7 +3,7 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/maniramezan/ComposeUIComponents/ci.yml?branch=main&label=CI)](https://github.com/maniramezan/ComposeUIComponents/actions/workflows/ci.yml)
 [![Docs](https://img.shields.io/github/actions/workflow/status/maniramezan/ComposeUIComponents/docs.yml?branch=main&label=docs)](https://maniramezan.github.io/ComposeUIComponents/)
 [![Release](https://img.shields.io/github/v/release/maniramezan/ComposeUIComponents?sort=semver)](https://github.com/maniramezan/ComposeUIComponents/releases/latest)
-[![License: MIT](https://img.shields.io/github/license/maniramezan/ComposeUIComponents)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 Reusable Kotlin-first Jetpack Compose design system for Android apps.
 

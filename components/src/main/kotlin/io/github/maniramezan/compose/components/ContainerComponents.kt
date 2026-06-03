@@ -28,15 +28,21 @@ import androidx.compose.material3.TextButton as MaterialTextButton
 @Composable
 public fun Card(
     modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
     contentPadding: PaddingValues = PaddingValues(AppTheme.spacing.lg),
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    MaterialCard(modifier = modifier.fillMaxWidth()) {
+    val columnContent: @Composable ColumnScope.() -> Unit = {
         Column(
             modifier = Modifier.padding(contentPadding),
             verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm),
             content = content,
         )
+    }
+    if (onClick != null) {
+        MaterialCard(modifier = modifier.fillMaxWidth(), onClick = onClick, content = columnContent)
+    } else {
+        MaterialCard(modifier = modifier.fillMaxWidth(), content = columnContent)
     }
 }
 
