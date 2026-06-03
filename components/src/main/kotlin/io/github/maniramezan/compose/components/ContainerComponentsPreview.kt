@@ -30,6 +30,9 @@ public fun ContainerComponentsPreview(): Unit =
                 actionLabel = "Undo",
                 onAction = {},
             )
+            Card(onClick = {}) {
+                Text(text = "Clickable card")
+            }
         }
     }
 

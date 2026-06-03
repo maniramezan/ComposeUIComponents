@@ -13,7 +13,9 @@ class ActionComponentsTest {
                 "TextButton",
                 "IconButton",
                 "FAB",
+                "ExtendedFloatingActionButton",
                 "SegmentedControl",
+                "SingleChoiceSegmentedButtonRow",
             ),
         ).containsExactly(
             "PrimaryButton",
@@ -21,7 +23,9 @@ class ActionComponentsTest {
             "TextButton",
             "IconButton",
             "FAB",
+            "ExtendedFloatingActionButton",
             "SegmentedControl",
+            "SingleChoiceSegmentedButtonRow",
         ).inOrder()
     }
 }
