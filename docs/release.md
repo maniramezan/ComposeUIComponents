@@ -1,47 +1,57 @@
-# Release Checklist
+# Release Process
 
-## 1.0.0 Gate
+Releases are fully automated via [Release Please](https://github.com/googleapis/release-please). Do not manually bump `VERSION_NAME` or create tags.
 
-- All public APIs reviewed for source and binary compatibility.
+## How it works
+
+1. Merge PRs to `main` using [Conventional Commit](https://www.conventionalcommits.org/) titles.
+2. After CI passes on `main`, the Release Please workflow opens (or updates) a release PR that bumps `VERSION_NAME` in `gradle.properties`, updates `.release-please-manifest.json`, and drafts release notes.
+3. When ready to ship, merge the release PR. Release Please pushes the `vX.Y.Z` tag, which triggers the release workflow to publish Maven artifacts and create the GitHub Release.
+
+## Controlling the version bump
+
+The bump is determined by the highest-impact commit since the last release:
+
+| Commit prefix | Bump |
+|---|---|
+| `fix:`, `perf:`, `refactor:` | patch (0.0.x) |
+| `feat:` | minor (0.x.0) |
+| `feat!:`, `fix!:`, or any commit with `BREAKING CHANGE:` in the footer | major (x.0.0) |
+| `chore:`, `docs:`, `test:`, `ci:`, `build:` | none (not released) |
+
+## Triggering manually
+
+The Release Please workflow can be run manually from the Actions tab via `workflow_dispatch`. This is useful if the automatic post-CI trigger was skipped or failed. It performs the same steps as the automatic run.
+
+## Pre-release checklist
+
+Before merging the Release Please PR, verify:
+
 - `apiCheck` passes.
 - Dokka generation passes.
 - Catalog and sample debug APKs assemble.
 - Component Roborazzi screenshots record successfully.
-- `publishToMavenLocal` passes before pushing a tag when local signing is configured.
-- Baseline profile generation is reviewed when startup or sample navigation changes.
-- Accessibility checklist is complete.
-- Performance checklist is complete.
-- GitHub Pages deployment succeeds from `main` before cutting a release.
-- Maven Central publishing credentials and signing are configured outside the repository.
+- GitHub Pages deployment succeeds from `main`.
+- Maven Central publishing credentials and signing are configured in CI secrets.
 
-## Verification
+## 1.0.0 Gate
 
-```bash
-./gradlew check :components:recordRoborazziDebug :catalog:assembleDebug :sample:assembleDebug publishToMavenLocal
-python -m pip install -r requirements-docs.txt
-mkdocs build --strict
-```
+Additional checks before the first stable release:
 
-If local signing is not configured, run the same verification without `publishToMavenLocal` and let the tag-triggered release workflow perform the signed publish in CI.
+- All public APIs reviewed for source and binary compatibility.
+- `publishToMavenLocal` passes with local signing configured.
+- Baseline profile generation reviewed for startup or sample navigation changes.
+- Accessibility checklist complete.
+- Performance checklist complete.
 
-Before pushing the release tag:
+## GitHub Release assets
 
-1. Set `VERSION_NAME` in `gradle.properties` to the release version.
-2. Commit and push that version bump to `main`.
-3. Create and push a tag with the same release version and the `v` prefix, for example `v0.2.0`.
+The release workflow attaches these assets automatically:
 
-## GitHub Release
-
-Pushing a tag matching `v*.*.*` runs `.github/workflows/release.yml`, publishes Maven artifacts, and creates the GitHub Release automatically.
-
-The workflow currently attaches these assets to the GitHub Release:
-
-- `catalog/build/outputs/apk/debug/catalog-debug.apk`
-- `sample/build/outputs/apk/debug/sample-debug.apk`
+- `catalog-debug.apk`
+- `sample-debug.apk`
 - `component-screenshots.tar.gz`
 
-The published Maven artifact version comes from `VERSION_NAME` in `gradle.properties`, so keep `v0.2.0`-style tags aligned with `0.2.0` in `VERSION_NAME`.
+## Versioning policy
 
-## Versioning
-
-After `1.0.0`, follow SemVer and keep deprecated APIs for at least one minor release before removal.
+After `1.0.0`, follow SemVer strictly. Deprecated APIs must remain for at least one minor release before removal.
