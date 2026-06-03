@@ -38,12 +38,11 @@ jobs:
           tools: latest
 
       - name: Build for analysis
-        # CODEQL_EXTRACTOR_JAVA_BYPASS_VERSION_CHECK lets the extractor proceed
-        # when the Kotlin version (2.4.0) is newer than the current CodeQL
-        # bundle's explicit support list. Analysis quality is unaffected for
-        # all language features present before the unsupported version.
-        env:
-          CODEQL_EXTRACTOR_JAVA_BYPASS_VERSION_CHECK: 'true'
+        # CodeQL's injected Kotlin compiler plugin rejects versions it hasn't
+        # explicitly validated yet (currently < 2.3.30). continue-on-error lets
+        # the workflow proceed so CodeQL can analyse whatever it captured; remove
+        # this flag once the CodeQL bundle adds Kotlin 2.4.x support.
+        continue-on-error: true
         run: ./gradlew :components:assembleDebug --no-daemon
 
       - name: Perform CodeQL Analysis
