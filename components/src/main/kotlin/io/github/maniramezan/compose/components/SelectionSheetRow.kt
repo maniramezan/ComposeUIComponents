@@ -81,14 +81,14 @@ internal fun SelectionSheetRow(
             expanded != null ->
                 Icon(
                     imageVector = AppTheme.icons.expand.imageVector,
-                    contentDescription = null,
+                    contentDescription = if (expanded) "Collapse" else "Expand",
                     tint = AppTheme.colors.onSurfaceVariant,
                     modifier = Modifier.rotate(if (expanded) 180f else 0f),
                 )
             isSelected ->
                 Icon(
                     imageVector = AppTheme.icons.check.imageVector,
-                    contentDescription = null,
+                    contentDescription = "Selected",
                     tint = AppTheme.colors.primary,
                 )
         }
