@@ -34,8 +34,10 @@ internal fun <ID : Any> SelectionSheetContent(
     onSelect: (ID) -> Unit,
     modifier: Modifier = Modifier,
     isSearchable: Boolean = false,
-    searchPlaceholder: String = "Search",
-    noResultsText: String = "No results",
+    searchPlaceholder: String = "",
+    noResultsText: String = "",
+    expandedDescription: String = "",
+    collapsedDescription: String = "",
     confirmButton: (@Composable () -> Unit)? = null,
 ) {
     var query by remember { mutableStateOf("") }
@@ -77,7 +79,7 @@ internal fun <ID : Any> SelectionSheetContent(
                     .weight(1f, fill = false)
                     .verticalScroll(rememberScrollState()),
         ) {
-            if (visibleNodes.isEmpty() && isSearching) {
+            if (visibleNodes.isEmpty() && isSearching && noResultsText.isNotBlank()) {
                 Text(
                     text = noResultsText,
                     style = AppTheme.typography.bodyMedium,
@@ -113,6 +115,8 @@ internal fun <ID : Any> SelectionSheetContent(
                             expandedIds =
                                 if (node.id in expandedIds) expandedIds - node.id else expandedIds + node.id
                         },
+                        expandedDescription = expandedDescription,
+                        collapsedDescription = collapsedDescription,
                     )
                     if (expanded) {
                         node.children.forEach { child ->

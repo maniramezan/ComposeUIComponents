@@ -16,9 +16,15 @@ public abstract class CheckComponentTokenUsageTask : DefaultTask() {
         val hardcodedColorPattern = Regex("""Color\s*\(\s*0x[0-9A-Fa-f_]+""")
         val nullableContentDescriptionPattern = Regex("""contentDescription\s*:\s*String\?""")
         val nullContentDescriptionPattern = Regex("""contentDescription\s*=\s*null""")
+        // Lines that end with this marker are explicitly acknowledged as intentional exceptions.
+        // Use sparingly: only for decorative icons inside composite components whose parent
+        // row/container already exposes full accessibility semantics (selected, stateDescription,
+        // heading, etc.) so the icon itself carries no additional information.
+        val suppressionMarker = "// @check:suppress"
         val violations =
             sourceFiles.files.flatMap { file ->
                 file.readLines().mapIndexedNotNull { index, line ->
+                    if (line.contains(suppressionMarker)) return@mapIndexedNotNull null
                     val hasViolation =
                         rawDpPattern.containsMatchIn(line) ||
                             hardcodedColorPattern.containsMatchIn(line) ||

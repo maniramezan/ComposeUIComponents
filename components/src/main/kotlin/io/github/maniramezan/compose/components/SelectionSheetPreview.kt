@@ -45,6 +45,8 @@ public fun SelectionSheetSingleChoicePreview(): Unit =
             selectedIds = setOf("banana"),
             onSelect = {},
             isSearchable = true,
+            searchPlaceholder = "Search",
+            noResultsText = "No results",
         )
     }
 
