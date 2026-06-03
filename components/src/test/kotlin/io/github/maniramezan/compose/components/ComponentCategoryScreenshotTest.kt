@@ -82,6 +82,13 @@ public class ComponentCategoryScreenshotTest {
     }
 
     @Test
+    public fun selectionSheetMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/selection-sheet.png") {
+            SelectionSheetSingleChoicePreview()
+        }
+    }
+
+    @Test
     public fun overlayCardMatchesGolden() {
         captureRoboImage("build/outputs/roborazzi/overlay-card.png") {
             OverlayCardPreview()

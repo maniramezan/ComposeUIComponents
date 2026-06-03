@@ -34,6 +34,7 @@ nav:
       - Primary Button: components/primary-button.md
       - Actions: components/actions.md
       - Inputs: components/inputs.md
+      - Selection: components/selection.md
       - Containers: components/containers.md
       - Lists: components/lists.md
       - Navigation: components/navigation.md

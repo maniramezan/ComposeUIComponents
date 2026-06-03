@@ -14,12 +14,14 @@ public data class IconToken(
 public data class AppIcons(
     public val check: IconToken,
     public val close: IconToken,
+    public val expand: IconToken = IconToken(EmptyIcon),
 ) {
     public companion object {
         public fun default(): AppIcons =
             AppIcons(
                 check = IconToken(EmptyIcon),
                 close = IconToken(EmptyIcon),
+                expand = IconToken(EmptyIcon),
             )
     }
 }
