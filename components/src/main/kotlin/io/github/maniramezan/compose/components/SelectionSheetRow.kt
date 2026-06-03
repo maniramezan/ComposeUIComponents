@@ -14,8 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextOverflow
 import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.utils.minimumTouchTargetHeight
@@ -28,10 +26,11 @@ import io.github.maniramezan.compose.utils.minimumTouchTargetHeight
  * disclosure chevron (rotated when expanded); when [expanded] is null it is a selectable
  * leaf/child and shows a checkmark when [isSelected].
  *
- * @param expandedDescription localized state label announced by accessibility services when the
- *   row is expanded (e.g. "expanded"). Ignored for leaf rows. When blank, no state is announced.
- * @param collapsedDescription localized state label announced when the row is collapsed
- *   (e.g. "collapsed"). Ignored for leaf rows. When blank, no state is announced.
+ * @param expandedDescription localized label for the chevron icon when the row is expanded
+ *   (e.g. `"expanded"`). TalkBack reads this as the icon's content description. When blank,
+ *   the chevron is decorative and the state is not announced. Ignored for leaf rows.
+ * @param collapsedDescription localized label for the chevron icon when the row is collapsed
+ *   (e.g. `"collapsed"`). When blank, the chevron is decorative. Ignored for leaf rows.
  */
 @Composable
 internal fun SelectionSheetRow(
@@ -45,27 +44,11 @@ internal fun SelectionSheetRow(
     expandedDescription: String = "",
     collapsedDescription: String = "",
 ) {
-    val expandStateDescription =
-        when {
-            expanded == null -> null
-            expanded && expandedDescription.isNotBlank() -> expandedDescription
-            !expanded && collapsedDescription.isNotBlank() -> collapsedDescription
-            else -> null
-        }
-
     val interaction =
         if (expanded == null) {
             Modifier.selectable(selected = isSelected, role = Role.Button, onClick = onClick)
         } else {
-            Modifier
-                .clickable(role = Role.Button, onClick = onClick)
-                .let { mod ->
-                    if (expandStateDescription != null) {
-                        mod.semantics { stateDescription = expandStateDescription }
-                    } else {
-                        mod
-                    }
-                }
+            Modifier.clickable(role = Role.Button, onClick = onClick)
         }
 
     Row(
@@ -103,13 +86,20 @@ internal fun SelectionSheetRow(
             }
         }
         when {
-            expanded != null ->
+            expanded != null -> {
+                val chevronDescription =
+                    if (expanded) {
+                        expandedDescription.ifBlank { null }
+                    } else {
+                        collapsedDescription.ifBlank { null }
+                    }
                 Icon(
                     imageVector = AppTheme.icons.expand.imageVector,
-                    contentDescription = null, // @check:suppress — decorative; expanded state is in stateDescription on the row
+                    contentDescription = chevronDescription,
                     tint = AppTheme.colors.onSurfaceVariant,
                     modifier = Modifier.rotate(if (expanded) 180f else 0f),
                 )
+            }
             isSelected ->
                 Icon(
                     imageVector = AppTheme.icons.check.imageVector,
