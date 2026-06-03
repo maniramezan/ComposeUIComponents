@@ -33,8 +33,17 @@ jobs:
         with:
           languages: java-kotlin
           build-mode: manual
+          # Always fetch the newest CodeQL bundle so Kotlin support tracks
+          # releases without requiring manual workflow updates.
+          tools: latest
 
       - name: Build for analysis
+        # CODEQL_EXTRACTOR_JAVA_BYPASS_VERSION_CHECK lets the extractor proceed
+        # when the Kotlin version (2.4.0) is newer than the current CodeQL
+        # bundle's explicit support list. Analysis quality is unaffected for
+        # all language features present before the unsupported version.
+        env:
+          CODEQL_EXTRACTOR_JAVA_BYPASS_VERSION_CHECK: 'true'
         run: ./gradlew :components:assembleDebug --no-daemon
 
       - name: Perform CodeQL Analysis
