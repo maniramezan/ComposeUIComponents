@@ -10,6 +10,10 @@ Container components provide themed layout surfaces and transient UI wrappers.
 - `BottomSheet`
 - `Dialog`
 - `Snackbar`
+- `HorizontalDivider`
+- `VerticalDivider`
+
+![Container components](https://maniramezan.github.io/ComposeUIComponents/images/screenshots/container-components.png)
 
 ## Example
 
