@@ -18,6 +18,9 @@ icons (for example via `defaultAppIcons()`) when constructing your theme.
 
 ## Single choice
 
+With no `confirmButton`, tapping an item updates the selection **and** dismisses the
+sheet — just update your state in `onSelect`:
+
 ```kotlin
 if (showSheet) {
     SelectionSheet(
@@ -25,10 +28,24 @@ if (showSheet) {
         nodes = nodes,
         selectedId = choice,
         isSearchable = true,
-        onSelect = { choice = it; showSheet = false }, // replace and dismiss
+        onSelect = { choice = it }, // sheet dismisses on tap
         onDismissRequest = { showSheet = false },
     )
 }
+```
+
+Pass a `confirmButton` to keep the sheet open while the user revises their choice;
+then only the confirm control dismisses:
+
+```kotlin
+SelectionSheet(
+    title = "Category",
+    nodes = nodes,
+    selectedId = choice,
+    onSelect = { choice = it }, // stays open
+    onDismissRequest = { showSheet = false },
+    confirmButton = { TextButton(text = doneLabel, onClick = { showSheet = false }) },
+)
 ```
 
 ## Multiple choice

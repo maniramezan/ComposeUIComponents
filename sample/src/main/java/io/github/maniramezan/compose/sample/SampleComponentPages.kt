@@ -405,10 +405,9 @@ internal fun SelectionSheetPage() {
             nodes = sampleSelectionSheetNodes,
             selectedId = category,
             isSearchable = searchable,
-            onSelect = {
-                category = it
-                showSingle = false
-            },
+            // Just update the selection — with no confirm button the sheet dismisses on tap;
+            // with one (toggle below) it stays open until "Done" is tapped.
+            onSelect = { category = it },
             onDismissRequest = { showSingle = false },
             // The confirm slot accepts any content — localized text, an icon, or an image.
             confirmButton =
