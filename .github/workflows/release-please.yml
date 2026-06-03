@@ -5,6 +5,7 @@ on:
     workflows: [CI]
     types: [completed]
     branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -12,8 +13,8 @@ permissions:
 
 jobs:
   release-please:
-    # Only run when CI passes — prevents tagging broken code
-    if: github.event.workflow_run.conclusion == 'success'
+    # On workflow_run: only proceed when CI passed. On manual dispatch: always run.
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
       - uses: googleapis/release-please-action@v5
