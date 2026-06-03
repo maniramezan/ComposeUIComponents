@@ -106,14 +106,14 @@ internal fun SelectionSheetRow(
             expanded != null ->
                 Icon(
                     imageVector = AppTheme.icons.expand.imageVector,
-                    contentDescription = null,
+                    contentDescription = null, // @check:suppress — decorative; expanded state is in stateDescription on the row
                     tint = AppTheme.colors.onSurfaceVariant,
                     modifier = Modifier.rotate(if (expanded) 180f else 0f),
                 )
             isSelected ->
                 Icon(
                     imageVector = AppTheme.icons.check.imageVector,
-                    contentDescription = null,
+                    contentDescription = null, // @check:suppress — decorative; selected state is in selectable() on the row
                     tint = AppTheme.colors.primary,
                 )
         }
