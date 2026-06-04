@@ -54,6 +54,8 @@ nav:
       - Module Boundaries: adr/0002-module-boundaries.md
       - Testing Strategy: adr/0003-testing-strategy.md
       - Localization and A11y String Contract: adr/0004-localization-and-a11y-string-contract.md
+      - M3 Expressive Adoption: adr/0005-m3-expressive-adoption.md
+      - Adaptive Layout Breakpoints: adr/0006-adaptive-layout-breakpoints.md
 
 markdown_extensions:
   - admonition

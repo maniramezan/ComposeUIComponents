@@ -7,6 +7,8 @@ Typography components expose semantic text styles through `AppTheme.typography` 
 - `AppText`
 - `AppTextStyle`
 
+![Typography components](https://maniramezan.github.io/ComposeUIComponents/images/screenshots/typography-components.png)
+
 ## Example
 
 ```kotlin

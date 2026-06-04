@@ -129,4 +129,11 @@ public class ComponentCategoryScreenshotTest {
             PaginatedContentPreview()
         }
     }
+
+    @Test
+    public fun dividerComponentsMatchGolden() {
+        captureRoboImage("build/outputs/roborazzi/divider-components.png") {
+            DividerComponentsPreview()
+        }
+    }
 }

@@ -5,11 +5,16 @@ Navigation components provide themed Material 3 wrappers for common app structur
 ## Components
 
 - `TopAppBar`
+- `MediumTopAppBar`
+- `LargeTopAppBar`
 - `BottomBar`
 - `TabRow`
 - `NavRail`
+- `AdaptiveNavScaffold`
 - `PaginatedContent`
 - `SegmentedContent`
+
+![Navigation components](https://maniramezan.github.io/ComposeUIComponents/images/screenshots/navigation-components.png)
 
 ## Example
 

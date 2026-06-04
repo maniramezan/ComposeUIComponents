@@ -9,7 +9,11 @@ Action components wrap Material 3 controls with AppTheme colors, spacing, and mi
 - `TextButton`
 - `IconButton`
 - `FAB`
+- `ExtendedFloatingActionButton`
 - `SegmentedControl`
+- `SingleChoiceSegmentedButtonRow`
+
+![Actions components](https://maniramezan.github.io/ComposeUIComponents/images/screenshots/actions-components.png)
 
 ## Example
 
