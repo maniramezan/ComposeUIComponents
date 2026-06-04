@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.utils.minimumTouchTargetHeight
@@ -73,7 +74,8 @@ internal fun SelectionSheetRow(
             Text(
                 text = title,
                 style = AppTheme.typography.bodyLarge,
-                color = AppTheme.colors.onSurface,
+                fontWeight = if (isSelected) FontWeight.SemiBold else null,
+                color = if (isSelected) AppTheme.colors.primary else AppTheme.colors.onSurface,
             )
             if (subtitle != null) {
                 Text(

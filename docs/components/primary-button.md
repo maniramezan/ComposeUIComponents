@@ -9,6 +9,8 @@
 - Enforces a minimum 48dp touch target.
 - Ships with Compose preview, Showkase entry, unit test, and Roborazzi smoke screenshot test.
 
+![PrimaryButton](https://maniramezan.github.io/ComposeUIComponents/images/screenshots/primary-button-default.png)
+
 ## Example
 
 ```kotlin

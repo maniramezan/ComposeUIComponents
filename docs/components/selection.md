@@ -16,6 +16,8 @@ icons (for example via `defaultAppIcons()`) when constructing your theme.
 - `SelectionSheet` — single-choice (`selectedId`) and multiple-choice (`selectedIds`) overloads.
 - `SelectionSheetNode` — an immutable tree node: `id`, `title`, optional `subtitle`/`leadingGlyph`, and `children`.
 
+![Selection sheet](https://maniramezan.github.io/ComposeUIComponents/images/screenshots/selection-sheet.png)
+
 ## Single choice
 
 With no `confirmButton`, tapping an item updates the selection **and** dismisses the

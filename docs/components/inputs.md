@@ -12,6 +12,8 @@ Input components are state-hoisted wrappers around Material 3 controls.
 - `Switch`
 - `Slider`
 
+![Input components](https://maniramezan.github.io/ComposeUIComponents/images/screenshots/input-components.png)
+
 ## Example
 
 ```kotlin

@@ -3,11 +3,12 @@ name: CodeQL
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
   schedule:
     # Weekly re-scan every Monday at 08:00 UTC
     - cron: '0 8 * * 1'
+  # pull_request trigger intentionally omitted: CodeQL 2.25.5 cannot extract
+  # Kotlin 2.4.0 in any build mode (manual rejects the version; none finds no
+  # code). Re-add pull_request once the CodeQL bundle supports Kotlin 2.4.x.
 
 permissions:
   contents: read
@@ -21,29 +22,16 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - uses: actions/setup-java@v5
-        with:
-          distribution: temurin
-          java-version: '17'
-
-      - uses: gradle/actions/setup-gradle@v6
-
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
           languages: java-kotlin
-          build-mode: manual
-          # Always fetch the newest CodeQL bundle so Kotlin support tracks
-          # releases without requiring manual workflow updates.
-          tools: latest
-
-      - name: Build for analysis
-        # CodeQL's injected Kotlin compiler plugin rejects versions it hasn't
-        # explicitly validated yet (currently < 2.3.30). continue-on-error lets
-        # the workflow proceed so CodeQL can analyse whatever it captured; remove
-        # this flag once the CodeQL bundle adds Kotlin 2.4.x support.
-        continue-on-error: true
-        run: ./gradlew :components:assembleDebug --no-daemon
+          # build-mode: none extracts directly from source files without
+          # invoking the Kotlin compiler. This sidesteps CodeQL's Kotlin
+          # version ceiling (currently < 2.3.30) and removes the need for
+          # a full Android/Gradle build in the security scan job.
+          # Switch to build-mode: manual once CodeQL supports Kotlin 2.4.x.
+          build-mode: none
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3

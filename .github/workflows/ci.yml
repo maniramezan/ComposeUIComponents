@@ -70,3 +70,51 @@ jobs:
         with:
           name: docs-site
           path: site
+
+  # Deploys docs to GitHub Pages on every push to main. Runs after `build` so
+  # it can download the freshly-recorded component screenshots and bundle them
+  # into the MkDocs site — no PNGs need to be committed to the repo.
+  deploy-docs:
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+      pages: write
+    environment:
+      name: github-pages
+      url: ${{ steps.pages-deployment.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Download component screenshots
+        uses: actions/download-artifact@v4
+        with:
+          name: component-screenshots
+          path: screenshots
+
+      - name: Copy screenshots into docs
+        run: |
+          mkdir -p docs/images/screenshots
+          cp screenshots/components/build/outputs/roborazzi/*.png docs/images/screenshots/
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Install docs dependencies
+        run: python -m pip install -r requirements-docs.txt
+
+      - name: Build docs site with screenshots
+        run: mkdocs build --strict
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
+
+      - id: pages-deployment
+        uses: actions/deploy-pages@v5
