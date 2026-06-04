@@ -20,14 +20,17 @@ import androidx.compose.ui.semantics.semantics
 import io.github.maniramezan.compose.theme.AppTheme
 
 /**
- * The stateful body of [SelectionSheet] without the surrounding modal bottom sheet.
+ * The embeddable body of [SelectionSheet] — the searchable two-level selection list
+ * without the surrounding `ModalBottomSheet`.
  *
- * Exposed internally so previews, Showkase entries, and screenshot tests can render the
- * list on a plain surface (a `ModalBottomSheet` does not render in those contexts). It
- * owns the search query and inline-expansion state.
+ * Use this directly to place the list inside your own screen (for example a full-screen
+ * onboarding step that already has its own header and primary button); use [SelectionSheet]
+ * when you want it presented as a modal bottom sheet. It owns the search query and
+ * inline-expansion state. A blank [title] with no [confirmButton] renders no header, so the
+ * host screen can supply its own.
  */
 @Composable
-internal fun <ID : Any> SelectionSheetContent(
+public fun <ID : Any> SelectionSheetContent(
     title: String,
     nodes: List<SelectionSheetNode<ID>>,
     selectedIds: Set<ID>,
@@ -143,36 +146,39 @@ private fun SelectionSheetHeader(
     title: String,
     confirmButton: (@Composable () -> Unit)?,
 ) {
-    if (confirmButton != null) {
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = AppTheme.spacing.x2, vertical = AppTheme.spacing.x1),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.x1),
-        ) {
+    when {
+        confirmButton != null ->
+            Row(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = AppTheme.spacing.x2, vertical = AppTheme.spacing.x1),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.x1),
+            ) {
+                Text(
+                    text = title,
+                    style = AppTheme.typography.titleLarge,
+                    color = AppTheme.colors.onSurface,
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .semantics { heading() },
+                )
+                confirmButton()
+            }
+        // Blank title with no confirm control: render no header so the host screen
+        // (e.g. an inline onboarding step) can supply its own.
+        title.isNotBlank() ->
             Text(
                 text = title,
                 style = AppTheme.typography.titleLarge,
                 color = AppTheme.colors.onSurface,
                 modifier =
                     Modifier
-                        .weight(1f)
+                        .fillMaxWidth()
+                        .padding(horizontal = AppTheme.spacing.x2, vertical = AppTheme.spacing.x1)
                         .semantics { heading() },
             )
-            confirmButton()
-        }
-    } else {
-        Text(
-            text = title,
-            style = AppTheme.typography.titleLarge,
-            color = AppTheme.colors.onSurface,
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = AppTheme.spacing.x2, vertical = AppTheme.spacing.x1)
-                    .semantics { heading() },
-        )
     }
 }
