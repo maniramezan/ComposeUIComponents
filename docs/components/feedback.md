@@ -8,6 +8,8 @@ Feedback components communicate loading, transient status, and placeholder state
 - `Skeleton`
 - `Toast`
 
+![Feedback components](https://maniramezan.github.io/ComposeUIComponents/images/screenshots/feedback-components.png)
+
 ## Example
 
 ```kotlin
