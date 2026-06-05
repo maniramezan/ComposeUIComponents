@@ -1,5 +1,10 @@
 package io.github.maniramezan.compose.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,19 +25,19 @@ import androidx.compose.ui.semantics.semantics
 import io.github.maniramezan.compose.theme.AppTheme
 
 /**
- * The embeddable body of [SelectionSheet] — the searchable two-level selection list
+ * The embeddable body of [SelectionList] — the searchable two-level selection list
  * without the surrounding `ModalBottomSheet`.
  *
  * Use this directly to place the list inside your own screen (for example a full-screen
- * onboarding step that already has its own header and primary button); use [SelectionSheet]
+ * onboarding step that already has its own header and primary button); use [SelectionList]
  * when you want it presented as a modal bottom sheet. It owns the search query and
  * inline-expansion state. A blank [title] with no [confirmButton] renders no header, so the
  * host screen can supply its own.
  */
 @Composable
-public fun <ID : Any> SelectionSheetContent(
+public fun <ID : Any> SelectionListContent(
     title: String,
-    nodes: List<SelectionSheetNode<ID>>,
+    nodes: List<SelectionListNode<ID>>,
     selectedIds: Set<ID>,
     onSelect: (ID) -> Unit,
     modifier: Modifier = Modifier,
@@ -56,11 +61,11 @@ public fun <ID : Any> SelectionSheetContent(
     val isSearching = isSearchable && query.isNotBlank()
     val visibleNodes =
         remember(nodes, query, isSearchable) {
-            filterSelectionSheetNodes(nodes, if (isSearchable) query else "")
+            filterSelectionListNodes(nodes, if (isSearchable) query else "")
         }
 
     Column(modifier = modifier.fillMaxWidth()) {
-        SelectionSheetHeader(title = title, confirmButton = confirmButton)
+        SelectionListHeader(title = title, confirmButton = confirmButton)
 
         if (isSearchable) {
             SearchField(
@@ -96,7 +101,7 @@ public fun <ID : Any> SelectionSheetContent(
 
             visibleNodes.forEach { node ->
                 if (node.isLeaf) {
-                    SelectionSheetRow(
+                    SelectionListRow(
                         title = node.title,
                         subtitle = node.subtitle,
                         leadingGlyph = node.leadingGlyph,
@@ -107,7 +112,7 @@ public fun <ID : Any> SelectionSheetContent(
                     )
                 } else {
                     val expanded = isSearching || node.id in expandedIds
-                    SelectionSheetRow(
+                    SelectionListRow(
                         title = node.title,
                         subtitle = selectedChildrenSummary(node, selectedIds) ?: node.subtitle,
                         leadingGlyph = node.leadingGlyph,
@@ -121,17 +126,33 @@ public fun <ID : Any> SelectionSheetContent(
                         expandedDescription = expandedDescription,
                         collapsedDescription = collapsedDescription,
                     )
-                    if (expanded) {
-                        node.children.forEach { child ->
-                            SelectionSheetRow(
-                                title = child.title,
-                                subtitle = child.subtitle,
-                                leadingGlyph = child.leadingGlyph,
-                                isSelected = child.id in selectedIds,
-                                isIndented = true,
-                                expanded = null,
-                                onClick = { onSelect(child.id) },
-                            )
+                    AnimatedVisibility(
+                        visible = expanded,
+                        enter = expandVertically(
+                            animationSpec = spring(
+                                dampingRatio = Spring.DampingRatioNoBouncy,
+                                stiffness = Spring.StiffnessMediumLow,
+                            ),
+                        ),
+                        exit = shrinkVertically(
+                            animationSpec = spring(
+                                dampingRatio = Spring.DampingRatioNoBouncy,
+                                stiffness = Spring.StiffnessMediumLow,
+                            ),
+                        ),
+                    ) {
+                        Column {
+                            node.children.forEach { child ->
+                                SelectionListRow(
+                                    title = child.title,
+                                    subtitle = child.subtitle,
+                                    leadingGlyph = child.leadingGlyph,
+                                    isSelected = child.id in selectedIds,
+                                    isIndented = true,
+                                    expanded = null,
+                                    onClick = { onSelect(child.id) },
+                                )
+                            }
                         }
                     }
                 }
@@ -140,9 +161,9 @@ public fun <ID : Any> SelectionSheetContent(
     }
 }
 
-/** The sheet title, with an optional trailing confirm control. */
+/** The list title, with an optional trailing confirm control. */
 @Composable
-private fun SelectionSheetHeader(
+private fun SelectionListHeader(
     title: String,
     confirmButton: (@Composable () -> Unit)?,
 ) {

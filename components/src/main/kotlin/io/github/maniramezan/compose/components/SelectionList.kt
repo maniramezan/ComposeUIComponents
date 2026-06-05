@@ -9,9 +9,9 @@ import androidx.compose.ui.Modifier
 /**
  * A themed selection list presented as a modal bottom sheet, with optional search and
  * inline two-level disclosure. This single-choice overload marks one row as selected;
- * see the [SelectionSheet] overload taking `selectedIds` for multiple choice.
+ * see the [SelectionList] overload taking `selectedIds` for multiple choice.
  *
- * Rows come from a [SelectionSheetNode] tree: leaf nodes are selectable, while parent nodes
+ * Rows come from a [SelectionListNode] tree: leaf nodes are selectable, while parent nodes
  * expand inline to reveal their children. Dismissal depends on [confirmButton]:
  * - **No [confirmButton]** (default): tapping an item reports it through [onSelect] **and**
  *   dismisses via [onDismissRequest]. Just update your selection in [onSelect].
@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
  *
  * ```kotlin
  * if (showSheet) {
- *     SelectionSheet(
+ *     SelectionList(
  *         title = "Category",
  *         nodes = nodes,
  *         selectedId = choice,
@@ -40,9 +40,9 @@ import androidx.compose.ui.Modifier
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-public fun <ID : Any> SelectionSheet(
+public fun <ID : Any> SelectionList(
     title: String,
-    nodes: List<SelectionSheetNode<ID>>,
+    nodes: List<SelectionListNode<ID>>,
     selectedId: ID?,
     onSelect: (ID) -> Unit,
     onDismissRequest: () -> Unit,
@@ -54,7 +54,7 @@ public fun <ID : Any> SelectionSheet(
     collapsedDescription: String = "",
     confirmButton: (@Composable () -> Unit)? = null,
 ) {
-    SelectionSheet(
+    SelectionList(
         title = title,
         nodes = nodes,
         selectedIds = selectedId?.let { setOf(it) } ?: emptySet(),
@@ -83,18 +83,18 @@ public fun <ID : Any> SelectionSheet(
 /**
  * A themed selection list presented as a modal bottom sheet, with optional search and
  * inline two-level disclosure. This multiple-choice overload marks every row in
- * [selectedIds] as selected; see the [SelectionSheet] overload taking `selectedId` for
+ * [selectedIds] as selected; see the [SelectionList] overload taking `selectedId` for
  * single choice.
  *
- * Rows come from a [SelectionSheetNode] tree: leaf nodes are selectable, while parent nodes
- * expand inline to reveal their children. The sheet reports taps through [onSelect] and
+ * Rows come from a [SelectionListNode] tree: leaf nodes are selectable, while parent nodes
+ * expand inline to reveal their children. The list reports taps through [onSelect] and
  * does not change the selection itself — toggle membership in your callback and keep the
  * sheet open. A collapsed parent lists its selected children as its subtitle, and the
  * parent that contains a selection starts expanded.
  *
  * ```kotlin
  * if (showSheet) {
- *     SelectionSheet(
+ *     SelectionList(
  *         title = "Categories",
  *         nodes = nodes,
  *         selectedIds = choices,
@@ -117,9 +117,9 @@ public fun <ID : Any> SelectionSheet(
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-public fun <ID : Any> SelectionSheet(
+public fun <ID : Any> SelectionList(
     title: String,
-    nodes: List<SelectionSheetNode<ID>>,
+    nodes: List<SelectionListNode<ID>>,
     selectedIds: Set<ID>,
     onSelect: (ID) -> Unit,
     onDismissRequest: () -> Unit,
@@ -136,7 +136,7 @@ public fun <ID : Any> SelectionSheet(
         modifier = modifier,
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     ) {
-        SelectionSheetContent(
+        SelectionListContent(
             title = title,
             nodes = nodes,
             selectedIds = selectedIds,

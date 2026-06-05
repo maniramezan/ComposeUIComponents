@@ -1,5 +1,8 @@
 package io.github.maniramezan.compose.components
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,6 +13,7 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -20,7 +24,7 @@ import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.utils.minimumTouchTargetHeight
 
 /**
- * A single themed row inside [SelectionSheetContent].
+ * A single themed row inside [SelectionListContent].
  *
  * Renders an optional leading glyph, a title with optional subtitle, and a trailing
  * indicator. When [expanded] is non-null the row is an expandable parent and shows a
@@ -34,7 +38,7 @@ import io.github.maniramezan.compose.utils.minimumTouchTargetHeight
  *   (e.g. `"collapsed"`). When blank, the chevron is decorative. Ignored for leaf rows.
  */
 @Composable
-internal fun SelectionSheetRow(
+internal fun SelectionListRow(
     title: String,
     subtitle: String?,
     leadingGlyph: String?,
@@ -45,6 +49,14 @@ internal fun SelectionSheetRow(
     expandedDescription: String = "",
     collapsedDescription: String = "",
 ) {
+    val chevronRotation by animateFloatAsState(
+        targetValue = if (expanded == true) 180f else 0f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioNoBouncy,
+            stiffness = Spring.StiffnessMediumLow,
+        ),
+        label = "chevron",
+    )
     val interaction =
         if (expanded == null) {
             Modifier.selectable(selected = isSelected, role = Role.Button, onClick = onClick)
@@ -99,7 +111,7 @@ internal fun SelectionSheetRow(
                     imageVector = AppTheme.icons.expand.imageVector,
                     contentDescription = chevronDescription,
                     tint = AppTheme.colors.onSurfaceVariant,
-                    modifier = Modifier.rotate(if (expanded) 180f else 0f),
+                    modifier = Modifier.rotate(chevronRotation),
                 )
             }
             isSelected ->
@@ -114,7 +126,7 @@ internal fun SelectionSheetRow(
 
 /** The comma-joined titles of [node]'s selected children, or `null` when none are selected. */
 internal fun <ID : Any> selectedChildrenSummary(
-    node: SelectionSheetNode<ID>,
+    node: SelectionListNode<ID>,
     selectedIds: Set<ID>,
 ): String? {
     val titles = node.children.filter { it.id in selectedIds }.map { it.title }

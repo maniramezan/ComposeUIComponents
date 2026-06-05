@@ -61,8 +61,8 @@ import io.github.maniramezan.compose.components.SegmentSelectionIndicator
 import io.github.maniramezan.compose.components.SegmentedContent
 import io.github.maniramezan.compose.components.SegmentedControl
 import io.github.maniramezan.compose.components.SegmentedItem
-import io.github.maniramezan.compose.components.SelectionSheet
-import io.github.maniramezan.compose.components.SelectionSheetNode
+import io.github.maniramezan.compose.components.SelectionListContent
+import io.github.maniramezan.compose.components.SelectionListNode
 import io.github.maniramezan.compose.components.Skeleton
 import io.github.maniramezan.compose.components.SkeletonBlock
 import io.github.maniramezan.compose.components.Slider
@@ -352,83 +352,102 @@ internal fun SliderPage() {
 // Selection
 // ─────────────────────────────────────────────────────────────────────────────
 
-private val sampleSelectionSheetNodes: List<SelectionSheetNode<String>> =
+private val sampleSelectionListNodes: List<SelectionListNode<String>> =
     listOf(
-        SelectionSheetNode(
+        SelectionListNode(
             id = "fruit",
             title = "Fruit",
             leadingGlyph = "🍎",
             children =
                 listOf(
-                    SelectionSheetNode(id = "apple", title = "Apple"),
-                    SelectionSheetNode(id = "banana", title = "Banana"),
-                    SelectionSheetNode(id = "mango", title = "Mango"),
+                    SelectionListNode(id = "apple", title = "Apple", subtitle = "Red or green"),
+                    SelectionListNode(id = "banana", title = "Banana", subtitle = "Tropical"),
+                    SelectionListNode(id = "mango", title = "Mango", subtitle = "Stone fruit"),
+                    SelectionListNode(id = "orange", title = "Orange", subtitle = "Citrus"),
+                    SelectionListNode(id = "grape", title = "Grape", subtitle = "Vine fruit"),
                 ),
         ),
-        SelectionSheetNode(
+        SelectionListNode(
             id = "vegetable",
             title = "Vegetable",
             leadingGlyph = "🥦",
             children =
                 listOf(
-                    SelectionSheetNode(id = "carrot", title = "Carrot"),
-                    SelectionSheetNode(id = "spinach", title = "Spinach"),
+                    SelectionListNode(id = "carrot", title = "Carrot"),
+                    SelectionListNode(id = "spinach", title = "Spinach"),
+                    SelectionListNode(id = "broccoli", title = "Broccoli"),
+                    SelectionListNode(id = "cucumber", title = "Cucumber"),
+                    SelectionListNode(id = "tomato", title = "Tomato"),
                 ),
         ),
-        SelectionSheetNode(id = "water", title = "Water", leadingGlyph = "💧"),
+        SelectionListNode(
+            id = "grain",
+            title = "Grain",
+            leadingGlyph = "🌾",
+            children =
+                listOf(
+                    SelectionListNode(id = "rice", title = "Rice"),
+                    SelectionListNode(id = "pasta", title = "Pasta"),
+                    SelectionListNode(id = "bread", title = "Bread"),
+                    SelectionListNode(id = "oats", title = "Oats"),
+                ),
+        ),
+        SelectionListNode(
+            id = "dairy",
+            title = "Dairy",
+            leadingGlyph = "🧀",
+            children =
+                listOf(
+                    SelectionListNode(id = "milk", title = "Milk"),
+                    SelectionListNode(id = "cheese", title = "Cheese"),
+                    SelectionListNode(id = "yogurt", title = "Yogurt"),
+                ),
+        ),
+        SelectionListNode(id = "water", title = "Water", leadingGlyph = "💧", subtitle = "Zero calories"),
+        SelectionListNode(id = "juice", title = "Juice", leadingGlyph = "🍹"),
     )
 
 @Composable
-internal fun SelectionSheetPage() {
-    var showSingle by remember { mutableStateOf(false) }
-    var showMultiple by remember { mutableStateOf(false) }
+internal fun SelectionListPage() {
+    val modeOptions = listOf("Single", "Multiple")
+    var modeIndex by remember { mutableIntStateOf(0) }
     var searchable by remember { mutableStateOf(true) }
-    var singleHasDoneButton by remember { mutableStateOf(false) }
     var category by remember { mutableStateOf("banana") }
-    var tags by remember { mutableStateOf(setOf("apple", "spinach")) }
+    var tags by remember { mutableStateOf(setOf("apple", "spinach", "rice")) }
 
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        PrimaryButton(text = "Single choice: $category", onClick = { showSingle = true })
-        SecondaryButton(text = "Multiple choice: ${tags.size} selected", onClick = { showMultiple = true })
+        if (modeIndex == 0) {
+            SelectionListContent(
+                title = "Category",
+                nodes = sampleSelectionListNodes,
+                selectedIds = setOf(category),
+                onSelect = { category = it },
+                isSearchable = searchable,
+                searchPlaceholder = "Search",
+                noResultsText = "No results",
+                modifier = Modifier.height(450.dp),
+            )
+        } else {
+            SelectionListContent(
+                title = "Categories",
+                nodes = sampleSelectionListNodes,
+                selectedIds = tags,
+                onSelect = { id -> tags = if (id in tags) tags - id else tags + id },
+                isSearchable = searchable,
+                searchPlaceholder = "Search",
+                noResultsText = "No results",
+                confirmButton = { TextButton(text = "${tags.size} selected", onClick = {}) },
+                modifier = Modifier.height(450.dp),
+            )
+        }
         ControlsDivider()
+        ControlSegmented(
+            label = "Mode",
+            options = modeOptions,
+            selectedIndex = modeIndex,
+            onOptionSelected = { modeIndex = it },
+        )
         ControlSwitch(label = "Searchable", checked = searchable, onCheckedChange = { searchable = it })
-        ControlSwitch(
-            label = "Done button (single choice)",
-            checked = singleHasDoneButton,
-            onCheckedChange = { singleHasDoneButton = it },
-        )
-    }
-
-    if (showSingle) {
-        SelectionSheet(
-            title = "Category",
-            nodes = sampleSelectionSheetNodes,
-            selectedId = category,
-            isSearchable = searchable,
-            // Just update the selection — with no confirm button the sheet dismisses on tap;
-            // with one (toggle below) it stays open until "Done" is tapped.
-            onSelect = { category = it },
-            onDismissRequest = { showSingle = false },
-            // The confirm slot accepts any content — localized text, an icon, or an image.
-            confirmButton =
-                if (singleHasDoneButton) {
-                    { TextButton(text = "Done", onClick = { showSingle = false }) }
-                } else {
-                    null
-                },
-        )
-    }
-
-    if (showMultiple) {
-        SelectionSheet(
-            title = "Categories",
-            nodes = sampleSelectionSheetNodes,
-            selectedIds = tags,
-            isSearchable = searchable,
-            onSelect = { id -> tags = if (id in tags) tags - id else tags + id },
-            onDismissRequest = { showMultiple = false },
-            confirmButton = { TextButton(text = "Done", onClick = { showMultiple = false }) },
-        )
     }
 }
 

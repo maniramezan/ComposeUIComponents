@@ -1,11 +1,11 @@
 # Selection
 
-`SelectionSheet` presents a single- or multiple-choice list inside a modal bottom
+`SelectionList` presents a single- or multiple-choice list inside a modal bottom
 sheet, with optional search and inline two-level disclosure. Rows come from a
-`SelectionSheetNode` tree: a node with no children is a **leaf** that selects on tap, while
+`SelectionListNode` tree: a node with no children is a **leaf** that selects on tap, while
 a node with children is an **expandable parent** that reveals its children inline.
 
-The sheet is controlled — it reflects the selection you pass and reports taps through a
+The list is controlled — it reflects the selection you pass and reports taps through a
 callback; it never mutates the selection or dismisses itself. Selected rows show a
 check (from `AppTheme.icons.check`), and a collapsed parent lists its selected children
 as its subtitle. The disclosure chevron uses `AppTheme.icons.expand`, so provide real
@@ -13,10 +13,11 @@ icons (for example via `defaultAppIcons()`) when constructing your theme.
 
 ## Components
 
-- `SelectionSheet` — single-choice (`selectedId`) and multiple-choice (`selectedIds`) overloads.
-- `SelectionSheetNode` — an immutable tree node: `id`, `title`, optional `subtitle`/`leadingGlyph`, and `children`.
+- `SelectionList` — single-choice (`selectedId`) and multiple-choice (`selectedIds`) overloads, presented as a modal bottom sheet.
+- `SelectionListContent` — the embeddable list body without the surrounding sheet, for inline use.
+- `SelectionListNode` — an immutable tree node: `id`, `title`, optional `subtitle`/`leadingGlyph`, and `children`.
 
-![Selection sheet](https://maniramezan.github.io/ComposeUIComponents/images/screenshots/selection-sheet.png)
+![Selection list](https://maniramezan.github.io/ComposeUIComponents/images/screenshots/selection-sheet.png)
 
 ## Single choice
 
@@ -25,7 +26,7 @@ sheet — just update your state in `onSelect`:
 
 ```kotlin
 if (showSheet) {
-    SelectionSheet(
+    SelectionList(
         title = "Category",
         nodes = nodes,
         selectedId = choice,
@@ -40,7 +41,7 @@ Pass a `confirmButton` to keep the sheet open while the user revises their choic
 then only the confirm control dismisses:
 
 ```kotlin
-SelectionSheet(
+SelectionList(
     title = "Category",
     nodes = nodes,
     selectedId = choice,
@@ -54,7 +55,7 @@ SelectionSheet(
 
 ```kotlin
 if (showSheet) {
-    SelectionSheet(
+    SelectionList(
         title = "Categories",
         nodes = nodes,
         selectedIds = choices,
@@ -83,23 +84,36 @@ It is available on **both** the single- and multiple-choice overloads. Multiple 
 should provide it (rows don't dismiss on tap); single choice usually omits it and
 dismisses on selection, but may include it when you want an explicit confirm step.
 
+## Inline embedding
+
+Use `SelectionListContent` to embed the list directly in a screen without a sheet:
+
+```kotlin
+SelectionListContent(
+    title = "Category",
+    nodes = nodes,
+    selectedIds = setOf(choice),
+    onSelect = { choice = it },
+)
+```
+
 ## Building the node tree
 
 ```kotlin
 val nodes = listOf(
-    SelectionSheetNode(id = "water", title = "Water"),            // leaf
-    SelectionSheetNode(
+    SelectionListNode(id = "water", title = "Water"),            // leaf
+    SelectionListNode(
         id = "fruit",
         title = "Fruit",
         leadingGlyph = "🍎",
         children = listOf(                                   // expands inline
-            SelectionSheetNode(id = "apple", title = "Apple"),
-            SelectionSheetNode(id = "banana", title = "Banana"),
+            SelectionListNode(id = "apple", title = "Apple"),
+            SelectionListNode(id = "banana", title = "Banana"),
         ),
     ),
 )
 ```
 
 Identifiers must be unique across the whole tree; they are used as the selection
-values reported by the sheet. When `isSearchable` is `true`, the search field filters
+values reported by the list. When `isSearchable` is `true`, the search field filters
 across both levels (case-insensitive) and force-expands matching parents.

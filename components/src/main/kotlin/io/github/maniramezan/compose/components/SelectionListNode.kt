@@ -3,7 +3,7 @@ package io.github.maniramezan.compose.components
 import androidx.compose.runtime.Immutable
 
 /**
- * A node in a one- or two-level [SelectionSheet] hierarchy.
+ * A node in a one- or two-level [SelectionList] hierarchy.
  *
  * A node with no [children] is a **leaf** that selects directly when tapped. A node
  * with children is an **expandable parent**: tapping it reveals its children inline,
@@ -12,7 +12,7 @@ import androidx.compose.runtime.Immutable
  * languages whose pluricentric entries expand into regional variants).
  *
  * Identifiers must be unique across the whole tree, since they are used as list keys
- * and as the selection values reported by [SelectionSheet].
+ * and as the selection values reported by [SelectionList].
  *
  * @param ID the identifier type reported through selection.
  * @property id stable, unique identifier reported back through selection.
@@ -22,12 +22,12 @@ import androidx.compose.runtime.Immutable
  * @property children child nodes revealed when an expandable parent is tapped; empty for a leaf.
  */
 @Immutable
-public data class SelectionSheetNode<ID : Any>(
+public data class SelectionListNode<ID : Any>(
     public val id: ID,
     public val title: String,
     public val subtitle: String? = null,
     public val leadingGlyph: String? = null,
-    public val children: List<SelectionSheetNode<ID>> = emptyList(),
+    public val children: List<SelectionListNode<ID>> = emptyList(),
 ) {
     /** Whether the node has no children and is therefore directly selectable. */
     public val isLeaf: Boolean get() = children.isEmpty()
