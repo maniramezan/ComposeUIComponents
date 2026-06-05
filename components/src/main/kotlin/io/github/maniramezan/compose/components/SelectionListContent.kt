@@ -128,18 +128,22 @@ public fun <ID : Any> SelectionListContent(
                     )
                     AnimatedVisibility(
                         visible = expanded,
-                        enter = expandVertically(
-                            animationSpec = spring(
-                                dampingRatio = Spring.DampingRatioNoBouncy,
-                                stiffness = Spring.StiffnessMediumLow,
+                        enter =
+                            expandVertically(
+                                animationSpec =
+                                    spring(
+                                        dampingRatio = Spring.DampingRatioNoBouncy,
+                                        stiffness = Spring.StiffnessMediumLow,
+                                    ),
                             ),
-                        ),
-                        exit = shrinkVertically(
-                            animationSpec = spring(
-                                dampingRatio = Spring.DampingRatioNoBouncy,
-                                stiffness = Spring.StiffnessMediumLow,
+                        exit =
+                            shrinkVertically(
+                                animationSpec =
+                                    spring(
+                                        dampingRatio = Spring.DampingRatioNoBouncy,
+                                        stiffness = Spring.StiffnessMediumLow,
+                                    ),
                             ),
-                        ),
                     ) {
                         Column {
                             node.children.forEach { child ->

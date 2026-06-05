@@ -51,10 +51,11 @@ internal fun SelectionListRow(
 ) {
     val chevronRotation by animateFloatAsState(
         targetValue = if (expanded == true) 180f else 0f,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioNoBouncy,
-            stiffness = Spring.StiffnessMediumLow,
-        ),
+        animationSpec =
+            spring(
+                dampingRatio = Spring.DampingRatioNoBouncy,
+                stiffness = Spring.StiffnessMediumLow,
+            ),
         label = "chevron",
     )
     val interaction =
