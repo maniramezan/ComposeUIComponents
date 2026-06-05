@@ -89,6 +89,18 @@ public enum class SegmentFitMode {
 }
 
 /**
+ * Controls whether the segment bar expands to fill the available width or
+ * wraps to the natural width of its segments.
+ */
+public enum class SegmentWidthMode {
+    /** Expand to fill available width (default). */
+    Fill,
+
+    /** Wrap to the natural width of the segments; scrolls when they overflow. */
+    Fit,
+}
+
+/**
  * A tab-style picker paired with a client-supplied content slot. Tapping a
  * segment swaps the content with a short crossfade. When all segment titles
  * fit on one row, they distribute evenly (in [SegmentFitMode.EvenWhenFits]);
@@ -105,6 +117,7 @@ public fun SegmentedContent(
     initialSelectedIndex: Int = 0,
     indicator: SegmentSelectionIndicator = SegmentSelectionIndicator.Pill,
     fitMode: SegmentFitMode = SegmentFitMode.EvenWhenFits,
+    widthMode: SegmentWidthMode = SegmentWidthMode.Fill,
     onSelectionChanged: ((Int) -> Unit)? = null,
     segmentTitle: @Composable (index: Int, item: SegmentedItem, isSelected: Boolean) -> Unit =
         { _, item, isSelected -> DefaultSegmentTitle(item.title, isSelected, indicator) },
@@ -123,6 +136,7 @@ public fun SegmentedContent(
         modifier = modifier,
         indicator = indicator,
         fitMode = fitMode,
+        widthMode = widthMode,
         segmentTitle = segmentTitle,
         segmentContent = segmentContent,
     )
@@ -140,6 +154,7 @@ public fun SegmentedContent(
     modifier: Modifier = Modifier,
     indicator: SegmentSelectionIndicator = SegmentSelectionIndicator.Pill,
     fitMode: SegmentFitMode = SegmentFitMode.EvenWhenFits,
+    widthMode: SegmentWidthMode = SegmentWidthMode.Fill,
     segmentTitle: @Composable (index: Int, item: SegmentedItem, isSelected: Boolean) -> Unit =
         { _, item, isSelected -> DefaultSegmentTitle(item.title, isSelected, indicator) },
     segmentContent: @Composable (index: Int, item: SegmentedItem) -> Unit,
@@ -148,13 +163,15 @@ public fun SegmentedContent(
     val safeIndex = selectedIndex.coerceIn(0, items.lastIndex)
 
     val shortMillis = AppTheme.motion.shortMillis
-    Column(modifier = modifier.fillMaxWidth()) {
+    val fillModifier = if (widthMode == SegmentWidthMode.Fill) Modifier.fillMaxWidth() else Modifier
+    Column(modifier = modifier.then(fillModifier)) {
         SegmentBar(
             items = items,
             selectedIndex = safeIndex,
             onSelectionChanged = onSelectionChanged,
             indicator = indicator,
             fitMode = fitMode,
+            widthMode = widthMode,
             segmentTitle = segmentTitle,
         )
         AnimatedContent(
@@ -164,7 +181,7 @@ public fun SegmentedContent(
                     fadeOut(animationSpec = tween(shortMillis))
             },
             label = "SegmentedContent",
-            modifier = Modifier.fillMaxWidth(),
+            modifier = fillModifier,
         ) { idx ->
             segmentContent(idx, items[idx])
         }
@@ -208,6 +225,7 @@ private fun SegmentBar(
     onSelectionChanged: (Int) -> Unit,
     indicator: SegmentSelectionIndicator,
     fitMode: SegmentFitMode,
+    widthMode: SegmentWidthMode,
     segmentTitle: @Composable (Int, SegmentedItem, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -216,15 +234,15 @@ private fun SegmentBar(
         if (indicator == SegmentSelectionIndicator.Pill) AppTheme.shapes.pill else RectangleShape
     val barBg =
         if (indicator == SegmentSelectionIndicator.Pill) AppTheme.colors.surfaceContainer else Color.Transparent
+    val fillWidth = widthMode == SegmentWidthMode.Fill
     val outerModifier =
         if (indicator == SegmentSelectionIndicator.Pill) {
-            Modifier
-                .fillMaxWidth()
+            (if (fillWidth) Modifier.fillMaxWidth() else Modifier)
                 .background(barBg, barShape)
                 .clip(barShape)
                 .padding(AppTheme.spacing.half)
         } else {
-            Modifier.fillMaxWidth()
+            if (fillWidth) Modifier.fillMaxWidth() else Modifier
         }
 
     SubcomposeLayout(
@@ -253,21 +271,30 @@ private fun SegmentBar(
 
         val gapCount = (items.size - 1).coerceAtLeast(0)
         val totalIntrinsic = intrinsicPlaceables.sumOf { it.width } + itemSpacingPx * gapCount
-        val useEven =
-            fitMode == SegmentFitMode.EvenWhenFits && totalIntrinsic <= constraints.maxWidth
+        val fits = totalIntrinsic <= constraints.maxWidth
+        // Even distribution only when explicitly requested and the bar is filling available width.
+        val useEven = fitMode == SegmentFitMode.EvenWhenFits && fillWidth && fits
+        // Scroll when overflowing, or when Fill+Intrinsic (always scroll regardless of fit).
+        val useScrollable = !useEven && (fillWidth || !fits)
 
         val mainPlaceables =
             subcompose("main") {
-                if (useEven) {
-                    EvenSegmentRow(
+                when {
+                    useEven -> EvenSegmentRow(
                         items = items,
                         selectedIndex = selectedIndex,
                         onSelectionChanged = onSelectionChanged,
                         indicator = indicator,
                         segmentTitle = segmentTitle,
                     )
-                } else {
-                    ScrollableSegmentRow(
+                    useScrollable -> ScrollableSegmentRow(
+                        items = items,
+                        selectedIndex = selectedIndex,
+                        onSelectionChanged = onSelectionChanged,
+                        indicator = indicator,
+                        segmentTitle = segmentTitle,
+                    )
+                    else -> IntrinsicSegmentRow(
                         items = items,
                         selectedIndex = selectedIndex,
                         onSelectionChanged = onSelectionChanged,
@@ -277,7 +304,9 @@ private fun SegmentBar(
                 }
             }.map { it.measure(constraints) }
 
-        val width = constraints.maxWidth
+        val width =
+            if (fillWidth) constraints.maxWidth
+            else totalIntrinsic.coerceIn(constraints.minWidth, constraints.maxWidth)
         val height = mainPlaceables.maxOfOrNull { it.height } ?: 0
         layout(width, height) {
             mainPlaceables.forEach { it.placeRelative(0, 0) }
@@ -306,6 +335,31 @@ private fun EvenSegmentRow(
                 onClick = { onSelectionChanged(i) },
                 segmentTitle = segmentTitle,
                 modifier = Modifier.weight(1f),
+            )
+        }
+    }
+}
+
+@Composable
+private fun IntrinsicSegmentRow(
+    items: List<SegmentedItem>,
+    selectedIndex: Int,
+    onSelectionChanged: (Int) -> Unit,
+    indicator: SegmentSelectionIndicator,
+    segmentTitle: @Composable (Int, SegmentedItem, Boolean) -> Unit,
+) {
+    Row(
+        modifier = Modifier.selectableGroup(),
+        horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.half),
+    ) {
+        items.forEachIndexed { i, item ->
+            SegmentSlot(
+                index = i,
+                item = item,
+                isSelected = i == selectedIndex,
+                indicator = indicator,
+                onClick = { onSelectionChanged(i) },
+                segmentTitle = segmentTitle,
             )
         }
     }
