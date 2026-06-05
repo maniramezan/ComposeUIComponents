@@ -1,9 +1,23 @@
 name: Release
 
+# Reusable publish workflow. Invoked automatically by Release Please once it
+# creates a release (see release-please.yml), and available as a manual
+# fallback via workflow_dispatch. It is intentionally NOT triggered by tag
+# pushes: release-please creates tags with GITHUB_TOKEN, and GitHub does not
+# fire tag-push workflows from GITHUB_TOKEN events, so that path never worked.
 on:
-  push:
-    tags:
-      - 'v*.*.*'
+  workflow_call:
+    inputs:
+      tag:
+        description: Tag to build and publish (e.g. v0.5.1)
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Tag to build and publish (e.g. v0.5.1)
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -13,22 +27,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.tag }}
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
       - uses: gradle/actions/setup-gradle@v6
 
-      # Fail fast if the pushed tag (e.g. v0.3.0) doesn't match VERSION_NAME in
-      # gradle.properties. Without this, a tag whose version is already on Maven
-      # Central re-publishes an existing version and fails late during upload.
+      # Fail fast if the resolved tag doesn't match VERSION_NAME in
+      # gradle.properties. Without this, publishing a version that's already on
+      # Maven Central fails late during upload. The sed/tr strips any trailing
+      # release-please marker comment and whitespace from the value.
       - name: Verify tag matches VERSION_NAME
+        env:
+          TAG_INPUT: ${{ inputs.tag }}
         run: |
-          TAG="${GITHUB_REF_NAME#v}"
+          TAG="${TAG_INPUT#v}"
           VER="$(grep '^VERSION_NAME=' gradle.properties | cut -d= -f2 | sed 's/#.*//' | tr -d '[:space:]')"
           echo "Tag version: $TAG | VERSION_NAME: $VER"
           if [ "$TAG" != "$VER" ]; then
-            echo "::error::Tag $GITHUB_REF_NAME does not match VERSION_NAME=$VER. Bump VERSION_NAME and re-tag."
+            echo "::error::Tag $TAG_INPUT does not match VERSION_NAME=$VER. Bump VERSION_NAME and re-tag."
             exit 1
           fi
 
@@ -52,8 +71,8 @@ jobs:
 
       - uses: softprops/action-gh-release@v3
         with:
-          tag_name: ${{ github.ref_name }}
-          name: ${{ github.ref_name }}
+          tag_name: ${{ inputs.tag }}
+          name: ${{ inputs.tag }}
           files: |
             catalog/build/outputs/apk/debug/catalog-debug.apk
             sample/build/outputs/apk/debug/sample-debug.apk
