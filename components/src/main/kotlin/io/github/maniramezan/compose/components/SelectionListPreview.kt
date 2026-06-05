@@ -7,41 +7,41 @@ import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.utils.PreviewFontScale
 import io.github.maniramezan.compose.utils.PreviewLightDark
 
-internal val selectionSheetSampleNodes: List<SelectionSheetNode<String>> =
+internal val selectionListSampleNodes: List<SelectionListNode<String>> =
     listOf(
-        SelectionSheetNode(
+        SelectionListNode(
             id = "fruit",
             title = "Fruit",
             leadingGlyph = "🍎",
             children =
                 listOf(
-                    SelectionSheetNode(id = "apple", title = "Apple"),
-                    SelectionSheetNode(id = "banana", title = "Banana"),
-                    SelectionSheetNode(id = "mango", title = "Mango"),
+                    SelectionListNode(id = "apple", title = "Apple"),
+                    SelectionListNode(id = "banana", title = "Banana"),
+                    SelectionListNode(id = "mango", title = "Mango"),
                 ),
         ),
-        SelectionSheetNode(
+        SelectionListNode(
             id = "vegetable",
             title = "Vegetable",
             leadingGlyph = "🥦",
             children =
                 listOf(
-                    SelectionSheetNode(id = "carrot", title = "Carrot"),
-                    SelectionSheetNode(id = "spinach", title = "Spinach"),
+                    SelectionListNode(id = "carrot", title = "Carrot"),
+                    SelectionListNode(id = "spinach", title = "Spinach"),
                 ),
         ),
-        SelectionSheetNode(id = "water", title = "Water", leadingGlyph = "💧"),
+        SelectionListNode(id = "water", title = "Water", leadingGlyph = "💧"),
     )
 
 @PreviewLightDark
 @PreviewFontScale
-@Preview(name = "SelectionSheet — single choice", group = "Selection")
+@Preview(name = "SelectionList — single choice", group = "Selection")
 @Composable
-public fun SelectionSheetSingleChoicePreview(): Unit =
+public fun SelectionListSingleChoicePreview(): Unit =
     AppTheme(icons = defaultAppIcons()) {
-        SelectionSheetContent(
+        SelectionListContent(
             title = "Category",
-            nodes = selectionSheetSampleNodes,
+            nodes = selectionListSampleNodes,
             selectedIds = setOf("banana"),
             onSelect = {},
             isSearchable = true,
@@ -50,13 +50,13 @@ public fun SelectionSheetSingleChoicePreview(): Unit =
         )
     }
 
-@Preview(name = "SelectionSheet — multiple choice", group = "Selection")
+@Preview(name = "SelectionList — multiple choice", group = "Selection")
 @Composable
-public fun SelectionSheetMultipleChoicePreview(): Unit =
+public fun SelectionListMultipleChoicePreview(): Unit =
     AppTheme(icons = defaultAppIcons()) {
-        SelectionSheetContent(
+        SelectionListContent(
             title = "Categories",
-            nodes = selectionSheetSampleNodes,
+            nodes = selectionListSampleNodes,
             selectedIds = setOf("apple", "spinach"),
             onSelect = {},
             confirmButton = { TextButton(text = "Done", onClick = {}) },

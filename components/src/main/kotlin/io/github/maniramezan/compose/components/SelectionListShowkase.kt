@@ -5,13 +5,13 @@ import com.airbnb.android.showkase.annotation.ShowkaseComposable
 import io.github.maniramezan.compose.icons.defaultAppIcons
 import io.github.maniramezan.compose.theme.AppTheme
 
-@ShowkaseComposable(name = "Selection Sheet — single choice", group = "Selection")
+@ShowkaseComposable(name = "Selection List — single choice", group = "Selection")
 @Composable
-public fun SelectionSheetSingleChoiceShowkase(): Unit =
+public fun SelectionListSingleChoiceShowkase(): Unit =
     AppTheme(icons = defaultAppIcons()) {
-        SelectionSheetContent(
+        SelectionListContent(
             title = "Category",
-            nodes = selectionSheetSampleNodes,
+            nodes = selectionListSampleNodes,
             selectedIds = setOf("banana"),
             onSelect = {},
             isSearchable = true,
@@ -20,13 +20,13 @@ public fun SelectionSheetSingleChoiceShowkase(): Unit =
         )
     }
 
-@ShowkaseComposable(name = "Selection Sheet — multiple choice", group = "Selection")
+@ShowkaseComposable(name = "Selection List — multiple choice", group = "Selection")
 @Composable
-public fun SelectionSheetMultipleChoiceShowkase(): Unit =
+public fun SelectionListMultipleChoiceShowkase(): Unit =
     AppTheme(icons = defaultAppIcons()) {
-        SelectionSheetContent(
+        SelectionListContent(
             title = "Categories",
-            nodes = selectionSheetSampleNodes,
+            nodes = selectionListSampleNodes,
             selectedIds = setOf("apple", "spinach"),
             onSelect = {},
             confirmButton = { TextButton(text = "Done", onClick = {}) },

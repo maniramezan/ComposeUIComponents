@@ -1,7 +1,7 @@
 package io.github.maniramezan.compose.components
 
 /** Whether the node's title or subtitle contains [query], case-insensitively. */
-internal fun SelectionSheetNode<*>.matches(query: String): Boolean =
+internal fun SelectionListNode<*>.matches(query: String): Boolean =
     title.contains(query, ignoreCase = true) || (subtitle?.contains(query, ignoreCase = true) == true)
 
 /**
@@ -11,10 +11,10 @@ internal fun SelectionSheetNode<*>.matches(query: String): Boolean =
  * its own title/subtitle matches; otherwise it is kept only if some child matches,
  * pruned to those children. An empty or blank query returns every node unchanged.
  */
-internal fun <ID : Any> filterSelectionSheetNodes(
-    nodes: List<SelectionSheetNode<ID>>,
+internal fun <ID : Any> filterSelectionListNodes(
+    nodes: List<SelectionListNode<ID>>,
     query: String,
-): List<SelectionSheetNode<ID>> {
+): List<SelectionListNode<ID>> {
     val trimmed = query.trim()
     if (trimmed.isEmpty()) return nodes
     return nodes.mapNotNull { node ->
