@@ -82,9 +82,9 @@ public class ComponentCategoryScreenshotTest {
     }
 
     @Test
-    public fun selectionSheetMatchesGolden() {
-        captureRoboImage("build/outputs/roborazzi/selection-sheet.png") {
-            SelectionSheetSingleChoicePreview()
+    public fun selectionListMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/selection-list.png") {
+            SelectionListSingleChoicePreview()
         }
     }
 

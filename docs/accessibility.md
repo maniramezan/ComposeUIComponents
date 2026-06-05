@@ -54,12 +54,12 @@ provide localized strings for a finished experience.
 - `SearchField.placeholder` — hint shown when the field is empty. Defaults to `""` (no
   placeholder). Pass a localized string such as `stringResource(R.string.search)`.
 
-### Selection sheet
+### Selection list
 
-- `SelectionSheet.searchPlaceholder` — hint in the search field. Defaults to `""`.
-- `SelectionSheet.noResultsText` — message shown when a search returns zero rows.
+- `SelectionList.searchPlaceholder` — hint in the search field. Defaults to `""`.
+- `SelectionList.noResultsText` — message shown when a search returns zero rows.
   Defaults to `""` (nothing rendered). Pass a localized string.
-- `SelectionSheet.expandedDescription` / `collapsedDescription` — `stateDescription`
+- `SelectionList.expandedDescription` / `collapsedDescription` — `stateDescription`
   announced by TalkBack when a parent row is expanded or collapsed. Defaults to `""`
   (no state announcement). Pass e.g. `stringResource(R.string.expanded)` /
   `stringResource(R.string.collapsed)`.
