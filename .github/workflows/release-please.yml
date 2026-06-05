@@ -20,16 +20,37 @@ jobs:
       release_created: ${{ steps.release.outputs.release_created }}
       tag_name: ${{ steps.release.outputs.tag_name }}
     steps:
+      # Run release-please as a GitHub App so the release PR it opens triggers
+      # CI (PRs opened with GITHUB_TOKEN don't) and so the App can be a ruleset
+      # bypass actor for the auto-merge below.
+      - uses: actions/create-github-app-token@v3
+        id: app-token
+        with:
+          app-id: ${{ secrets.RELEASE_PLEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_PLEASE_APP_PRIVATE_KEY }}
+
       - uses: googleapis/release-please-action@v5
         id: release
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
 
-  # Publish in-line with release creation. release-please tags via GITHUB_TOKEN,
-  # which can't trigger a tag-push workflow, so we call the publish workflow
-  # directly off its release_created/tag_name outputs instead.
+      # Auto-merge the release PR. --auto waits for the required CI check to pass
+      # before merging; the App is a ruleset bypass actor, so the code-owner
+      # review requirement is waived for this merge only (human review stays
+      # enforced for every other PR). The squash-merge to main then re-triggers
+      # this workflow, which creates the release/tag and runs the publish job.
+      - name: Auto-merge release PR
+        if: steps.release.outputs.pr
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          PR_NUMBER: ${{ fromJson(steps.release.outputs.pr).number }}
+        run: gh pr merge "$PR_NUMBER" --squash --auto
+
+  # Publish in-line with release creation. release-please tags via the App
+  # token, which still can't fire a tag-push workflow, so we call the publish
+  # workflow directly off its release_created/tag_name outputs instead.
   publish:
     needs: release-please
     if: needs.release-please.outputs.release_created == 'true'
