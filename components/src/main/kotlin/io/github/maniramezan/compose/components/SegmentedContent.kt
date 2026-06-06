@@ -280,33 +280,39 @@ private fun SegmentBar(
         val mainPlaceables =
             subcompose("main") {
                 when {
-                    useEven -> EvenSegmentRow(
-                        items = items,
-                        selectedIndex = selectedIndex,
-                        onSelectionChanged = onSelectionChanged,
-                        indicator = indicator,
-                        segmentTitle = segmentTitle,
-                    )
-                    useScrollable -> ScrollableSegmentRow(
-                        items = items,
-                        selectedIndex = selectedIndex,
-                        onSelectionChanged = onSelectionChanged,
-                        indicator = indicator,
-                        segmentTitle = segmentTitle,
-                    )
-                    else -> IntrinsicSegmentRow(
-                        items = items,
-                        selectedIndex = selectedIndex,
-                        onSelectionChanged = onSelectionChanged,
-                        indicator = indicator,
-                        segmentTitle = segmentTitle,
-                    )
+                    useEven ->
+                        EvenSegmentRow(
+                            items = items,
+                            selectedIndex = selectedIndex,
+                            onSelectionChanged = onSelectionChanged,
+                            indicator = indicator,
+                            segmentTitle = segmentTitle,
+                        )
+                    useScrollable ->
+                        ScrollableSegmentRow(
+                            items = items,
+                            selectedIndex = selectedIndex,
+                            onSelectionChanged = onSelectionChanged,
+                            indicator = indicator,
+                            segmentTitle = segmentTitle,
+                        )
+                    else ->
+                        IntrinsicSegmentRow(
+                            items = items,
+                            selectedIndex = selectedIndex,
+                            onSelectionChanged = onSelectionChanged,
+                            indicator = indicator,
+                            segmentTitle = segmentTitle,
+                        )
                 }
             }.map { it.measure(constraints) }
 
         val width =
-            if (fillWidth) constraints.maxWidth
-            else totalIntrinsic.coerceIn(constraints.minWidth, constraints.maxWidth)
+            if (fillWidth) {
+                constraints.maxWidth
+            } else {
+                totalIntrinsic.coerceIn(constraints.minWidth, constraints.maxWidth)
+            }
         val height = mainPlaceables.maxOfOrNull { it.height } ?: 0
         layout(width, height) {
             mainPlaceables.forEach { it.placeRelative(0, 0) }
