@@ -26,3 +26,7 @@ public fun SegmentedContentNoIndicatorShowkase(): Unit = SegmentedContentNoIndic
 @ShowkaseComposable(name = "Segmented Content – Fit Width", group = "Navigation")
 @Composable
 public fun SegmentedContentFitWidthShowkase(): Unit = SegmentedContentFitWidthPreview()
+
+@ShowkaseComposable(name = "Segmented Content – Compact Density", group = "Navigation")
+@Composable
+public fun SegmentedContentCompactShowkase(): Unit = SegmentedContentCompactPreview()

@@ -115,6 +115,20 @@ public fun SegmentedContentFitWidthPreview(): Unit =
         ) { _, item -> SegmentPlaceholder(item.title) }
     }
 
+@PreviewLightDark
+@Preview(name = "SegmentedContent – Compact Density", group = "Navigation")
+@Composable
+public fun SegmentedContentCompactPreview(): Unit =
+    AppTheme {
+        SegmentedContent(
+            items = threeShortItems,
+            initialSelectedIndex = 0,
+            indicator = SegmentSelectionIndicator.Pill,
+            fitMode = SegmentFitMode.EvenWhenFits,
+            density = SegmentDensity.Compact,
+        ) { _, item -> SegmentPlaceholder(item.title) }
+    }
+
 @Composable
 private fun SegmentPlaceholder(title: String) {
     Box(

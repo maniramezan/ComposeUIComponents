@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -101,6 +102,21 @@ public enum class SegmentWidthMode {
 }
 
 /**
+ * Controls the vertical density (height) of the segment bar.
+ */
+public enum class SegmentDensity {
+    /** Standard height with a 48dp minimum touch target (default). */
+    Regular,
+
+    /**
+     * Reduced height (~32dp), matching a native compact segmented control. The
+     * touch target shrinks with the control, so prefer [Regular] where a
+     * generous tap area matters.
+     */
+    Compact,
+}
+
+/**
  * A tab-style picker paired with a client-supplied content slot. Tapping a
  * segment swaps the content with a short crossfade. When all segment titles
  * fit on one row, they distribute evenly (in [SegmentFitMode.EvenWhenFits]);
@@ -118,6 +134,7 @@ public fun SegmentedContent(
     indicator: SegmentSelectionIndicator = SegmentSelectionIndicator.Pill,
     fitMode: SegmentFitMode = SegmentFitMode.EvenWhenFits,
     widthMode: SegmentWidthMode = SegmentWidthMode.Fill,
+    density: SegmentDensity = SegmentDensity.Regular,
     onSelectionChanged: ((Int) -> Unit)? = null,
     segmentTitle: @Composable (index: Int, item: SegmentedItem, isSelected: Boolean) -> Unit =
         { _, item, isSelected -> DefaultSegmentTitle(item.title, isSelected, indicator) },
@@ -137,6 +154,7 @@ public fun SegmentedContent(
         indicator = indicator,
         fitMode = fitMode,
         widthMode = widthMode,
+        density = density,
         segmentTitle = segmentTitle,
         segmentContent = segmentContent,
     )
@@ -155,6 +173,7 @@ public fun SegmentedContent(
     indicator: SegmentSelectionIndicator = SegmentSelectionIndicator.Pill,
     fitMode: SegmentFitMode = SegmentFitMode.EvenWhenFits,
     widthMode: SegmentWidthMode = SegmentWidthMode.Fill,
+    density: SegmentDensity = SegmentDensity.Regular,
     segmentTitle: @Composable (index: Int, item: SegmentedItem, isSelected: Boolean) -> Unit =
         { _, item, isSelected -> DefaultSegmentTitle(item.title, isSelected, indicator) },
     segmentContent: @Composable (index: Int, item: SegmentedItem) -> Unit,
@@ -172,6 +191,7 @@ public fun SegmentedContent(
             indicator = indicator,
             fitMode = fitMode,
             widthMode = widthMode,
+            density = density,
             segmentTitle = segmentTitle,
         )
         AnimatedContent(
@@ -226,6 +246,7 @@ private fun SegmentBar(
     indicator: SegmentSelectionIndicator,
     fitMode: SegmentFitMode,
     widthMode: SegmentWidthMode,
+    density: SegmentDensity,
     segmentTitle: @Composable (Int, SegmentedItem, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -286,6 +307,7 @@ private fun SegmentBar(
                             selectedIndex = selectedIndex,
                             onSelectionChanged = onSelectionChanged,
                             indicator = indicator,
+                            density = density,
                             segmentTitle = segmentTitle,
                         )
                     useScrollable ->
@@ -294,6 +316,7 @@ private fun SegmentBar(
                             selectedIndex = selectedIndex,
                             onSelectionChanged = onSelectionChanged,
                             indicator = indicator,
+                            density = density,
                             segmentTitle = segmentTitle,
                         )
                     else ->
@@ -302,6 +325,7 @@ private fun SegmentBar(
                             selectedIndex = selectedIndex,
                             onSelectionChanged = onSelectionChanged,
                             indicator = indicator,
+                            density = density,
                             segmentTitle = segmentTitle,
                         )
                 }
@@ -326,6 +350,7 @@ private fun EvenSegmentRow(
     selectedIndex: Int,
     onSelectionChanged: (Int) -> Unit,
     indicator: SegmentSelectionIndicator,
+    density: SegmentDensity,
     segmentTitle: @Composable (Int, SegmentedItem, Boolean) -> Unit,
 ) {
     Row(
@@ -339,6 +364,7 @@ private fun EvenSegmentRow(
                 isSelected = i == selectedIndex,
                 indicator = indicator,
                 onClick = { onSelectionChanged(i) },
+                density = density,
                 segmentTitle = segmentTitle,
                 modifier = Modifier.weight(1f),
             )
@@ -352,6 +378,7 @@ private fun IntrinsicSegmentRow(
     selectedIndex: Int,
     onSelectionChanged: (Int) -> Unit,
     indicator: SegmentSelectionIndicator,
+    density: SegmentDensity,
     segmentTitle: @Composable (Int, SegmentedItem, Boolean) -> Unit,
 ) {
     Row(
@@ -365,6 +392,7 @@ private fun IntrinsicSegmentRow(
                 isSelected = i == selectedIndex,
                 indicator = indicator,
                 onClick = { onSelectionChanged(i) },
+                density = density,
                 segmentTitle = segmentTitle,
             )
         }
@@ -377,6 +405,7 @@ private fun ScrollableSegmentRow(
     selectedIndex: Int,
     onSelectionChanged: (Int) -> Unit,
     indicator: SegmentSelectionIndicator,
+    density: SegmentDensity,
     segmentTitle: @Composable (Int, SegmentedItem, Boolean) -> Unit,
 ) {
     val state = rememberLazyListState()
@@ -436,6 +465,7 @@ private fun ScrollableSegmentRow(
                 isSelected = i == selectedIndex,
                 indicator = indicator,
                 onClick = { onSelectionChanged(i) },
+                density = density,
                 segmentTitle = segmentTitle,
             )
         }
@@ -494,6 +524,7 @@ private fun SegmentSlot(
     isSelected: Boolean,
     indicator: SegmentSelectionIndicator,
     onClick: () -> Unit,
+    density: SegmentDensity,
     segmentTitle: @Composable (Int, SegmentedItem, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -517,6 +548,16 @@ private fun SegmentSlot(
     )
     val slotShape =
         if (indicator == SegmentSelectionIndicator.Pill) AppTheme.shapes.pill else RectangleShape
+    // Compact trades the 48dp touch-target floor for a ~32dp control height that
+    // matches a native compact segmented control; the tap area shrinks with it.
+    val heightModifier =
+        if (density == SegmentDensity.Compact) {
+            Modifier.defaultMinSize(minHeight = AppTheme.spacing.x4)
+        } else {
+            Modifier.minimumTouchTargetHeight(minimumTouchTargetSize())
+        }
+    val titleVerticalPadding =
+        if (density == SegmentDensity.Compact) AppTheme.spacing.half else AppTheme.spacing.x1
 
     Box(
         modifier =
@@ -524,13 +565,13 @@ private fun SegmentSlot(
                 .clip(slotShape)
                 .background(pillBg)
                 .selectable(selected = isSelected, role = Role.Tab, onClick = onClick)
-                .minimumTouchTargetHeight(minimumTouchTargetSize()),
+                .then(heightModifier),
         contentAlignment = Alignment.Center,
     ) {
         // Title centred both axes within the (≥48dp) slot.
         Box(
             modifier =
-                Modifier.padding(horizontal = AppTheme.spacing.x2, vertical = AppTheme.spacing.x1),
+                Modifier.padding(horizontal = AppTheme.spacing.x2, vertical = titleVerticalPadding),
             contentAlignment = Alignment.Center,
         ) {
             segmentTitle(index, item, isSelected)

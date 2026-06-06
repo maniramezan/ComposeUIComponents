@@ -56,6 +56,7 @@ import io.github.maniramezan.compose.components.RadioGroup
 import io.github.maniramezan.compose.components.SearchField
 import io.github.maniramezan.compose.components.SecondaryButton
 import io.github.maniramezan.compose.components.SectionHeader
+import io.github.maniramezan.compose.components.SegmentDensity
 import io.github.maniramezan.compose.components.SegmentFitMode
 import io.github.maniramezan.compose.components.SegmentSelectionIndicator
 import io.github.maniramezan.compose.components.SegmentedContent
@@ -747,6 +748,10 @@ internal fun SegmentedContentPage() {
     var fitIndex by remember { mutableIntStateOf(0) }
     val fitMode = if (fitIndex == 0) SegmentFitMode.EvenWhenFits else SegmentFitMode.Intrinsic
 
+    val densityOptions = listOf("Regular", "Compact")
+    var densityIndex by remember { mutableIntStateOf(0) }
+    val density = if (densityIndex == 0) SegmentDensity.Regular else SegmentDensity.Compact
+
     val minSegments = 2
     val maxSegments = allDemoSegmentedItems.size
     var segmentCountSlider by remember { mutableFloatStateOf(3f) }
@@ -767,6 +772,7 @@ internal fun SegmentedContentPage() {
             onSelectionChanged = { selectedIndex = it },
             indicator = indicator,
             fitMode = fitMode,
+            density = density,
             segmentTitle = { _, item, isSelected ->
                 if (useIconTitle) {
                     IconSegmentTitle(item.title, isSelected, indicator)
@@ -793,6 +799,12 @@ internal fun SegmentedContentPage() {
             options = fitOptions,
             selectedIndex = fitIndex,
             onOptionSelected = { fitIndex = it },
+        )
+        ControlSegmented(
+            label = "Density",
+            options = densityOptions,
+            selectedIndex = densityIndex,
+            onOptionSelected = { densityIndex = it },
         )
         ControlSwitch(
             label = "Custom title slot (icon + label)",
