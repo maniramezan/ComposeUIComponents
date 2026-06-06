@@ -25,6 +25,7 @@ jobs:
       # bypass actor for the auto-merge below.
       - uses: actions/create-github-app-token@v3
         id: app-token
+        continue-on-error: true
         with:
           app-id: ${{ secrets.RELEASE_PLEASE_APP_ID }}
           private-key: ${{ secrets.RELEASE_PLEASE_APP_PRIVATE_KEY }}
@@ -32,7 +33,7 @@ jobs:
       - uses: googleapis/release-please-action@v5
         id: release
         with:
-          token: ${{ steps.app-token.outputs.token }}
+          token: ${{ steps.app-token.outputs.token || secrets.GITHUB_TOKEN }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
 
@@ -41,12 +42,16 @@ jobs:
       # review requirement is waived for this merge only (human review stays
       # enforced for every other PR). The squash-merge to main then re-triggers
       # this workflow, which creates the release/tag and runs the publish job.
+      # Only runs when the App token is available — auto-merge requires the App
+      # to be a ruleset bypass actor.
       - name: Auto-merge release PR
-        if: steps.release.outputs.pr
+        if: steps.release.outputs.pr && steps.app-token.outcome == 'success'
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
-          PR_NUMBER: ${{ fromJson(steps.release.outputs.pr).number }}
-        run: gh pr merge "$PR_NUMBER" --squash --auto
+          PR_JSON: ${{ steps.release.outputs.pr }}
+        run: |
+          PR_NUMBER=$(echo "$PR_JSON" | jq -r '.number')
+          gh pr merge "$PR_NUMBER" --squash --auto
 
   # Publish in-line with release creation. release-please tags via the App
   # token, which still can't fire a tag-push workflow, so we call the publish
