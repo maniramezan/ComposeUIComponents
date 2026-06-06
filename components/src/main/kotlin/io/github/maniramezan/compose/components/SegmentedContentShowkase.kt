@@ -22,3 +22,7 @@ public fun SegmentedContentCustomTitleShowkase(): Unit = SegmentedContentCustomT
 @ShowkaseComposable(name = "Segmented Content – No Indicator", group = "Navigation")
 @Composable
 public fun SegmentedContentNoIndicatorShowkase(): Unit = SegmentedContentNoIndicatorPreview()
+
+@ShowkaseComposable(name = "Segmented Content – Fit Width", group = "Navigation")
+@Composable
+public fun SegmentedContentFitWidthShowkase(): Unit = SegmentedContentFitWidthPreview()

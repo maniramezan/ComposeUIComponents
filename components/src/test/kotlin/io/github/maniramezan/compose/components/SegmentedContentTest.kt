@@ -12,12 +12,14 @@ class SegmentedContentTest {
                 "SegmentedItem",
                 "SegmentSelectionIndicator",
                 "SegmentFitMode",
+                "SegmentWidthMode",
             ),
         ).containsExactly(
             "SegmentedContent",
             "SegmentedItem",
             "SegmentSelectionIndicator",
             "SegmentFitMode",
+            "SegmentWidthMode",
         ).inOrder()
     }
 
@@ -50,6 +52,15 @@ class SegmentedContentTest {
             .containsExactly(
                 SegmentFitMode.EvenWhenFits,
                 SegmentFitMode.Intrinsic,
+            ).inOrder()
+    }
+
+    @Test
+    fun segmentWidthModeValues() {
+        assertThat(SegmentWidthMode.entries)
+            .containsExactly(
+                SegmentWidthMode.Fill,
+                SegmentWidthMode.Fit,
             ).inOrder()
     }
 }

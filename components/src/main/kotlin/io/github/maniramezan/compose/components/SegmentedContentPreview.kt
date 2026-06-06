@@ -102,6 +102,19 @@ public fun SegmentedContentNoIndicatorPreview(): Unit =
         ) { _, item -> SegmentPlaceholder(item.title) }
     }
 
+@PreviewLightDark
+@Preview(name = "SegmentedContent – Fit Width", group = "Navigation")
+@Composable
+public fun SegmentedContentFitWidthPreview(): Unit =
+    AppTheme {
+        SegmentedContent(
+            items = threeShortItems,
+            initialSelectedIndex = 0,
+            indicator = SegmentSelectionIndicator.Pill,
+            widthMode = SegmentWidthMode.Fit,
+        ) { _, item -> SegmentPlaceholder(item.title) }
+    }
+
 @Composable
 private fun SegmentPlaceholder(title: String) {
     Box(
