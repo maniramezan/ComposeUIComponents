@@ -10,6 +10,10 @@ on:
   # Kotlin 2.4.0 in any build mode (manual rejects the version; none finds no
   # code). Re-add pull_request once the CodeQL bundle supports Kotlin 2.4.x.
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name != 'schedule' }}
+
 permissions:
   contents: read
   security-events: write
