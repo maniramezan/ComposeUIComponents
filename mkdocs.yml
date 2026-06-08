@@ -41,6 +41,7 @@ nav:
       - Media: components/media.md
       - Feedback: components/feedback.md
       - Typography: components/typography.md
+  - Secure Storage: secure-storage.md
   - Quality:
       - Accessibility: accessibility.md
       - Performance: performance.md
@@ -56,6 +57,7 @@ nav:
       - Localization and A11y String Contract: adr/0004-localization-and-a11y-string-contract.md
       - M3 Expressive Adoption: adr/0005-m3-expressive-adoption.md
       - Adaptive Layout Breakpoints: adr/0006-adaptive-layout-breakpoints.md
+      - Secure Storage Module: adr/0007-secure-storage-module.md
 
 markdown_extensions:
   - admonition
