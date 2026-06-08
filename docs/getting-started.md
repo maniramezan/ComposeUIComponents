@@ -8,7 +8,10 @@ Use the modules you need:
 implementation("io.github.maniramezan.compose:theme:<version>")
 implementation("io.github.maniramezan.compose:icons:<version>")
 implementation("io.github.maniramezan.compose:components:<version>")
+implementation("io.github.maniramezan.compose:secure-storage:<version>") // optional, standalone
 ```
+
+`secure-storage` is independent of the Compose modules — see [Secure Storage](secure-storage.md).
 
 ## App setup
 

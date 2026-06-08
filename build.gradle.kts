@@ -26,6 +26,7 @@ apiValidation {
             "theme",
             "icons",
             "compose-utils",
+            "secure-storage",
             "components",
         ),
     )

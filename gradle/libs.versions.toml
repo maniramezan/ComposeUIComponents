@@ -20,6 +20,7 @@ mavenPublish = "0.36.0"
 roborazzi = "1.63.0"
 robolectric = "4.16.1"
 showkase = "1.0.5"
+tink = "1.21.0"
 truth = "1.4.5"
 uiautomator = "2.3.0"
 
@@ -57,6 +58,7 @@ roborazzi-junit-rule = { module = "io.github.takahirom.roborazzi:roborazzi-junit
 showkase = { module = "com.airbnb.android:showkase", version.ref = "showkase" }
 showkase-annotation = { module = "com.airbnb.android:showkase-annotation", version.ref = "showkase" }
 showkase-processor = { module = "com.airbnb.android:showkase-processor", version.ref = "showkase" }
+tink-android = { module = "com.google.crypto.tink:tink-android", version.ref = "tink" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
 
 [plugins]
