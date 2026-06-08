@@ -16,6 +16,10 @@ import android.content.Context
  * not meant to be repeated per access.
  *
  * Implementations are safe to call from any thread.
+ *
+ * **Testing:** depend on this interface rather than [create], and use
+ * [InMemorySecureStorage] as the test double so unit tests run on a plain JVM without the
+ * Android Keystore. You can also supply your own implementation of this interface.
  */
 public interface SecureStorage {
     /** Encrypts and stores [value] under [key], replacing any existing value. */
