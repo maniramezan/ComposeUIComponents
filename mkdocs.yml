@@ -41,6 +41,7 @@ nav:
       - Media: components/media.md
       - Feedback: components/feedback.md
       - Typography: components/typography.md
+  - Secure Storage: secure-storage.md
   - Quality:
       - Accessibility: accessibility.md
       - Performance: performance.md
