@@ -149,6 +149,7 @@ public fun Toast(
         Text(
             text = message,
             color = AppTheme.colors.surface,
+            style = AppTheme.typography.bodyMedium,
             // Take the remaining width so a long message wraps between the icon
             // and the action instead of pushing the action button off-screen.
             // Align by baseline so the action label lines up with the first line.
@@ -157,11 +158,15 @@ public fun Toast(
         if (actionLabel != null && onAction != null) {
             TextButton(
                 onClick = onAction,
-                modifier = Modifier.alignByBaseline(),
+                modifier =
+                    Modifier
+                        .minimumTouchTargetHeight(minimumTouchTargetSize())
+                        .alignByBaseline(),
             ) {
                 Text(
                     text = actionLabel,
                     color = AppTheme.colors.surface,
+                    style = AppTheme.typography.labelLarge,
                 )
             }
         }

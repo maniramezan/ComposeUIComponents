@@ -1,6 +1,7 @@
 package io.github.maniramezan.compose.components
 
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -103,5 +104,19 @@ public class ToastHostInteractionTest {
         composeRule.runOnIdle {
             assert(result == ToastResult.Dismissed) { "Expected Dismissed, got $result" }
         }
+    }
+
+    @Test
+    public fun indefiniteToastWithDismissLabelExposesClickAction() {
+        val (hostState, scope) = setUpHost()
+
+        composeRule.runOnIdle {
+            scope.launch {
+                hostState.showToast(message = "Stay", duration = ToastDuration.Indefinite)
+            }
+        }
+        composeRule.mainClock.advanceTimeBy(500)
+
+        composeRule.onNodeWithText("Stay").assertHasClickAction()
     }
 }
