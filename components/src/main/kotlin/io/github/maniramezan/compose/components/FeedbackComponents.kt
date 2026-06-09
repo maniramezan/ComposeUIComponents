@@ -35,10 +35,13 @@ import io.github.maniramezan.compose.utils.minimumTouchTargetHeight
 public fun ProgressIndicator(
     modifier: Modifier = Modifier,
     progress: Float? = null,
-    label: String? = null,
+    label: String,
 ) {
     Column(
-        modifier = modifier.fillMaxWidth(),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .semantics { liveRegion = LiveRegionMode.Polite },
         verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -50,9 +53,11 @@ public fun ProgressIndicator(
                 modifier = Modifier.fillMaxWidth(),
             )
         }
-        if (label != null) {
-            Text(text = label)
-        }
+        Text(
+            text = label,
+            style = AppTheme.typography.bodyMedium,
+            color = AppTheme.colors.onSurface,
+        )
     }
 }
 

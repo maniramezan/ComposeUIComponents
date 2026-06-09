@@ -40,9 +40,17 @@ public fun ListItem(
             // Headline + supporting text read as a single focus stop.
             modifier = Modifier.weight(1f).semantics(mergeDescendants = true) {},
         ) {
-            Text(text = headline)
+            Text(
+                text = headline,
+                style = AppTheme.typography.bodyLarge,
+                color = AppTheme.colors.onSurface,
+            )
             if (supportingText != null) {
-                Text(text = supportingText)
+                Text(
+                    text = supportingText,
+                    style = AppTheme.typography.bodyMedium,
+                    color = AppTheme.colors.onSurfaceVariant,
+                )
             }
         }
         trailingContent?.invoke()
@@ -72,9 +80,17 @@ public fun EmptyState(
 ) {
     StateColumn(modifier = modifier) {
         leadingContent?.invoke()
-        Text(text = title)
+        Text(
+            text = title,
+            style = AppTheme.typography.titleSmall,
+            color = AppTheme.colors.onSurface,
+        )
         if (message != null) {
-            Text(text = message)
+            Text(
+                text = message,
+                style = AppTheme.typography.bodyMedium,
+                color = AppTheme.colors.onSurfaceVariant,
+            )
         }
         action?.invoke()
     }
@@ -82,7 +98,7 @@ public fun EmptyState(
 
 @Composable
 public fun LoadingState(
-    label: String? = null,
+    label: String,
     modifier: Modifier = Modifier,
 ) {
     StateColumn(
@@ -90,9 +106,11 @@ public fun LoadingState(
         modifier = modifier.semantics { liveRegion = LiveRegionMode.Polite },
     ) {
         CircularProgressIndicator()
-        if (label != null) {
-            Text(text = label)
-        }
+        Text(
+            text = label,
+            style = AppTheme.typography.bodyMedium,
+            color = AppTheme.colors.onSurface,
+        )
     }
 }
 
@@ -109,8 +127,16 @@ public fun ErrorState(
         modifier = modifier.semantics { liveRegion = LiveRegionMode.Polite },
     ) {
         leadingContent?.invoke()
-        Text(text = title)
-        Text(text = message)
+        Text(
+            text = title,
+            style = AppTheme.typography.titleSmall,
+            color = AppTheme.colors.onSurface,
+        )
+        Text(
+            text = message,
+            style = AppTheme.typography.bodyMedium,
+            color = AppTheme.colors.onSurfaceVariant,
+        )
         action?.invoke()
     }
 }

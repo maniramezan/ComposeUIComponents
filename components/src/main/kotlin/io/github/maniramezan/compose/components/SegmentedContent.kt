@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -49,7 +48,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import io.github.maniramezan.compose.theme.AppTheme
-import io.github.maniramezan.compose.utils.minimumTouchTargetHeight
+import io.github.maniramezan.compose.utils.minimumTouchTarget
 
 /**
  * Represents a single segment in [SegmentedContent].
@@ -105,13 +104,12 @@ public enum class SegmentWidthMode {
  * Controls the vertical density (height) of the segment bar.
  */
 public enum class SegmentDensity {
-    /** Standard height with a 48dp minimum touch target (default). */
+    /** Standard internal padding with a 48dp minimum touch target (default). */
     Regular,
 
     /**
-     * Reduced height (~32dp), matching a native compact segmented control. The
-     * touch target shrinks with the control, so prefer [Regular] where a
-     * generous tap area matters.
+     * Reduced internal padding matching a native compact segmented control,
+     * while preserving the same 48dp minimum touch target as [Regular].
      */
     Compact,
 }
@@ -548,14 +546,6 @@ private fun SegmentSlot(
     )
     val slotShape =
         if (indicator == SegmentSelectionIndicator.Pill) AppTheme.shapes.pill else RectangleShape
-    // Compact trades the 48dp touch-target floor for a ~32dp control height that
-    // matches a native compact segmented control; the tap area shrinks with it.
-    val heightModifier =
-        if (density == SegmentDensity.Compact) {
-            Modifier.defaultMinSize(minHeight = AppTheme.spacing.x4)
-        } else {
-            Modifier.minimumTouchTargetHeight(minimumTouchTargetSize())
-        }
     val titleVerticalPadding =
         if (density == SegmentDensity.Compact) AppTheme.spacing.half else AppTheme.spacing.x1
 
@@ -565,7 +555,7 @@ private fun SegmentSlot(
                 .clip(slotShape)
                 .background(pillBg)
                 .selectable(selected = isSelected, role = Role.Tab, onClick = onClick)
-                .then(heightModifier),
+                .minimumTouchTarget(minimumTouchTargetSize()),
         contentAlignment = Alignment.Center,
     ) {
         // Title centred both axes within the (≥48dp) slot.

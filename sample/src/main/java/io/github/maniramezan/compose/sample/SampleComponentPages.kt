@@ -908,12 +908,8 @@ internal fun EmptyStatePage() {
 
 @Composable
 internal fun LoadingStatePage() {
-    var showLabel by remember { mutableStateOf(true) }
-
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        LoadingState(label = if (showLabel) "Loading projects…" else null)
-        ControlsDivider()
-        ControlSwitch(label = "Label", checked = showLabel, onCheckedChange = { showLabel = it })
+        LoadingState(label = "Loading projects…")
     }
 }
 
@@ -1086,16 +1082,15 @@ internal fun ToastHostPage() {
 internal fun ProgressIndicatorPage() {
     var determinate by remember { mutableStateOf(true) }
     var progress by remember { mutableFloatStateOf(0.45f) }
-    var showLabel by remember { mutableStateOf(true) }
 
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
         ProgressIndicator(
             progress = if (determinate) progress else null,
             label =
-                if (showLabel) {
-                    if (determinate) "Progress: ${(progress * 100).toInt()}%" else "Loading…"
+                if (determinate) {
+                    "Progress: ${(progress * 100).toInt()}%"
                 } else {
-                    null
+                    "Loading…"
                 },
         )
         ControlsDivider()
@@ -1111,7 +1106,6 @@ internal fun ProgressIndicatorPage() {
                 onValueChange = { progress = it },
             )
         }
-        ControlSwitch(label = "Label", checked = showLabel, onCheckedChange = { showLabel = it })
     }
 }
 

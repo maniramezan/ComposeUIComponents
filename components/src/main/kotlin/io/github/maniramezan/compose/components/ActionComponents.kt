@@ -167,6 +167,7 @@ public fun SegmentedControl(
 }
 
 @Composable
+@Suppress("UNUSED_PARAMETER")
 public fun ExtendedFloatingActionButton(
     text: String,
     icon: IconToken,
@@ -182,7 +183,7 @@ public fun ExtendedFloatingActionButton(
         icon = {
             Icon(
                 imageVector = icon.imageVector,
-                contentDescription = contentDescription,
+                contentDescription = null, // @check:suppress — decorative; the extended FAB text labels the action
                 modifier = Modifier.size(standardIconSize()),
             )
         },

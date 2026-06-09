@@ -18,6 +18,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import io.github.maniramezan.compose.theme.AppTheme
@@ -31,11 +33,10 @@ import io.github.maniramezan.compose.utils.minimumTouchTargetHeight
  * disclosure chevron (rotated when expanded); when [expanded] is null it is a selectable
  * leaf/child and shows a checkmark when [isSelected].
  *
- * @param expandedDescription localized label for the chevron icon when the row is expanded
- *   (e.g. `"expanded"`). TalkBack reads this as the icon's content description. When blank,
- *   the chevron is decorative and the state is not announced. Ignored for leaf rows.
- * @param collapsedDescription localized label for the chevron icon when the row is collapsed
- *   (e.g. `"collapsed"`). When blank, the chevron is decorative. Ignored for leaf rows.
+ * @param expandedDescription localized state description when the row is expanded
+ *   (e.g. `"expanded"`). When blank, no custom state is announced. Ignored for leaf rows.
+ * @param collapsedDescription localized state description when the row is collapsed
+ *   (e.g. `"collapsed"`). When blank, no custom state is announced. Ignored for leaf rows.
  */
 @Composable
 internal fun SelectionListRow(
@@ -64,6 +65,12 @@ internal fun SelectionListRow(
         } else {
             Modifier.clickable(role = Role.Button, onClick = onClick)
         }
+    val expandableStateDescription =
+        when (expanded) {
+            true -> expandedDescription.ifBlank { null }
+            false -> collapsedDescription.ifBlank { null }
+            null -> null
+        }
 
     Row(
         modifier =
@@ -71,6 +78,7 @@ internal fun SelectionListRow(
                 .fillMaxWidth()
                 .minimumTouchTargetHeight(minimumTouchTargetSize())
                 .then(interaction)
+                .semantics { expandableStateDescription?.let { stateDescription = it } }
                 .padding(
                     start = if (isIndented) AppTheme.spacing.x4 else AppTheme.spacing.x2,
                     end = AppTheme.spacing.x2,
@@ -102,15 +110,9 @@ internal fun SelectionListRow(
         }
         when {
             expanded != null -> {
-                val chevronDescription =
-                    if (expanded) {
-                        expandedDescription.ifBlank { null }
-                    } else {
-                        collapsedDescription.ifBlank { null }
-                    }
                 Icon(
                     imageVector = AppTheme.icons.expand.imageVector,
-                    contentDescription = chevronDescription,
+                    contentDescription = null, // @check:suppress — decorative; expanded/collapsed state is on the row
                     tint = AppTheme.colors.onSurfaceVariant,
                     modifier = Modifier.rotate(chevronRotation),
                 )
