@@ -20,7 +20,14 @@ public fun FeedbackComponentsPreview(): Unit =
             Skeleton()
             Toast(
                 message = "Saved",
+                icon = AppTheme.icons.check,
                 actionLabel = "Undo",
+                onAction = {},
+            )
+            Toast(
+                message = "Your changes are saved and will sync to all of your devices shortly.",
+                icon = AppTheme.icons.check,
+                actionLabel = "View",
                 onAction = {},
             )
         }

@@ -28,6 +28,7 @@ public fun ToastShowkase(): Unit =
     AppTheme {
         Toast(
             message = "Saved",
+            icon = AppTheme.icons.check,
             actionLabel = "Undo",
             onAction = {},
         )

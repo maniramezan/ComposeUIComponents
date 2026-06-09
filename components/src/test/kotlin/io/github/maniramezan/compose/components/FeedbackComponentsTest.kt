@@ -11,11 +11,13 @@ class FeedbackComponentsTest {
                 "ProgressIndicator",
                 "Skeleton",
                 "Toast",
+                "ToastHost",
             ),
         ).containsExactly(
             "ProgressIndicator",
             "Skeleton",
             "Toast",
+            "ToastHost",
         ).inOrder()
     }
 }

@@ -8,9 +8,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -26,6 +28,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import io.github.maniramezan.compose.theme.AppTheme
+import io.github.maniramezan.compose.theme.IconToken
 import io.github.maniramezan.compose.utils.minimumTouchTargetHeight
 
 @Composable
@@ -100,10 +103,20 @@ public fun SkeletonBlock(
     )
 }
 
+/**
+ * Transient message surface with an optional leading [icon] and action button.
+ *
+ * @param iconTint color applied to [icon]. Defaults to the surface color so a
+ *   monochrome icon reads against the dark container. Pass [Color.Unspecified]
+ *   to render a multi-color (colorful) icon with its own colors untouched.
+ */
 @Composable
 public fun Toast(
     message: String,
     modifier: Modifier = Modifier,
+    icon: IconToken? = null,
+    iconContentDescription: String? = null,
+    iconTint: Color? = null,
     actionLabel: String? = null,
     onAction: (() -> Unit)? = null,
 ) {
@@ -116,12 +129,26 @@ public fun Toast(
                 .padding(horizontal = AppTheme.spacing.lg, vertical = AppTheme.spacing.md)
                 // Transient message: announce when it appears without stealing focus.
                 .semantics { liveRegion = LiveRegionMode.Polite },
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        if (icon != null) {
+            Icon(
+                imageVector = icon.imageVector,
+                // Null by default: the message text already conveys the meaning,
+                // so the icon is decorative unless the caller labels it.
+                contentDescription = iconContentDescription,
+                // Color.Unspecified keeps a colorful icon's own colors.
+                tint = iconTint ?: AppTheme.colors.surface,
+                modifier = Modifier.size(standardIconSize()),
+            )
+        }
         Text(
             text = message,
             color = AppTheme.colors.surface,
+            // Take the remaining width so a long message wraps between the icon
+            // and the action instead of pushing the action button off-screen.
+            modifier = Modifier.weight(1f),
         )
         if (actionLabel != null && onAction != null) {
             TextButton(
