@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import io.github.maniramezan.compose.icons.defaultAppIcons
 import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.utils.PreviewFontScale
 import io.github.maniramezan.compose.utils.PreviewLightDark
@@ -13,14 +14,21 @@ import io.github.maniramezan.compose.utils.PreviewLightDark
 @Preview(name = "Feedback Components", group = "Feedback")
 @Composable
 public fun FeedbackComponentsPreview(): Unit =
-    AppTheme {
+    AppTheme(icons = defaultAppIcons()) {
         Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
             ProgressIndicator(label = "Loading")
             ProgressIndicator(progress = 0.65f, label = "Syncing")
             Skeleton()
             Toast(
                 message = "Saved",
+                icon = AppTheme.icons.check,
                 actionLabel = "Undo",
+                onAction = {},
+            )
+            Toast(
+                message = "Your changes are saved and will sync to all of your devices shortly.",
+                icon = AppTheme.icons.check,
+                actionLabel = "View",
                 onAction = {},
             )
         }

@@ -229,6 +229,13 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             content = { ToastPage() },
         ),
         SampleComponentDemo(
+            id = "toast-host",
+            title = "ToastHost",
+            category = "Containers",
+            description = "Shows toasts with auto-dismiss or keep-until-dismissed behavior.",
+            content = { ToastHostPage() },
+        ),
+        SampleComponentDemo(
             id = "progress-indicator",
             title = "ProgressIndicator",
             category = "Feedback",
