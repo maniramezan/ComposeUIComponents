@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
 import io.github.maniramezan.compose.theme.AppTheme
+import io.github.maniramezan.compose.utils.minimumTouchTargetHeight
 
 /**
  * A two-line list row with title, optional supporting/secondary text, and
@@ -36,6 +37,8 @@ public fun ContentRow(
         modifier
             .fillMaxWidth()
             .let { if (onClick != null) it.clickable(role = Role.Button, onClick = onClick) else it }
+            .semantics(mergeDescendants = onClick != null) {}
+            .minimumTouchTargetHeight(minimumTouchTargetSize())
             .padding(horizontal = AppTheme.spacing.x2, vertical = AppTheme.spacing.x1_5)
 
     Row(

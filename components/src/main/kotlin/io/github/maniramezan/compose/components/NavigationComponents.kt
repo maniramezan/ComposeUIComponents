@@ -34,6 +34,11 @@ import androidx.compose.material3.TopAppBar as MaterialTopAppBar
 public data class NavigationItem(
     public val label: String,
     public val icon: IconToken,
+    /**
+     * Accessibility label for icon-only or custom navigation presentations. The
+     * built-in bottom bar and rail render text labels, so their icons are
+     * decorative and this value is not read there.
+     */
     public val contentDescription: String = label,
     public val badge: String? = null,
     /**
@@ -240,13 +245,13 @@ private fun NavigationItemIcon(item: NavigationItem) {
         ) {
             Icon(
                 imageVector = item.icon.imageVector,
-                contentDescription = item.contentDescription,
+                contentDescription = null, // @check:suppress — decorative; the visible label names the navigation item
             )
         }
     } else {
         Icon(
             imageVector = item.icon.imageVector,
-            contentDescription = item.contentDescription,
+            contentDescription = null, // @check:suppress — decorative; the visible label names the navigation item
         )
     }
 }

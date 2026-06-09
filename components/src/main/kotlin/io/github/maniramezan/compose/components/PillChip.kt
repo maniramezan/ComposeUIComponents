@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import io.github.maniramezan.compose.theme.AppTheme
+import io.github.maniramezan.compose.utils.minimumTouchTarget
 
 /**
  * A capsule-shaped tappable chip that toggles between a selected and
@@ -41,6 +42,7 @@ public fun PillChip(
     Box(
         modifier =
             modifier
+                .minimumTouchTarget(minimumTouchTargetSize())
                 .clip(AppTheme.shapes.pill)
                 .background(backgroundColor)
                 .selectable(selected = isSelected, role = Role.Button, onClick = onClick)
