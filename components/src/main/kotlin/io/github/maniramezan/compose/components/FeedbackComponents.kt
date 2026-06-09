@@ -130,7 +130,10 @@ public fun Toast(
                 // Transient message: announce when it appears without stealing focus.
                 .semantics { liveRegion = LiveRegionMode.Polite },
         horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md),
-        verticalAlignment = Alignment.CenterVertically,
+        // Top-align so the leading icon and action sit beside the first line
+        // when the message wraps to multiple lines, rather than floating against
+        // the vertical center of the whole text block.
+        verticalAlignment = Alignment.Top,
     ) {
         if (icon != null) {
             Icon(
@@ -148,11 +151,13 @@ public fun Toast(
             color = AppTheme.colors.surface,
             // Take the remaining width so a long message wraps between the icon
             // and the action instead of pushing the action button off-screen.
-            modifier = Modifier.weight(1f),
+            // Align by baseline so the action label lines up with the first line.
+            modifier = Modifier.weight(1f).alignByBaseline(),
         )
         if (actionLabel != null && onAction != null) {
             TextButton(
                 onClick = onAction,
+                modifier = Modifier.alignByBaseline(),
             ) {
                 Text(
                     text = actionLabel,

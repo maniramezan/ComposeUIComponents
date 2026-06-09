@@ -2,6 +2,7 @@ package io.github.maniramezan.compose.components
 
 import androidx.compose.runtime.Composable
 import com.airbnb.android.showkase.annotation.ShowkaseComposable
+import io.github.maniramezan.compose.icons.defaultAppIcons
 import io.github.maniramezan.compose.theme.AppTheme
 
 @ShowkaseComposable(name = "Feedback", group = "Feedback")
@@ -25,7 +26,7 @@ public fun SkeletonShowkase(): Unit =
 @ShowkaseComposable(name = "Toast", group = "Feedback")
 @Composable
 public fun ToastShowkase(): Unit =
-    AppTheme {
+    AppTheme(icons = defaultAppIcons()) {
         Toast(
             message = "Saved",
             icon = AppTheme.icons.check,
