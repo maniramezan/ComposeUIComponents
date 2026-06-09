@@ -35,8 +35,8 @@ import androidx.compose.ui.Modifier
  * @param onSelect invoked with the tapped leaf or child identifier; just update your selection — dismissal is handled per [confirmButton].
  * @param onDismissRequest invoked when the sheet is dismissed by scrim tap, drag, back, item tap (when there is no [confirmButton]), or the confirm control.
  * @param confirmButton optional slot for a confirm/close control shown at the trailing edge of the header — supply your own localized text button, icon, or image and wire its `onClick` (e.g. to [onDismissRequest]). When provided, item taps no longer dismiss; only the confirm control does.
- * @param expandedDescription localized label for the disclosure chevron when a parent row is expanded (e.g. `"expanded"`). TalkBack reads this as the icon's content description. When blank, the chevron is decorative and the state is not announced.
- * @param collapsedDescription localized label for the disclosure chevron when a parent row is collapsed (e.g. `"collapsed"`). When blank, the chevron is decorative.
+ * @param expandedDescription localized state description for expanded parent rows (e.g. `"expanded"`). When blank, no custom state is announced.
+ * @param collapsedDescription localized state description for collapsed parent rows (e.g. `"collapsed"`). When blank, no custom state is announced.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -111,8 +111,8 @@ public fun <ID : Any> SelectionList(
  * @param isSearchable when `true`, shows a search field that filters across both levels.
  * @param searchPlaceholder hint shown in the search field when it is empty; supply a localized string. Defaults to no hint.
  * @param noResultsText shown when a search matches nothing; supply a localized string. Defaults to no message.
- * @param expandedDescription localized label for the disclosure chevron when a parent row is expanded (e.g. `"expanded"`). TalkBack reads this as the icon's content description. When blank, the chevron is decorative and the state is not announced.
- * @param collapsedDescription localized label for the disclosure chevron when a parent row is collapsed (e.g. `"collapsed"`). When blank, the chevron is decorative.
+ * @param expandedDescription localized state description for expanded parent rows (e.g. `"expanded"`). When blank, no custom state is announced.
+ * @param collapsedDescription localized state description for collapsed parent rows (e.g. `"collapsed"`). When blank, no custom state is announced.
  * @param confirmButton optional slot for a confirm/close control shown at the trailing edge of the header — supply your own localized text button, icon, or image and wire its `onClick` (e.g. to [onDismissRequest]). Recommended for multiple choice, which does not dismiss on tap.
  */
 @OptIn(ExperimentalMaterial3Api::class)

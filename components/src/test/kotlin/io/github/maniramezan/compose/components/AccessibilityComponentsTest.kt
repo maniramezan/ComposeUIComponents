@@ -1,10 +1,21 @@
 package io.github.maniramezan.compose.components
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.Text
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.hasClickAction
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -139,6 +150,30 @@ public class AccessibilityComponentsTest {
     }
 
     @Test
+    public fun extractedInteractiveComponentsMeetMinimumTouchTargetSize() {
+        composeRule.setContent {
+            AppTheme {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    PillChip(label = "Filter", isSelected = false, onClick = {})
+                    ContentRow(title = "Row", modifier = Modifier.testTag("content-row"), onClick = {})
+                    SegmentedContent(
+                        items = listOf(SegmentedItem("One"), SegmentedItem("Two")),
+                        initialSelectedIndex = 0,
+                        density = SegmentDensity.Compact,
+                    ) { _, item ->
+                        Text(text = item.title)
+                    }
+                }
+            }
+        }
+
+        composeRule.onNode(hasText("Filter") and hasClickAction()).assertMinimumTouchTarget()
+        composeRule.onNodeWithTag("content-row").assertMinimumTouchTarget()
+        composeRule.onNode(hasText("One") and hasClickAction()).assertMinimumTouchTarget()
+        composeRule.onNode(hasText("Two") and hasClickAction()).assertMinimumTouchTarget()
+    }
+
+    @Test
     public fun sliderExposesLabelAndValueDescription() {
         composeRule.setContent {
             AppTheme {
@@ -152,5 +187,85 @@ public class AccessibilityComponentsTest {
         }
 
         composeRule.onNodeWithContentDescription("Volume").assertExists()
+    }
+
+    @Test
+    public fun expandableSelectionRowsExposeStateOnRow() {
+        composeRule.setContent {
+            AppTheme(icons = defaultAppIcons()) {
+                SelectionListContent(
+                    title = "Options",
+                    nodes =
+                        listOf(
+                            SelectionListNode(
+                                id = "parent",
+                                title = "Parent",
+                                children = listOf(SelectionListNode(id = "child", title = "Child")),
+                            ),
+                        ),
+                    selectedIds = emptySet(),
+                    onSelect = {},
+                    expandedDescription = "Expanded",
+                    collapsedDescription = "Collapsed",
+                )
+            }
+        }
+
+        composeRule
+            .onNode(hasText("Parent") and hasClickAction())
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, "Collapsed"))
+    }
+
+    @Test
+    public fun navigationItemIconsAreDecorativeWhenLabelIsVisible() {
+        composeRule.setContent {
+            AppTheme(icons = defaultAppIcons()) {
+                BottomBar(
+                    items =
+                        listOf(
+                            NavigationItem(
+                                label = "Home",
+                                icon = AppTheme.icons.check,
+                                contentDescription = "Home icon",
+                            ),
+                        ),
+                    selectedIndex = 0,
+                    onItemSelected = {},
+                )
+            }
+        }
+
+        composeRule.onNodeWithText("Home").assertExists()
+        composeRule.onNodeWithContentDescription("Home icon").assertDoesNotExist()
+    }
+
+    @Test
+    public fun extendedFabIconIsDecorativeByDefault() {
+        composeRule.setContent {
+            AppTheme(icons = defaultAppIcons()) {
+                ExtendedFloatingActionButton(
+                    text = "Create",
+                    icon = AppTheme.icons.check,
+                    contentDescription = "Create icon",
+                    onClick = {},
+                )
+            }
+        }
+
+        composeRule.onNodeWithText("Create", useUnmergedTree = true).assertExists()
+        composeRule.onNodeWithContentDescription("Create icon").assertDoesNotExist()
+    }
+
+    @Test
+    public fun progressAndLoadingStatesExposeReadableText() {
+        composeRule.setContent {
+            AppTheme {
+                ProgressIndicator(label = "Loading")
+                LoadingState(label = "Loading projects")
+            }
+        }
+
+        composeRule.onNodeWithText("Loading").assertExists()
+        composeRule.onNodeWithText("Loading projects").assertExists()
     }
 }
