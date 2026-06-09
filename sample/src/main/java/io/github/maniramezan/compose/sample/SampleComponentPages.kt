@@ -20,6 +20,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -73,8 +74,13 @@ import io.github.maniramezan.compose.components.TabRow
 import io.github.maniramezan.compose.components.TextButton
 import io.github.maniramezan.compose.components.TextField
 import io.github.maniramezan.compose.components.Toast
+import io.github.maniramezan.compose.components.ToastDuration
+import io.github.maniramezan.compose.components.ToastHost
+import io.github.maniramezan.compose.components.ToastPosition
 import io.github.maniramezan.compose.components.TopAppBar
+import io.github.maniramezan.compose.components.rememberToastHostState
 import io.github.maniramezan.compose.theme.AppTheme
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -989,15 +995,86 @@ internal fun SnackbarPage() {
 @Composable
 internal fun ToastPage() {
     var showAction by remember { mutableStateOf(false) }
+    var showIcon by remember { mutableStateOf(false) }
+    var longMessage by remember { mutableStateOf(false) }
 
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
         Toast(
-            message = "Toast message",
+            message =
+                if (longMessage) {
+                    "Your changes are saved and will sync to all of your devices shortly."
+                } else {
+                    "Toast message"
+                },
+            icon = if (showIcon) AppTheme.icons.check else null,
             actionLabel = if (showAction) "View" else null,
             onAction = if (showAction) ({}) else null,
         )
         ControlsDivider()
         ControlSwitch(label = "Action", checked = showAction, onCheckedChange = { showAction = it })
+        ControlSwitch(label = "Icon", checked = showIcon, onCheckedChange = { showIcon = it })
+        ControlSwitch(label = "Long message", checked = longMessage, onCheckedChange = { longMessage = it })
+    }
+}
+
+@Composable
+internal fun ToastHostPage() {
+    val hostState = rememberToastHostState()
+    val scope = rememberCoroutineScope()
+    var withAction by remember { mutableStateOf(true) }
+    var withIcon by remember { mutableStateOf(false) }
+    // Show the actual timeout so it's obvious how long each option lasts.
+    val durationOptions = listOf("4s", "10s", "∞")
+    var durationIndex by remember { mutableIntStateOf(0) }
+    val positionOptions = listOf("Bottom", "Top")
+    var positionIndex by remember { mutableIntStateOf(0) }
+
+    val duration =
+        when (durationIndex) {
+            1 -> ToastDuration.Long
+            2 -> ToastDuration.Indefinite
+            else -> ToastDuration.Short
+        }
+    val position = if (positionIndex == 1) ToastPosition.Top else ToastPosition.Bottom
+    // Read the icon token in composable scope; it can't be read inside launch{}.
+    val checkIcon = AppTheme.icons.check
+
+    Box(modifier = Modifier.fillMaxWidth().height(AppTheme.spacing.xl * 12)) {
+        Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
+            PrimaryButton(
+                text = "Show toast",
+                onClick = {
+                    scope.launch {
+                        hostState.showToast(
+                            message = "Toast message",
+                            icon = if (withIcon) checkIcon else null,
+                            actionLabel = if (withAction) "Undo" else null,
+                            duration = duration,
+                        )
+                    }
+                },
+            )
+            ControlsDivider()
+            ControlSwitch(label = "Action", checked = withAction, onCheckedChange = { withAction = it })
+            ControlSwitch(label = "Icon", checked = withIcon, onCheckedChange = { withIcon = it })
+            ControlSegmented(
+                label = "Duration",
+                options = durationOptions,
+                selectedIndex = durationIndex,
+                onOptionSelected = { durationIndex = it },
+            )
+            ControlSegmented(
+                label = "Position",
+                options = positionOptions,
+                selectedIndex = positionIndex,
+                onOptionSelected = { positionIndex = it },
+            )
+        }
+        ToastHost(
+            hostState = hostState,
+            position = position,
+            dismissContentDescription = "Dismiss",
+        )
     }
 }
 
