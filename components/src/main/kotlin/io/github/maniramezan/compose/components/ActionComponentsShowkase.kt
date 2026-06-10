@@ -55,6 +55,43 @@ public fun SegmentedControlShowkase(): Unit =
         )
     }
 
+@ShowkaseComposable(name = "Segmented Control – Compact", group = "Actions")
+@Composable
+public fun SegmentedControlCompactShowkase(): Unit =
+    AppTheme {
+        SegmentedControl(
+            options = listOf("Day", "Week", "Month"),
+            selectedIndex = 1,
+            onOptionSelected = {},
+            density = SegmentDensity.Compact,
+        )
+    }
+
+@ShowkaseComposable(name = "Segmented Control – Fit Width", group = "Actions")
+@Composable
+public fun SegmentedControlFitShowkase(): Unit =
+    AppTheme {
+        SegmentedControl(
+            options = listOf("Day", "Week", "Month"),
+            selectedIndex = 1,
+            onOptionSelected = {},
+            widthMode = SegmentWidthMode.Fit,
+        )
+    }
+
+@ShowkaseComposable(name = "Segmented Control – Compact Fit Width", group = "Actions")
+@Composable
+public fun SegmentedControlCompactFitShowkase(): Unit =
+    AppTheme {
+        SegmentedControl(
+            options = listOf("Day", "Week", "Month"),
+            selectedIndex = 1,
+            onOptionSelected = {},
+            density = SegmentDensity.Compact,
+            widthMode = SegmentWidthMode.Fit,
+        )
+    }
+
 @ShowkaseComposable(name = "Single Choice Segmented Button Row", group = "Actions")
 @Composable
 public fun SingleChoiceSegmentedButtonRowShowkase(): Unit =
