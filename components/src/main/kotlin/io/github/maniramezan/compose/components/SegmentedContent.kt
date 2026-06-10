@@ -7,7 +7,10 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -123,6 +126,10 @@ public enum class SegmentDensity {
  *
  * This overload owns selection state. Use the hoisted overload when the
  * caller needs to drive selection externally.
+ *
+ * @param backgroundColor Color painted behind the segment row.
+ * @param unselectedSegmentColor Color painted behind each unselected segment.
+ *   Defaults to transparent so [backgroundColor] shows through.
  */
 @Composable
 public fun SegmentedContent(
@@ -133,6 +140,8 @@ public fun SegmentedContent(
     fitMode: SegmentFitMode = SegmentFitMode.EvenWhenFits,
     widthMode: SegmentWidthMode = SegmentWidthMode.Fill,
     density: SegmentDensity = SegmentDensity.Regular,
+    backgroundColor: Color = AppTheme.colors.surfaceVariant,
+    unselectedSegmentColor: Color = Color.Transparent,
     onSelectionChanged: ((Int) -> Unit)? = null,
     segmentTitle: @Composable (index: Int, item: SegmentedItem, isSelected: Boolean) -> Unit =
         { _, item, isSelected -> DefaultSegmentTitle(item.title, isSelected, indicator) },
@@ -153,6 +162,8 @@ public fun SegmentedContent(
         fitMode = fitMode,
         widthMode = widthMode,
         density = density,
+        backgroundColor = backgroundColor,
+        unselectedSegmentColor = unselectedSegmentColor,
         segmentTitle = segmentTitle,
         segmentContent = segmentContent,
     )
@@ -161,6 +172,10 @@ public fun SegmentedContent(
 /**
  * State-hoisted overload of [SegmentedContent]. The caller drives selection
  * via [selectedIndex] and [onSelectionChanged].
+ *
+ * @param backgroundColor Color painted behind the segment row.
+ * @param unselectedSegmentColor Color painted behind each unselected segment.
+ *   Defaults to transparent so [backgroundColor] shows through.
  */
 @Composable
 public fun SegmentedContent(
@@ -172,6 +187,8 @@ public fun SegmentedContent(
     fitMode: SegmentFitMode = SegmentFitMode.EvenWhenFits,
     widthMode: SegmentWidthMode = SegmentWidthMode.Fill,
     density: SegmentDensity = SegmentDensity.Regular,
+    backgroundColor: Color = AppTheme.colors.surfaceVariant,
+    unselectedSegmentColor: Color = Color.Transparent,
     segmentTitle: @Composable (index: Int, item: SegmentedItem, isSelected: Boolean) -> Unit =
         { _, item, isSelected -> DefaultSegmentTitle(item.title, isSelected, indicator) },
     segmentContent: @Composable (index: Int, item: SegmentedItem) -> Unit,
@@ -190,6 +207,8 @@ public fun SegmentedContent(
             fitMode = fitMode,
             widthMode = widthMode,
             density = density,
+            backgroundColor = backgroundColor,
+            unselectedSegmentColor = unselectedSegmentColor,
             segmentTitle = segmentTitle,
         )
         AnimatedContent(
@@ -245,99 +264,103 @@ private fun SegmentBar(
     fitMode: SegmentFitMode,
     widthMode: SegmentWidthMode,
     density: SegmentDensity,
+    backgroundColor: Color,
+    unselectedSegmentColor: Color,
     segmentTitle: @Composable (Int, SegmentedItem, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val itemSpacingPx = with(LocalDensity.current) { AppTheme.spacing.half.roundToPx() }
     val barShape =
         if (indicator == SegmentSelectionIndicator.Pill) AppTheme.shapes.pill else RectangleShape
-    val barBg =
-        if (indicator == SegmentSelectionIndicator.Pill) AppTheme.colors.surfaceContainer else Color.Transparent
+    val barBg = backgroundColor
     val fillWidth = widthMode == SegmentWidthMode.Fill
     val outerModifier =
-        if (indicator == SegmentSelectionIndicator.Pill) {
-            (if (fillWidth) Modifier.fillMaxWidth() else Modifier)
+        if (fillWidth) Modifier.fillMaxWidth() else Modifier
+
+    Box(
+        modifier =
+            modifier
+                .then(outerModifier)
                 .background(barBg, barShape)
-                .clip(barShape)
-                .padding(AppTheme.spacing.half)
-        } else {
-            if (fillWidth) Modifier.fillMaxWidth() else Modifier
-        }
-
-    SubcomposeLayout(
-        modifier = modifier.then(outerModifier),
-    ) { constraints ->
-        // Measure intrinsic title widths (with tap padding) to decide between
-        // even distribution and horizontal scroll. This pass is never placed,
-        // and its semantics are cleared so the throwaway titles don't appear
-        // twice to accessibility services or UI tests.
-        val intrinsicPlaceables =
-            subcompose("intrinsic") {
-                items.forEachIndexed { i, item ->
-                    Box(
-                        modifier =
-                            Modifier
-                                .clearAndSetSemantics {}
-                                .padding(
-                                    horizontal = AppTheme.spacing.x2,
-                                    vertical = AppTheme.spacing.x1,
-                                ),
-                    ) {
-                        segmentTitle(i, item, i == selectedIndex)
+                .clip(barShape),
+    ) {
+        SubcomposeLayout(modifier = Modifier.padding(AppTheme.spacing.half)) { constraints ->
+            // Measure intrinsic title widths (with tap padding) to decide between
+            // even distribution and horizontal scroll. This pass is never placed,
+            // and its semantics are cleared so the throwaway titles don't appear
+            // twice to accessibility services or UI tests.
+            val intrinsicPlaceables =
+                subcompose("intrinsic") {
+                    items.forEachIndexed { i, item ->
+                        Box(
+                            modifier =
+                                Modifier
+                                    .clearAndSetSemantics {}
+                                    .padding(
+                                        horizontal = AppTheme.spacing.x2,
+                                        vertical = AppTheme.spacing.x1,
+                                    ),
+                        ) {
+                            segmentTitle(i, item, i == selectedIndex)
+                        }
                     }
+                }.map { it.measure(constraints.copy(minWidth = 0)) }
+
+            val gapCount = (items.size - 1).coerceAtLeast(0)
+            val totalIntrinsic = intrinsicPlaceables.sumOf { it.width } + itemSpacingPx * gapCount
+            val fits = totalIntrinsic <= constraints.maxWidth
+            // Even distribution only when explicitly requested and the bar is filling available width.
+            val useEven = fitMode == SegmentFitMode.EvenWhenFits && fillWidth && fits
+            // Scroll when overflowing, or when Fill+Intrinsic (always scroll regardless of fit).
+            val useScrollable = !useEven && (fillWidth || !fits)
+
+            val mainPlaceables =
+                subcompose("main") {
+                    when {
+                        useEven ->
+                            EvenSegmentRow(
+                                items = items,
+                                selectedIndex = selectedIndex,
+                                onSelectionChanged = onSelectionChanged,
+                                indicator = indicator,
+                                density = density,
+                                unselectedSegmentColor = unselectedSegmentColor,
+                                segmentTitle = segmentTitle,
+                            )
+                        useScrollable ->
+                            ScrollableSegmentRow(
+                                items = items,
+                                selectedIndex = selectedIndex,
+                                onSelectionChanged = onSelectionChanged,
+                                indicator = indicator,
+                                density = density,
+                                backgroundColor = backgroundColor,
+                                unselectedSegmentColor = unselectedSegmentColor,
+                                segmentTitle = segmentTitle,
+                            )
+                        else ->
+                            IntrinsicSegmentRow(
+                                items = items,
+                                selectedIndex = selectedIndex,
+                                onSelectionChanged = onSelectionChanged,
+                                indicator = indicator,
+                                density = density,
+                                unselectedSegmentColor = unselectedSegmentColor,
+                                segmentTitle = segmentTitle,
+                            )
+                    }
+                }.map { it.measure(constraints) }
+
+            val width =
+                if (fillWidth) {
+                    constraints.maxWidth
+                } else {
+                    totalIntrinsic.coerceIn(constraints.minWidth, constraints.maxWidth)
                 }
-            }.map { it.measure(constraints.copy(minWidth = 0)) }
-
-        val gapCount = (items.size - 1).coerceAtLeast(0)
-        val totalIntrinsic = intrinsicPlaceables.sumOf { it.width } + itemSpacingPx * gapCount
-        val fits = totalIntrinsic <= constraints.maxWidth
-        // Even distribution only when explicitly requested and the bar is filling available width.
-        val useEven = fitMode == SegmentFitMode.EvenWhenFits && fillWidth && fits
-        // Scroll when overflowing, or when Fill+Intrinsic (always scroll regardless of fit).
-        val useScrollable = !useEven && (fillWidth || !fits)
-
-        val mainPlaceables =
-            subcompose("main") {
-                when {
-                    useEven ->
-                        EvenSegmentRow(
-                            items = items,
-                            selectedIndex = selectedIndex,
-                            onSelectionChanged = onSelectionChanged,
-                            indicator = indicator,
-                            density = density,
-                            segmentTitle = segmentTitle,
-                        )
-                    useScrollable ->
-                        ScrollableSegmentRow(
-                            items = items,
-                            selectedIndex = selectedIndex,
-                            onSelectionChanged = onSelectionChanged,
-                            indicator = indicator,
-                            density = density,
-                            segmentTitle = segmentTitle,
-                        )
-                    else ->
-                        IntrinsicSegmentRow(
-                            items = items,
-                            selectedIndex = selectedIndex,
-                            onSelectionChanged = onSelectionChanged,
-                            indicator = indicator,
-                            density = density,
-                            segmentTitle = segmentTitle,
-                        )
-                }
-            }.map { it.measure(constraints) }
-
-        val width =
-            if (fillWidth) {
-                constraints.maxWidth
-            } else {
-                totalIntrinsic.coerceIn(constraints.minWidth, constraints.maxWidth)
+            val height = mainPlaceables.maxOfOrNull { it.height } ?: 0
+            layout(width, height) {
+                mainPlaceables.forEach { it.placeRelative(0, 0) }
             }
-        val height = mainPlaceables.maxOfOrNull { it.height } ?: 0
-        layout(width, height) {
-            mainPlaceables.forEach { it.placeRelative(0, 0) }
         }
     }
 }
@@ -349,6 +372,7 @@ private fun EvenSegmentRow(
     onSelectionChanged: (Int) -> Unit,
     indicator: SegmentSelectionIndicator,
     density: SegmentDensity,
+    unselectedSegmentColor: Color,
     segmentTitle: @Composable (Int, SegmentedItem, Boolean) -> Unit,
 ) {
     Row(
@@ -363,7 +387,9 @@ private fun EvenSegmentRow(
                 indicator = indicator,
                 onClick = { onSelectionChanged(i) },
                 density = density,
+                unselectedSegmentColor = unselectedSegmentColor,
                 segmentTitle = segmentTitle,
+                fillVisualWidth = true,
                 modifier = Modifier.weight(1f),
             )
         }
@@ -377,6 +403,7 @@ private fun IntrinsicSegmentRow(
     onSelectionChanged: (Int) -> Unit,
     indicator: SegmentSelectionIndicator,
     density: SegmentDensity,
+    unselectedSegmentColor: Color,
     segmentTitle: @Composable (Int, SegmentedItem, Boolean) -> Unit,
 ) {
     Row(
@@ -391,6 +418,7 @@ private fun IntrinsicSegmentRow(
                 indicator = indicator,
                 onClick = { onSelectionChanged(i) },
                 density = density,
+                unselectedSegmentColor = unselectedSegmentColor,
                 segmentTitle = segmentTitle,
             )
         }
@@ -404,6 +432,8 @@ private fun ScrollableSegmentRow(
     onSelectionChanged: (Int) -> Unit,
     indicator: SegmentSelectionIndicator,
     density: SegmentDensity,
+    backgroundColor: Color,
+    unselectedSegmentColor: Color,
     segmentTitle: @Composable (Int, SegmentedItem, Boolean) -> Unit,
 ) {
     val state = rememberLazyListState()
@@ -431,12 +461,7 @@ private fun ScrollableSegmentRow(
     val leadingAlpha by animateFloatAsState(if (showLeading) 1f else 0f, label = "leadingFade")
     val trailingAlpha by animateFloatAsState(if (showTrailing) 1f else 0f, label = "trailingFade")
 
-    val fadeColor =
-        if (indicator == SegmentSelectionIndicator.Pill) {
-            AppTheme.colors.surfaceContainer
-        } else {
-            AppTheme.colors.surface
-        }
+    val fadeColor = backgroundColor
     val fadeWidthPx = with(LocalDensity.current) { AppTheme.spacing.x3.toPx() }
     val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
 
@@ -464,6 +489,7 @@ private fun ScrollableSegmentRow(
                 indicator = indicator,
                 onClick = { onSelectionChanged(i) },
                 density = density,
+                unselectedSegmentColor = unselectedSegmentColor,
                 segmentTitle = segmentTitle,
             )
         }
@@ -523,15 +549,17 @@ private fun SegmentSlot(
     indicator: SegmentSelectionIndicator,
     onClick: () -> Unit,
     density: SegmentDensity,
+    unselectedSegmentColor: Color,
     segmentTitle: @Composable (Int, SegmentedItem, Boolean) -> Unit,
+    fillVisualWidth: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
-    val pillBg by animateColorAsState(
+    val segmentBg by animateColorAsState(
         targetValue =
-            if (indicator == SegmentSelectionIndicator.Pill && isSelected) {
-                AppTheme.colors.primary
-            } else {
-                Color.Transparent
+            when {
+                indicator == SegmentSelectionIndicator.Pill && isSelected -> AppTheme.colors.primary
+                indicator != SegmentSelectionIndicator.None -> unselectedSegmentColor
+                else -> Color.Transparent
             },
         label = "segmentBg",
     )
@@ -548,34 +576,59 @@ private fun SegmentSlot(
         if (indicator == SegmentSelectionIndicator.Pill) AppTheme.shapes.pill else RectangleShape
     val titleVerticalPadding =
         if (density == SegmentDensity.Compact) AppTheme.spacing.half else AppTheme.spacing.x1
+    val visualWidthModifier = if (fillVisualWidth) Modifier.fillMaxWidth() else Modifier
+    val visualSizeModifier =
+        if (density == SegmentDensity.Regular) {
+            visualWidthModifier.minimumTouchTarget(minimumTouchTargetSize())
+        } else {
+            visualWidthModifier
+        }
+    val touchTargetModifier =
+        if (density == SegmentDensity.Regular) {
+            Modifier.minimumTouchTarget(minimumTouchTargetSize())
+        } else {
+            Modifier
+        }
+    val interactionSource = remember { MutableInteractionSource() }
+    val indication = LocalIndication.current
+    val selectableModifier =
+        Modifier.selectable(
+            selected = isSelected,
+            interactionSource = interactionSource,
+            indication = null,
+            role = Role.Tab,
+            onClick = onClick,
+        )
 
     Box(
         modifier =
             modifier
-                .clip(slotShape)
-                .background(pillBg)
-                .selectable(selected = isSelected, role = Role.Tab, onClick = onClick)
-                .minimumTouchTarget(minimumTouchTargetSize()),
+                .then(selectableModifier)
+                .then(touchTargetModifier),
         contentAlignment = Alignment.Center,
     ) {
         // Title centred both axes within the (≥48dp) slot.
         Box(
             modifier =
-                Modifier.padding(horizontal = AppTheme.spacing.x2, vertical = titleVerticalPadding),
+                visualSizeModifier
+                    .clip(slotShape)
+                    .background(segmentBg)
+                    .indication(interactionSource, indication)
+                    .padding(horizontal = AppTheme.spacing.x2, vertical = titleVerticalPadding),
             contentAlignment = Alignment.Center,
         ) {
             segmentTitle(index, item, isSelected)
-        }
-        // Tab-style underline pinned to the bottom edge of the slot.
-        if (indicator == SegmentSelectionIndicator.Underline) {
-            Box(
-                modifier =
-                    Modifier
-                        .align(Alignment.BottomCenter)
-                        .fillMaxWidth()
-                        .height(AppTheme.spacing.strokeThick)
-                        .background(underlineColor),
-            )
+            // Tab-style underline pinned to the bottom edge of the visual slot.
+            if (indicator == SegmentSelectionIndicator.Underline) {
+                Box(
+                    modifier =
+                        Modifier
+                            .align(Alignment.BottomCenter)
+                            .fillMaxWidth()
+                            .height(AppTheme.spacing.strokeThick)
+                            .background(underlineColor),
+                )
+            }
         }
     }
 }
