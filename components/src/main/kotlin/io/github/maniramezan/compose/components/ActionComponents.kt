@@ -118,6 +118,23 @@ public fun FAB(
     }
 }
 
+/**
+ * A simple segmented control that renders one [Button] (selected) or a
+ * [Button] with [AppColors.surfaceVariant] background (unselected) per entry
+ * in [options].
+ *
+ * @param options Labels for each segment.
+ * @param selectedIndex Index of the currently selected segment.
+ * @param onOptionSelected Called with the tapped index.
+ * @param modifier Modifier applied to the outer [Row].
+ * @param enabled Whether all segments respond to interaction.
+ * @param density [SegmentDensity.Regular] uses standard button padding;
+ *   [SegmentDensity.Compact] reduces vertical padding for a shorter control.
+ *   The 48dp minimum touch target is preserved in both modes.
+ * @param widthMode [SegmentWidthMode.Fill] distributes buttons evenly across
+ *   the full available width; [SegmentWidthMode.Fit] lets each button wrap to
+ *   its content width.
+ */
 @Composable
 public fun SegmentedControl(
     options: List<String>,
@@ -125,42 +142,52 @@ public fun SegmentedControl(
     onOptionSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    density: SegmentDensity = SegmentDensity.Regular,
+    widthMode: SegmentWidthMode = SegmentWidthMode.Fill,
 ) {
+    val verticalPadding =
+        if (density == SegmentDensity.Compact) AppTheme.spacing.half else AppTheme.spacing.sm
+    val contentPadding =
+        PaddingValues(
+            horizontal = AppTheme.spacing.lg,
+            vertical = verticalPadding,
+        )
     Row(
         modifier = modifier.selectableGroup(),
         horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs),
     ) {
         options.forEachIndexed { index, option ->
             val selected = index == selectedIndex
-            val segmentModifier =
+            val baseModifier =
                 Modifier
                     .minimumTouchTargetHeight(minimumTouchTargetSize())
                     .semantics { this.selected = selected }
+            val segmentModifier =
+                if (widthMode == SegmentWidthMode.Fill) baseModifier.weight(1f) else baseModifier
             if (selected) {
                 Button(
                     onClick = { onOptionSelected(index) },
                     enabled = enabled,
                     modifier = segmentModifier,
+                    contentPadding = contentPadding,
                     colors =
                         ButtonDefaults.buttonColors(
                             containerColor = AppTheme.colors.primary,
                             contentColor = AppTheme.colors.onPrimary,
                         ),
-                ) {
-                    Text(text = option)
-                }
+                ) { Text(text = option) }
             } else {
-                OutlinedButton(
+                Button(
                     onClick = { onOptionSelected(index) },
                     enabled = enabled,
                     modifier = segmentModifier,
+                    contentPadding = contentPadding,
                     colors =
-                        ButtonDefaults.outlinedButtonColors(
-                            contentColor = AppTheme.colors.primary,
+                        ButtonDefaults.buttonColors(
+                            containerColor = AppTheme.colors.surfaceVariant,
+                            contentColor = AppTheme.colors.onSurfaceVariant,
                         ),
-                ) {
-                    Text(text = option)
-                }
+                ) { Text(text = option) }
             }
         }
     }
