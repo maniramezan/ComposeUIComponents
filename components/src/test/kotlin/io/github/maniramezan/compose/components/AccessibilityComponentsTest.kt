@@ -159,7 +159,6 @@ public class AccessibilityComponentsTest {
                     SegmentedContent(
                         items = listOf(SegmentedItem("One"), SegmentedItem("Two")),
                         initialSelectedIndex = 0,
-                        density = SegmentDensity.Compact,
                     ) { _, item ->
                         Text(text = item.title)
                     }
