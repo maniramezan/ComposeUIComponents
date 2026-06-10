@@ -36,6 +36,25 @@ public fun ActionComponentsPreview(): Unit =
                 selectedIndex = 1,
                 onOptionSelected = {},
             )
+            SegmentedControl(
+                options = listOf("Day", "Week", "Month"),
+                selectedIndex = 1,
+                onOptionSelected = {},
+                density = SegmentDensity.Compact,
+            )
+            SegmentedControl(
+                options = listOf("Day", "Week", "Month"),
+                selectedIndex = 1,
+                onOptionSelected = {},
+                widthMode = SegmentWidthMode.Fit,
+            )
+            SegmentedControl(
+                options = listOf("Day", "Week", "Month"),
+                selectedIndex = 1,
+                onOptionSelected = {},
+                density = SegmentDensity.Compact,
+                widthMode = SegmentWidthMode.Fit,
+            )
             SingleChoiceSegmentedButtonRow(
                 options = listOf("Day", "Week", "Month"),
                 selectedIndex = 1,
