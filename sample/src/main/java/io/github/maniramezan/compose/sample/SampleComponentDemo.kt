@@ -282,3 +282,17 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
 /** Returns demo entries grouped by [SampleComponentDemo.category] in insertion order. */
 internal fun List<SampleComponentDemo>.groupedByCategory(): Map<String, List<SampleComponentDemo>> =
     groupByTo(LinkedHashMap()) { it.category }
+
+/**
+ * Case-insensitive filter over title, category, and description. A blank query
+ * returns the list unchanged.
+ */
+internal fun List<SampleComponentDemo>.matching(query: String): List<SampleComponentDemo> {
+    val trimmed = query.trim()
+    if (trimmed.isEmpty()) return this
+    return filter { demo ->
+        demo.title.contains(trimmed, ignoreCase = true) ||
+            demo.category.contains(trimmed, ignoreCase = true) ||
+            demo.description.contains(trimmed, ignoreCase = true)
+    }
+}
