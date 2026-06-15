@@ -23,6 +23,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,6 +43,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import io.github.maniramezan.compose.components.AppText
 import io.github.maniramezan.compose.components.AppTextStyle
+import io.github.maniramezan.compose.components.EmptyState
+import io.github.maniramezan.compose.components.SearchField
 import io.github.maniramezan.compose.components.TopAppBar
 import io.github.maniramezan.compose.theme.AppTheme
 
@@ -62,7 +65,12 @@ private val LIST_PANE_WIDTH = 280.dp
 @Composable
 internal fun SampleBrowserApp() {
     val demos = remember { sampleDemos() }
-    val grouped = remember(demos) { demos.groupedByCategory() }
+
+    var query by rememberSaveable { mutableStateOf("") }
+    val grouped =
+        remember(demos, query) {
+            demos.matching(query).groupedByCategory()
+        }
 
     var selectedId by rememberSaveable { mutableStateOf(demos.first().id) }
     var compactDetailVisible by rememberSaveable { mutableStateOf(false) }
@@ -80,6 +88,8 @@ internal fun SampleBrowserApp() {
                     grouped = grouped,
                     selectedId = selectedId,
                     onSelect = { selectedId = it },
+                    query = query,
+                    onQueryChange = { query = it },
                     modifier =
                         Modifier
                             .width(LIST_PANE_WIDTH)
@@ -117,6 +127,8 @@ internal fun SampleBrowserApp() {
                         selectedId = id
                         compactDetailVisible = true
                     },
+                    query = query,
+                    onQueryChange = { query = it },
                     modifier = Modifier.fillMaxSize(),
                 )
             }
@@ -133,6 +145,8 @@ private fun SampleListPane(
     grouped: Map<String, List<SampleComponentDemo>>,
     selectedId: String,
     onSelect: (String) -> Unit,
+    query: String,
+    onQueryChange: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -140,23 +154,53 @@ private fun SampleListPane(
         topBar = { TopAppBar(title = "Components") },
         contentWindowInsets = WindowInsets.safeDrawing,
     ) { innerPadding ->
-        LazyColumn(
+        Column(
             modifier =
                 Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
-                    .consumeWindowInsets(innerPadding),
+                    .consumeWindowInsets(innerPadding)
+                    .imePadding(),
         ) {
-            grouped.forEach { (category, entries) ->
-                item(key = "header-$category") {
-                    CategoryHeader(category = category)
-                }
-                items(entries, key = { it.id }) { demo ->
-                    DemoListRow(
-                        demo = demo,
-                        isSelected = demo.id == selectedId,
-                        onClick = { onSelect(demo.id) },
+            SearchField(
+                value = query,
+                onValueChange = onQueryChange,
+                placeholder = "Search components",
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.Search,
+                        contentDescription = null,
                     )
+                },
+                modifier =
+                    Modifier.padding(
+                        horizontal = AppTheme.spacing.lg,
+                        vertical = AppTheme.spacing.sm,
+                    ),
+            )
+            if (grouped.isEmpty()) {
+                EmptyState(
+                    title = "No components found",
+                    message = "No component matches \"$query\".",
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(AppTheme.spacing.lg),
+                )
+            } else {
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    grouped.forEach { (category, entries) ->
+                        item(key = "header-$category") {
+                            CategoryHeader(category = category)
+                        }
+                        items(entries, key = { it.id }) { demo ->
+                            DemoListRow(
+                                demo = demo,
+                                isSelected = demo.id == selectedId,
+                                onClick = { onSelect(demo.id) },
+                            )
+                        }
+                    }
                 }
             }
         }
