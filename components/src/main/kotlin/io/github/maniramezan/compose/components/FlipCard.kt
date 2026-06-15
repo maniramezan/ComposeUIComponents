@@ -1,5 +1,6 @@
 package io.github.maniramezan.compose.components
 
+import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -58,6 +59,9 @@ public enum class FlipAxis {
  * @param onFlippedChange Invoked with the requested face state when the user taps
  *   the card. Required for tap-to-flip in controlled mode; optional otherwise.
  * @param axis The [FlipAxis] the card rotates around.
+ * @param animationSpec Animation driving the flip. Defaults to a token-driven
+ *   [tween] using [AppTheme]'s medium duration and emphasized easing; pass any
+ *   [AnimationSpec] (e.g. a faster tween or a spring) to customize the motion.
  * @param enabled Whether tapping flips the card. Set `false` for display-only or
  *   fully externally driven flips.
  * @param shape Shape of the card container and clip.
@@ -78,6 +82,11 @@ public fun FlipCard(
     flipped: Boolean? = null,
     onFlippedChange: ((Boolean) -> Unit)? = null,
     axis: FlipAxis = FlipAxis.Horizontal,
+    animationSpec: AnimationSpec<Float> =
+        tween(
+            durationMillis = AppTheme.motion.mediumMillis,
+            easing = AppTheme.motion.emphasizedEasing,
+        ),
     enabled: Boolean = true,
     shape: Shape = AppTheme.shapes.large,
     containerColor: Color = AppTheme.colors.surface,
@@ -90,11 +99,7 @@ public fun FlipCard(
 
     val rotation by animateFloatAsState(
         targetValue = if (isFlipped) 180f else 0f,
-        animationSpec =
-            tween(
-                durationMillis = AppTheme.motion.mediumMillis,
-                easing = AppTheme.motion.emphasizedEasing,
-            ),
+        animationSpec = animationSpec,
         label = "flipCardRotation",
     )
 

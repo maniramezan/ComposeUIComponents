@@ -1,5 +1,6 @@
 package io.github.maniramezan.compose.sample
 
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -983,6 +984,14 @@ internal fun FlipCardPage() {
     val axisOptions = listOf("Horizontal", "Vertical")
     var axisIndex by remember { mutableIntStateOf(0) }
     val axis = if (axisIndex == 0) FlipAxis.Horizontal else FlipAxis.Vertical
+    val speedOptions = listOf("Slow", "Normal", "Fast")
+    var speedIndex by remember { mutableIntStateOf(1) }
+    val durationMillis =
+        when (speedIndex) {
+            0 -> 1200
+            2 -> 300
+            else -> AppTheme.motion.mediumMillis
+        }
 
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
         FlipCard(
@@ -993,6 +1002,7 @@ internal fun FlipCardPage() {
             flipped = flipped,
             onFlippedChange = { flipped = it },
             axis = axis,
+            animationSpec = tween(durationMillis = durationMillis, easing = AppTheme.motion.emphasizedEasing),
             enabled = enabled,
             onClickLabel = "Flip card",
             frontStateDescription = "Showing question",
@@ -1029,6 +1039,12 @@ internal fun FlipCardPage() {
             options = axisOptions,
             selectedIndex = axisIndex,
             onOptionSelected = { axisIndex = it },
+        )
+        ControlSegmented(
+            label = "Speed",
+            options = speedOptions,
+            selectedIndex = speedIndex,
+            onOptionSelected = { speedIndex = it },
         )
     }
 }

@@ -87,7 +87,16 @@ Both faces are composed continuously, each on its own rotated graphics layer, so
 | --- | --- | --- |
 | `shape` | `AppTheme.shapes.large` | Clip and container shape. |
 | `containerColor` | `AppTheme.colors.surface` | Background of each face. |
-| flip duration / easing | `AppTheme.motion.mediumMillis` + `emphasizedEasing` | Driven by motion tokens, not hardcoded. |
+| `animationSpec` | `tween(AppTheme.motion.mediumMillis, emphasizedEasing)` | Token-driven by default; pass any `AnimationSpec<Float>` (e.g. a faster `tween` or a `spring`) to customize the flip motion. |
+
+```kotlin
+// Snappier flip with a custom spec.
+FlipCard(
+    animationSpec = tween(durationMillis = 600, easing = FastOutSlowInEasing),
+    front = { Text("Front") },
+    back = { Text("Back") },
+)
+```
 
 ### Accessibility
 
@@ -106,6 +115,7 @@ Both faces are composed continuously, each on its own rotated graphics layer, so
 | `flipped` | `Boolean?` | `null` = uncontrolled; non-null = controlled (shows back while `true`). |
 | `onFlippedChange` | `((Boolean) -> Unit)?` | Invoked with the requested face on tap. Required for tap-to-flip in controlled mode. |
 | `axis` | `FlipAxis` | Rotation axis. |
+| `animationSpec` | `AnimationSpec<Float>` | Animation driving the flip. Defaults to a token-driven tween. |
 | `enabled` | `Boolean` | Whether tapping flips the card. |
 | `shape` | `Shape` | Container shape and clip. |
 | `containerColor` | `Color` | Background of each face. |
