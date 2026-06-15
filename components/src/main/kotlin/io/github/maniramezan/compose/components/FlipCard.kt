@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
@@ -43,9 +44,11 @@ public enum class FlipAxis {
  * - Leave [flipped] as `null` to let the card manage its own flip state; taps
  *   then toggle between faces and [onFlippedChange] is still notified.
  *
- * Only the currently visible face is composed; the faces are swapped at the
- * edge-on midpoint of the rotation, which keeps the accessibility tree clean and
- * the back face readable (not mirrored).
+ * Both faces are composed continuously, each on its own rotated graphics layer,
+ * so the card reads as a single solid surface turning through edge-on rather than
+ * one face blinking out and the other blinking in. The face turned away from the
+ * viewer is culled (alpha `0`) and removed from the accessibility tree, and the
+ * back face is counter-rotated so its content is never mirrored.
  *
  * @param front Content for the front face.
  * @param back Content for the back face.
@@ -96,7 +99,10 @@ public fun FlipCard(
     )
 
     val density = LocalDensity.current.density
-    val showingFront = rotation <= 90f
+    // The front faces the viewer for the first half of the rotation, the back for
+    // the second half. At the 90° crossover both faces are edge-on (and invisible),
+    // so toggling the alpha there is imperceptible.
+    val frontVisible = rotation <= 90f
     val stateDesc = if (isFlipped) backStateDescription else frontStateDescription
 
     val toggleModifier =
@@ -116,36 +122,67 @@ public fun FlipCard(
     Box(
         modifier =
             modifier
-                .clip(shape)
-                .background(containerColor)
                 .then(toggleModifier)
+                .semantics {
+                    if (stateDesc != null) stateDescription = stateDesc
+                    if (enabled && onClickLabel != null) onClick(label = onClickLabel, action = null)
+                },
+    ) {
+        // Front face: rotates 0°→180° with the flip; culled once it turns away.
+        FlipFace(
+            rotation = rotation,
+            axis = axis,
+            density = density,
+            visible = frontVisible,
+            shape = shape,
+            containerColor = containerColor,
+            content = front,
+        )
+        // Back face: counter-rotated by 180° so it faces the viewer (un-mirrored)
+        // exactly when the front has turned away.
+        FlipFace(
+            rotation = rotation - 180f,
+            axis = axis,
+            density = density,
+            visible = !frontVisible,
+            shape = shape,
+            containerColor = containerColor,
+            content = back,
+        )
+    }
+}
+
+/**
+ * One rotated face of a [FlipCard]. Fills the card bounds, draws the themed
+ * surface, and culls itself (alpha `0` + cleared semantics) when [visible] is
+ * `false` so the away-facing side is neither seen nor announced.
+ */
+@Composable
+private fun BoxScope.FlipFace(
+    rotation: Float,
+    axis: FlipAxis,
+    density: Float,
+    visible: Boolean,
+    shape: Shape,
+    containerColor: Color,
+    content: @Composable BoxScope.() -> Unit,
+) {
+    Box(
+        modifier =
+            Modifier
+                .matchParentSize()
                 .graphicsLayer {
                     when (axis) {
                         FlipAxis.Horizontal -> rotationY = rotation
                         FlipAxis.Vertical -> rotationX = rotation
                     }
                     cameraDistance = CAMERA_DISTANCE_MULTIPLIER * density
-                }.semantics {
-                    if (stateDesc != null) stateDescription = stateDesc
-                    if (enabled && onClickLabel != null) onClick(label = onClickLabel, action = null)
-                },
-    ) {
-        if (showingFront) {
-            front()
-        } else {
-            // Counter-rotate the back face so its content is not mirrored.
-            Box(
-                modifier =
-                    Modifier.graphicsLayer {
-                        when (axis) {
-                            FlipAxis.Horizontal -> rotationY = 180f
-                            FlipAxis.Vertical -> rotationX = 180f
-                        }
-                    },
-                content = back,
-            )
-        }
-    }
+                    alpha = if (visible) 1f else 0f
+                }.clip(shape)
+                .background(containerColor)
+                .then(if (visible) Modifier else Modifier.clearAndSetSemantics {}),
+        content = content,
+    )
 }
 
 /**

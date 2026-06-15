@@ -36,11 +36,15 @@ public class FlipCardTest {
             }
         }
 
+        // Both faces are composed, but the away-facing one is culled from the
+        // semantics tree, so only the front is discoverable at rest.
         composeRule.onNodeWithText("Front").assertExists()
+        composeRule.onNodeWithText("Back").assertDoesNotExist()
 
         composeRule.onNodeWithText("Front").performClick()
 
         composeRule.onNodeWithText("Back").assertExists()
+        composeRule.onNodeWithText("Front").assertDoesNotExist()
     }
 
     @Test
