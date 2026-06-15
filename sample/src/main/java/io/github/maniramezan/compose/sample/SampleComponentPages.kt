@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -37,6 +38,8 @@ import io.github.maniramezan.compose.components.ContentRow
 import io.github.maniramezan.compose.components.EmptyState
 import io.github.maniramezan.compose.components.ErrorState
 import io.github.maniramezan.compose.components.FAB
+import io.github.maniramezan.compose.components.FlipAxis
+import io.github.maniramezan.compose.components.FlipCard
 import io.github.maniramezan.compose.components.IconButton
 import io.github.maniramezan.compose.components.LevelBadge
 import io.github.maniramezan.compose.components.ListItem
@@ -969,6 +972,63 @@ internal fun OverlayCardPage() {
             label = "Multi-line content",
             checked = multiLine,
             onCheckedChange = { multiLine = it },
+        )
+    }
+}
+
+@Composable
+internal fun FlipCardPage() {
+    var flipped by remember { mutableStateOf(false) }
+    var enabled by remember { mutableStateOf(true) }
+    val axisOptions = listOf("Horizontal", "Vertical")
+    var axisIndex by remember { mutableIntStateOf(0) }
+    val axis = if (axisIndex == 0) FlipAxis.Horizontal else FlipAxis.Vertical
+
+    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
+        FlipCard(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(140.dp),
+            flipped = flipped,
+            onFlippedChange = { flipped = it },
+            axis = axis,
+            enabled = enabled,
+            onClickLabel = "Flip card",
+            frontStateDescription = "Showing question",
+            backStateDescription = "Showing answer",
+            front = {
+                Box(
+                    modifier = Modifier.fillMaxSize().padding(AppTheme.spacing.lg),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(text = "What is Jetpack Compose?", style = AppTheme.typography.titleSmall)
+                }
+            },
+            back = {
+                Box(
+                    modifier = Modifier.fillMaxSize().padding(AppTheme.spacing.lg),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = "A declarative UI toolkit for Android.",
+                        style = AppTheme.typography.bodyMedium,
+                    )
+                }
+            },
+        )
+        ControlsDivider()
+        SecondaryButton(
+            text = if (flipped) "Show front" else "Show back",
+            onClick = { flipped = !flipped },
+            modifier = Modifier.fillMaxWidth(),
+        )
+        ControlSwitch(label = "Tap to flip (enabled)", checked = enabled, onCheckedChange = { enabled = it })
+        ControlSegmented(
+            label = "Axis",
+            options = axisOptions,
+            selectedIndex = axisIndex,
+            onOptionSelected = { axisIndex = it },
         )
     }
 }
