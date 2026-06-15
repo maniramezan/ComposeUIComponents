@@ -989,7 +989,7 @@ internal fun FlipCardPage() {
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .height(140.dp),
+                    .height(180.dp),
             flipped = flipped,
             onFlippedChange = { flipped = it },
             axis = axis,

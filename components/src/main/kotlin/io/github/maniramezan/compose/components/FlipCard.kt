@@ -150,6 +150,7 @@ public fun FlipCard(
 
 /**
  * Multiplier applied to display density for [graphicsLayer]'s camera distance.
- * Larger values flatten the perspective and reduce distortion during the flip.
+ * Smaller values deepen the perspective so the rotation reads as a 3D flip
+ * (and the [FlipAxis] is clearly distinguishable) rather than a flat squish.
  */
-private const val CAMERA_DISTANCE_MULTIPLIER = 12f
+private const val CAMERA_DISTANCE_MULTIPLIER = 8f
