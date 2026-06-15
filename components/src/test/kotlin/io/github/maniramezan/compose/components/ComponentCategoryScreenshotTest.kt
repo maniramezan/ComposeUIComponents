@@ -96,6 +96,13 @@ public class ComponentCategoryScreenshotTest {
     }
 
     @Test
+    public fun flipCardMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/flip-card.png") {
+            FlipCardPreview()
+        }
+    }
+
+    @Test
     public fun adaptiveContentContainerMatchesGolden() {
         captureRoboImage("build/outputs/roborazzi/adaptive-content-container.png") {
             AdaptiveContentContainerPreview()
