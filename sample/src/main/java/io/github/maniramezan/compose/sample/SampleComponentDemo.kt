@@ -215,6 +215,13 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             content = { OverlayCardPage() },
         ),
         SampleComponentDemo(
+            id = "flip-card",
+            title = "FlipCard",
+            category = "Containers",
+            description = "Two-sided card with an animated 3D flip for flash-card style UIs.",
+            content = { FlipCardPage() },
+        ),
+        SampleComponentDemo(
             id = "snackbar",
             title = "Snackbar",
             category = "Containers",
