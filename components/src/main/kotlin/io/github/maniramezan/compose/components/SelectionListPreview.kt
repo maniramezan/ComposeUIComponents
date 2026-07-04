@@ -62,3 +62,33 @@ public fun SelectionListMultipleChoicePreview(): Unit =
             confirmButton = { TextButton(text = "Done", onClick = {}) },
         )
     }
+
+@Preview(name = "SelectionList Sheet — single choice", group = "Selection")
+@Composable
+public fun SelectionListSheetSingleChoicePreview(): Unit =
+    AppTheme(icons = defaultAppIcons()) {
+        SelectionList(
+            title = "Category",
+            nodes = selectionListSampleNodes,
+            selectedId = "banana",
+            onSelect = {},
+            onDismissRequest = {},
+            isSearchable = true,
+            searchPlaceholder = "Search",
+            noResultsText = "No results",
+        )
+    }
+
+@Preview(name = "SelectionList Sheet — multiple choice", group = "Selection")
+@Composable
+public fun SelectionListSheetMultipleChoicePreview(): Unit =
+    AppTheme(icons = defaultAppIcons()) {
+        SelectionList(
+            title = "Categories",
+            nodes = selectionListSampleNodes,
+            selectedIds = setOf("apple", "spinach"),
+            onSelect = {},
+            onDismissRequest = {},
+            confirmButton = { TextButton(text = "Done", onClick = {}) },
+        )
+    }

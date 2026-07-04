@@ -2,6 +2,7 @@ package io.github.maniramezan.compose.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,3 +33,18 @@ public fun ListComponentsPreview(): Unit =
             )
         }
     }
+
+@PreviewLightDark
+@PreviewFontScale
+@Preview(name = "Lazy List", group = "Lists")
+@Composable
+public fun LazyListPreview(): Unit =
+    AppTheme {
+        LazyList {
+            items(previewLazyListRows) { row ->
+                ListItem(headline = row)
+            }
+        }
+    }
+
+private val previewLazyListRows = listOf("Alpha", "Bravo", "Charlie", "Delta")
