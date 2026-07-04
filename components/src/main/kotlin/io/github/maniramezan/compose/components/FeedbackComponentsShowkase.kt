@@ -1,6 +1,9 @@
 package io.github.maniramezan.compose.components
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.dp
 import com.airbnb.android.showkase.annotation.ShowkaseComposable
 import io.github.maniramezan.compose.icons.defaultAppIcons
 import io.github.maniramezan.compose.theme.AppTheme
@@ -21,6 +24,16 @@ public fun ProgressIndicatorShowkase(): Unit =
 public fun SkeletonShowkase(): Unit =
     AppTheme {
         Skeleton()
+    }
+
+@ShowkaseComposable(name = "Skeleton Block", group = "Feedback")
+@Composable
+public fun SkeletonBlockShowkase(): Unit =
+    AppTheme {
+        Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.x1)) {
+            SkeletonBlock(height = 20.dp, width = 160.dp)
+            SkeletonBlock(height = 16.dp)
+        }
     }
 
 @ShowkaseComposable(name = "Toast", group = "Feedback")

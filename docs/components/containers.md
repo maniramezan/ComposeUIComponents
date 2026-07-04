@@ -13,6 +13,8 @@ Container components provide themed layout surfaces and transient UI wrappers.
 - `Snackbar`
 - `HorizontalDivider`
 - `VerticalDivider`
+- `OverlayCard`
+- `AdaptiveContentContainer`
 
 ![Container components](https://maniramezan.github.io/ComposeUIComponents/images/screenshots/container-components.png)
 
@@ -122,3 +124,58 @@ FlipCard(
 | `frontStateDescription` | `String?` | TalkBack state description while the front shows. |
 | `backStateDescription` | `String?` | TalkBack state description while the back shows. |
 | `onClickLabel` | `String?` | Accessibility label for the flip action. |
+
+## OverlayCard
+
+`OverlayCard` is a subtle, rounded container intended to sit on top of media or
+photographic content — video thumbnails, hero images, player overlays. It defaults to
+`AppTheme.colors.overlaySubtle` and `AppTheme.shapes.large`, so a caption or action
+reads clearly against a busy background image.
+
+```kotlin
+AppTheme {
+    Box {
+        HeroImage()
+        OverlayCard(modifier = Modifier.align(Alignment.BottomStart)) {
+            Text(text = "On a hero image")
+        }
+    }
+}
+```
+
+### Parameters
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `modifier` | `Modifier` | Applied to the card container. |
+| `contentAlignment` | `Alignment` | Alignment of `content` within the card. Defaults to `Alignment.TopStart`. |
+| `background` | `Color` | Card background. Defaults to `AppTheme.colors.overlaySubtle`. |
+| `content` | `@Composable BoxScope.() -> Unit` | Card content. |
+
+## AdaptiveContentContainer
+
+`AdaptiveContentContainer` centers content horizontally and caps it at `maxWidth` so
+screens don't stretch uncomfortably across tablet form factors. On phones the
+constraint is not hit and the container behaves as a pass-through that fills available
+width. It mirrors Apple's adaptive-width view modifiers on iOS.
+
+```kotlin
+AppTheme {
+    AdaptiveContentContainer(maxWidth = AppTheme.spacing.maxContentWidthForm) {
+        Text(text = "Capped content area")
+    }
+}
+```
+
+Apps typically pick a semantic max width per surface — narrow for forms, wider for
+lists, in-between for media — and pass the value from their own layout-dimension
+tokens (`AppTheme.spacing.maxContentWidthForm` is provided as a form-width default).
+
+### Parameters
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `modifier` | `Modifier` | Applied to the outer, full-width `Box`. |
+| `maxWidth` | `Dp` | Maximum width of the content area. Defaults to `AppSpacingDefaults.maxContentWidthForm`. |
+| `contentAlignment` | `Alignment` | Alignment of the capped content area within the outer box. Defaults to `Alignment.TopCenter`. |
+| `content` | `@Composable BoxScope.() -> Unit` | Content rendered inside the width-capped box. |
