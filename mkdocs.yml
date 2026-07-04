@@ -36,6 +36,7 @@ nav:
       - Inputs: components/inputs.md
       - Selection: components/selection.md
       - Containers: components/containers.md
+      - Layout: components/layout.md
       - Lists: components/lists.md
       - Navigation: components/navigation.md
       - Media: components/media.md
