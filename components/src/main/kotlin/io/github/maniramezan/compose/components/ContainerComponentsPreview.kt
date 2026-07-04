@@ -51,3 +51,15 @@ public fun DialogPreview(): Unit =
             onDismissRequest = {},
         )
     }
+
+@PreviewLightDark
+@PreviewFontScale
+@Preview(name = "Bottom Sheet", group = "Containers")
+@Composable
+public fun BottomSheetPreview(): Unit =
+    AppTheme {
+        BottomSheet(onDismissRequest = {}) {
+            Text(text = "Sheet title", style = AppTheme.typography.titleMedium)
+            Text(text = "Sheet content goes here.")
+        }
+    }

@@ -49,6 +49,10 @@ public fun MediumTopAppBarShowkase(): Unit = MediumTopAppBarPreview()
 @Composable
 public fun LargeTopAppBarShowkase(): Unit = LargeTopAppBarPreview()
 
+@ShowkaseComposable(name = "Adaptive Nav Scaffold", group = "Navigation")
+@Composable
+public fun AdaptiveNavScaffoldShowkase(): Unit = AdaptiveNavScaffoldPreview()
+
 @Composable
 private fun showkaseNavigationItems(): List<NavigationItem> =
     listOf(

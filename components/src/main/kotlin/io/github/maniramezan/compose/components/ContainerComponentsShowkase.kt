@@ -50,6 +50,10 @@ public fun SectionShowkase(): Unit =
 @Composable
 public fun DialogShowkase(): Unit = DialogPreview()
 
+@ShowkaseComposable(name = "Bottom Sheet", group = "Containers")
+@Composable
+public fun BottomSheetShowkase(): Unit = BottomSheetPreview()
+
 @ShowkaseComposable(name = "Snackbar", group = "Containers")
 @Composable
 public fun SnackbarShowkase(): Unit =

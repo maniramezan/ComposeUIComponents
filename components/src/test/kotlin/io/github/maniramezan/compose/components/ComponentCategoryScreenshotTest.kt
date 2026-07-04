@@ -40,9 +40,23 @@ public class ComponentCategoryScreenshotTest {
     }
 
     @Test
+    public fun bottomSheetMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/bottom-sheet.png") {
+            BottomSheetPreview()
+        }
+    }
+
+    @Test
     public fun listComponentsMatchGolden() {
         captureRoboImage("build/outputs/roborazzi/list-components.png") {
             ListComponentsPreview()
+        }
+    }
+
+    @Test
+    public fun lazyListMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/lazy-list.png") {
+            LazyListPreview()
         }
     }
 
@@ -57,6 +71,13 @@ public class ComponentCategoryScreenshotTest {
     public fun navigationRailMatchesGolden() {
         captureRoboImage("build/outputs/roborazzi/navigation-rail.png") {
             NavRailPreview()
+        }
+    }
+
+    @Test
+    public fun adaptiveNavScaffoldMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/adaptive-nav-scaffold.png") {
+            AdaptiveNavScaffoldPreview()
         }
     }
 
@@ -85,6 +106,13 @@ public class ComponentCategoryScreenshotTest {
     public fun selectionListMatchesGolden() {
         captureRoboImage("build/outputs/roborazzi/selection-list.png") {
             SelectionListSingleChoicePreview()
+        }
+    }
+
+    @Test
+    public fun selectionListSheetMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/selection-list-sheet.png") {
+            SelectionListSheetSingleChoicePreview()
         }
     }
 

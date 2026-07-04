@@ -32,3 +32,11 @@ public fun SelectionListMultipleChoiceShowkase(): Unit =
             confirmButton = { TextButton(text = "Done", onClick = {}) },
         )
     }
+
+@ShowkaseComposable(name = "Selection List Sheet — single choice", group = "Selection")
+@Composable
+public fun SelectionListSheetSingleChoiceShowkase(): Unit = SelectionListSheetSingleChoicePreview()
+
+@ShowkaseComposable(name = "Selection List Sheet — multiple choice", group = "Selection")
+@Composable
+public fun SelectionListSheetMultipleChoiceShowkase(): Unit = SelectionListSheetMultipleChoicePreview()
