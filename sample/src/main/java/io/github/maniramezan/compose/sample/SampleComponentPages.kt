@@ -1,10 +1,12 @@
 package io.github.maniramezan.compose.sample
 
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,6 +28,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
@@ -69,6 +72,8 @@ import io.github.maniramezan.compose.components.SegmentedControl
 import io.github.maniramezan.compose.components.SegmentedItem
 import io.github.maniramezan.compose.components.SelectionListContent
 import io.github.maniramezan.compose.components.SelectionListNode
+import io.github.maniramezan.compose.components.ShowcaseFeed
+import io.github.maniramezan.compose.components.ShowcaseItemWidth
 import io.github.maniramezan.compose.components.Skeleton
 import io.github.maniramezan.compose.components.SkeletonBlock
 import io.github.maniramezan.compose.components.Slider
@@ -1045,6 +1050,109 @@ internal fun FlipCardPage() {
             options = speedOptions,
             selectedIndex = speedIndex,
             onOptionSelected = { speedIndex = it },
+        )
+    }
+}
+
+@Composable
+internal fun ShowcaseFeedPage() {
+    var peek by remember { mutableFloatStateOf(0.85f) }
+    val rowOptions = listOf("1 row", "2 rows")
+    var rowsIndex by remember { mutableIntStateOf(0) }
+    var showAction by remember { mutableStateOf(true) }
+    val rows = rowsIndex + 1
+
+    val topApps = listOf("Focus", "Sky Notes", "Trailhead", "Loop", "Pixel Paint")
+    val games = listOf("Nova Run", "Blocks!", "Chess+", "Dungeon", "Kart Rally")
+
+    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
+        ShowcaseFeed(modifier = Modifier.fillMaxWidth().height(360.dp)) {
+            section(
+                title = "Top Apps",
+                items = topApps,
+                actionLabel = if (showAction) "See all" else null,
+                onAction = if (showAction) ({}) else null,
+                itemWidth = ShowcaseItemWidth.Peek(peek),
+                rows = rows,
+                rowHeight = if (rows > 1) 64.dp else null,
+                rowContentDescription = "Top apps, horizontally scrollable",
+            ) { app -> ShowcaseDemoCard(label = app, fillHeight = rows > 1) }
+
+            section(
+                title = "New Games",
+                items = games,
+                itemWidth = ShowcaseItemWidth.Peek(peek),
+                rows = rows,
+                rowHeight = if (rows > 1) 64.dp else null,
+            ) { game -> ShowcaseDemoCard(label = game, fillHeight = rows > 1) }
+
+            customSection {
+                ShowcaseDemoBanner(label = "Editor's Choice")
+            }
+        }
+        ControlsDivider()
+        ControlSlider(
+            label = "Peek fraction",
+            value = peek,
+            onValueChange = { peek = it },
+            valueRange = 0.5f..1f,
+        )
+        ControlSegmented(
+            label = "Rows",
+            options = rowOptions,
+            selectedIndex = rowsIndex,
+            onOptionSelected = { rowsIndex = it },
+        )
+        ControlSwitch(
+            label = "Show \"See all\" action",
+            checked = showAction,
+            onCheckedChange = { showAction = it },
+        )
+    }
+}
+
+@Composable
+private fun ShowcaseDemoCard(
+    label: String,
+    fillHeight: Boolean,
+) {
+    val sizeModifier =
+        if (fillHeight) {
+            Modifier.fillMaxWidth().fillMaxHeight()
+        } else {
+            Modifier.fillMaxWidth().height(120.dp)
+        }
+    Box(
+        modifier =
+            sizeModifier
+                .clip(AppTheme.shapes.large)
+                .background(AppTheme.colors.surfaceVariant),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = label,
+            style = AppTheme.typography.titleSmall,
+            color = AppTheme.colors.onSurfaceVariant,
+        )
+    }
+}
+
+@Composable
+private fun ShowcaseDemoBanner(label: String) {
+    Box(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = AppTheme.spacing.md)
+                .height(96.dp)
+                .clip(AppTheme.shapes.large)
+                .background(AppTheme.colors.primaryContainer),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = label,
+            style = AppTheme.typography.titleMedium,
+            color = AppTheme.colors.onPrimaryContainer,
         )
     }
 }

@@ -143,4 +143,11 @@ public class ComponentCategoryScreenshotTest {
             DividerComponentsPreview()
         }
     }
+
+    @Test
+    public fun showcaseFeedMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/showcase-feed.png") {
+            ShowcaseFeedPreview()
+        }
+    }
 }

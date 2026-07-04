@@ -166,6 +166,13 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             content = { SegmentedContentPage() },
         ),
         SampleComponentDemo(
+            id = "showcase-feed",
+            title = "ShowcaseFeed",
+            category = "Layout",
+            description = "App Store–style feed: vertical sections that each scroll horizontally with a peeking next item.",
+            content = { ShowcaseFeedPage() },
+        ),
+        SampleComponentDemo(
             id = "list-item",
             title = "ListItem",
             category = "Lists",
