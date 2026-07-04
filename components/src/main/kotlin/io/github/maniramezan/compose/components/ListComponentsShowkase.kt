@@ -46,3 +46,7 @@ public fun ErrorStateShowkase(): Unit =
             message = "Check your connection and retry.",
         )
     }
+
+@ShowkaseComposable(name = "Lazy List", group = "Lists")
+@Composable
+public fun LazyListShowkase(): Unit = LazyListPreview()

@@ -2,7 +2,10 @@ package io.github.maniramezan.compose.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.utils.PreviewFontScale
@@ -57,6 +60,24 @@ public fun MediumTopAppBarPreview(): Unit =
 public fun LargeTopAppBarPreview(): Unit =
     AppTheme {
         LargeTopAppBar(title = "Dashboard")
+    }
+
+@PreviewLightDark
+@Preview(name = "Adaptive Nav Scaffold", group = "Navigation")
+@Composable
+public fun AdaptiveNavScaffoldPreview(): Unit =
+    AppTheme {
+        AdaptiveNavScaffold(
+            items = previewNavigationItems(),
+            selectedIndex = 0,
+            onItemSelected = {},
+            topBar = { TopAppBar(title = "Dashboard") },
+        ) { innerPadding ->
+            Text(
+                text = "Content",
+                modifier = Modifier.padding(innerPadding),
+            )
+        }
     }
 
 @Composable
