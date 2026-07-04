@@ -24,7 +24,6 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import io.github.maniramezan.compose.theme.AppTheme
 import androidx.compose.foundation.lazy.grid.itemsIndexed as gridItemsIndexed
 
@@ -103,7 +102,7 @@ public fun <T> ShowcaseRow(
             when (itemWidth) {
                 is ShowcaseItemWidth.Peek ->
                     ((maxWidth - horizontalPadding - itemSpacing) * itemWidth.visibleFraction)
-                        .coerceAtLeast(0.dp)
+                        .coerceAtLeast(Dp.Hairline)
                 is ShowcaseItemWidth.Fixed -> itemWidth.width
                 ShowcaseItemWidth.Wrap -> null
             }
