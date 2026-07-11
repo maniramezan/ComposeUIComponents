@@ -173,6 +173,64 @@ public class AccessibilityComponentsTest {
     }
 
     @Test
+    public fun compactSegmentedContentMeetsMinimumTouchTargetSize() {
+        composeRule.setContent {
+            AppTheme {
+                SegmentedContent(
+                    items = listOf(SegmentedItem("One"), SegmentedItem("Two")),
+                    initialSelectedIndex = 0,
+                    density = SegmentDensity.Compact,
+                ) { _, item ->
+                    Text(text = item.title)
+                }
+            }
+        }
+
+        composeRule.onNode(hasText("One") and hasClickAction()).assertMinimumTouchTarget()
+        composeRule.onNode(hasText("Two") and hasClickAction()).assertMinimumTouchTarget()
+    }
+
+    @Test
+    public fun containerAndFeedbackComponentsMeetMinimumTouchTargetSize() {
+        composeRule.setContent {
+            AppTheme {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Card(onClick = {}) { Text(text = "Card content") }
+                    FlipCard(
+                        front = { Text(text = "Front") },
+                        back = { Text(text = "Back") },
+                        modifier = Modifier.testTag("flip-card"),
+                    )
+                    SectionHeader(title = "Section", actionLabel = "See all", onAction = {})
+                    SingleChoiceSegmentedButtonRow(
+                        options = listOf("A", "B"),
+                        selectedIndex = 0,
+                        onOptionSelected = {},
+                    )
+                    Dialog(
+                        title = "Title",
+                        text = "Body",
+                        confirmText = "Confirm",
+                        onConfirm = {},
+                        onDismissRequest = {},
+                        dismissText = "Dismiss",
+                    )
+                    Snackbar(message = "Saved", actionLabel = "Undo", onAction = {})
+                }
+            }
+        }
+
+        composeRule.onNode(hasText("Card content") and hasClickAction()).assertMinimumTouchTarget()
+        composeRule.onNodeWithTag("flip-card").assertMinimumTouchTarget()
+        composeRule.onNode(hasText("See all") and hasClickAction()).assertMinimumTouchTarget()
+        composeRule.onNode(hasText("A") and hasClickAction()).assertMinimumTouchTarget()
+        composeRule.onNode(hasText("B") and hasClickAction()).assertMinimumTouchTarget()
+        composeRule.onNode(hasText("Confirm") and hasClickAction()).assertMinimumTouchTarget()
+        composeRule.onNode(hasText("Dismiss") and hasClickAction()).assertMinimumTouchTarget()
+        composeRule.onNode(hasText("Undo") and hasClickAction()).assertMinimumTouchTarget()
+    }
+
+    @Test
     public fun sliderExposesLabelAndValueDescription() {
         composeRule.setContent {
             AppTheme {

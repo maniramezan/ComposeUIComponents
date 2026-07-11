@@ -20,10 +20,10 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import io.github.maniramezan.compose.theme.AppTheme
+import io.github.maniramezan.compose.utils.minimumTouchTargetHeight
 import androidx.compose.material3.Card as MaterialCard
 import androidx.compose.material3.Snackbar as MaterialSnackbar
 import androidx.compose.material3.Surface as MaterialSurface
-import androidx.compose.material3.TextButton as MaterialTextButton
 
 /** A themed, elevated container for grouping related content, optionally tappable via [onClick]. */
 @Composable
@@ -41,7 +41,11 @@ public fun Card(
         )
     }
     if (onClick != null) {
-        MaterialCard(modifier = modifier.fillMaxWidth(), onClick = onClick, content = columnContent)
+        MaterialCard(
+            modifier = modifier.fillMaxWidth().minimumTouchTargetHeight(minimumTouchTargetSize()),
+            onClick = onClick,
+            content = columnContent,
+        )
     } else {
         MaterialCard(modifier = modifier.fillMaxWidth(), content = columnContent)
     }
@@ -135,17 +139,11 @@ public fun Dialog(
         title = { Text(text = title) },
         text = { Text(text = text) },
         confirmButton = {
-            MaterialTextButton(onClick = onConfirm) {
-                Text(text = confirmText)
-            }
+            TextButton(text = confirmText, onClick = onConfirm)
         },
         dismissButton =
             dismissText?.let {
-                {
-                    MaterialTextButton(onClick = onDismissRequest) {
-                        Text(text = it)
-                    }
-                }
+                { TextButton(text = it, onClick = onDismissRequest) }
             },
     )
 }
@@ -169,11 +167,7 @@ public fun Snackbar(
         modifier = modifier.semantics { liveRegion = LiveRegionMode.Polite },
         action =
             if (actionLabel != null && onAction != null) {
-                {
-                    MaterialTextButton(onClick = onAction) {
-                        Text(text = actionLabel)
-                    }
-                }
+                { TextButton(text = actionLabel, onClick = onAction) }
             } else {
                 null
             },

@@ -24,6 +24,7 @@ import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import io.github.maniramezan.compose.theme.AppTheme
+import io.github.maniramezan.compose.utils.minimumTouchTarget
 
 /**
  * The axis a [FlipCard] rotates around.
@@ -112,14 +113,16 @@ public fun FlipCard(
 
     val toggleModifier =
         if (enabled) {
-            Modifier.toggleable(
-                value = isFlipped,
-                role = Role.Switch,
-                onValueChange = { requested ->
-                    if (flipped == null) internalFlipped = requested
-                    onFlippedChange?.invoke(requested)
-                },
-            )
+            Modifier
+                .minimumTouchTarget(minimumTouchTargetSize())
+                .toggleable(
+                    value = isFlipped,
+                    role = Role.Switch,
+                    onValueChange = { requested ->
+                        if (flipped == null) internalFlipped = requested
+                        onFlippedChange?.invoke(requested)
+                    },
+                )
         } else {
             Modifier
         }

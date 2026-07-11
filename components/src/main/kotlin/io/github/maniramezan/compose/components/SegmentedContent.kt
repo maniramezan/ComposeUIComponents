@@ -583,12 +583,7 @@ private fun SegmentSlot(
         } else {
             visualWidthModifier
         }
-    val touchTargetModifier =
-        if (density == SegmentDensity.Regular) {
-            Modifier.minimumTouchTarget(minimumTouchTargetSize())
-        } else {
-            Modifier
-        }
+    val touchTargetModifier = Modifier.minimumTouchTarget(minimumTouchTargetSize())
     val interactionSource = remember { MutableInteractionSource() }
     val indication = LocalIndication.current
     val selectableModifier =
