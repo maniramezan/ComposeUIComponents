@@ -102,6 +102,8 @@ section(
 | `itemWidth` | `ShowcaseItemWidth` | Item sizing / peek strategy. |
 | `rows` | `Int` | `1` = single row; `> 1` = grid (needs `rowHeight`). |
 | `rowHeight` | `Dp?` | Height of one row; required when `rows > 1`. |
+| `state` | `LazyListState` | Hoisted scroll state when `rows = 1`. |
+| `gridState` | `LazyGridState` | Hoisted scroll state when `rows > 1`. |
 | `contentPadding` | `PaddingValues` | Padding around the scrolling content. |
 | `itemSpacing` | `Dp` | Gap between items (and grid rows). |
 | `key` | `((index: Int, item: T) -> Any)?` | Stable item identity. |
