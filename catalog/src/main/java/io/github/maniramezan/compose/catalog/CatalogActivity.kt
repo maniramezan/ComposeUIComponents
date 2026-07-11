@@ -131,7 +131,7 @@ public class CatalogActivity : ComponentActivity() {
                             TabRow(
                                 tabs = listOf("Overview", "Activity", "Settings"),
                                 selectedIndex = 0,
-                                onTabSelected = {},
+                                onItemSelected = {},
                             )
                             BottomBar(
                                 items =

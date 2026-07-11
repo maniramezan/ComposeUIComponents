@@ -31,6 +31,11 @@ import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.theme.IconToken
 import io.github.maniramezan.compose.utils.minimumTouchTargetHeight
 
+/**
+ * A progress indicator with a readable [label], announced to screen readers as a live region.
+ *
+ * @param progress `null` renders an indeterminate spinner; a value renders a determinate bar.
+ */
 @Composable
 public fun ProgressIndicator(
     modifier: Modifier = Modifier,
@@ -61,6 +66,7 @@ public fun ProgressIndicator(
     }
 }
 
+/** A single decorative, shimmer-free loading placeholder block; kept out of the accessibility tree. */
 @Composable
 public fun Skeleton(modifier: Modifier = Modifier) {
     Box(

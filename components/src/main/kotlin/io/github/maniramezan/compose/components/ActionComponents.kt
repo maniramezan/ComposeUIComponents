@@ -26,6 +26,7 @@ import androidx.compose.material3.IconButton as MaterialIconButton
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow as MaterialSingleChoiceSegmentedButtonRow
 import androidx.compose.material3.TextButton as MaterialTextButton
 
+/** A themed, outlined medium-emphasis button for a secondary action. */
 @Composable
 public fun SecondaryButton(
     text: String,
@@ -51,6 +52,7 @@ public fun SecondaryButton(
     }
 }
 
+/** A themed, low-emphasis text button, typically for a tertiary or dismissive action. */
 @Composable
 public fun TextButton(
     text: String,
@@ -76,6 +78,12 @@ public fun TextButton(
     }
 }
 
+/**
+ * A themed, icon-only tappable button.
+ *
+ * @param contentDescription Accessibility label announced for this control; the icon
+ *   carries no visible text, so this must describe the action (e.g. "Delete").
+ */
 @Composable
 public fun IconButton(
     icon: IconToken,
@@ -97,6 +105,12 @@ public fun IconButton(
     }
 }
 
+/**
+ * A themed, icon-only floating action button for a screen's primary action.
+ *
+ * @param contentDescription Accessibility label announced for this control; the icon
+ *   carries no visible text, so this must describe the action (e.g. "Compose").
+ */
 @Composable
 public fun FAB(
     icon: IconToken,
@@ -193,12 +207,18 @@ public fun SegmentedControl(
     }
 }
 
+/**
+ * An extended FAB that pairs [icon] with a visible [text] label.
+ *
+ * The icon is always rendered decoratively (`contentDescription = null`): the
+ * visible [text] already labels the action, and Material3 merges the icon and
+ * text into a single accessibility node, so a separate icon description would
+ * only cause TalkBack to announce the label twice.
+ */
 @Composable
-@Suppress("UNUSED_PARAMETER")
 public fun ExtendedFloatingActionButton(
     text: String,
     icon: IconToken,
-    contentDescription: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -210,7 +230,7 @@ public fun ExtendedFloatingActionButton(
         icon = {
             Icon(
                 imageVector = icon.imageVector,
-                contentDescription = null, // @check:suppress — decorative; the extended FAB text labels the action
+                contentDescription = null, // decorative; text already labels the action
                 modifier = Modifier.size(standardIconSize()),
             )
         },
@@ -218,6 +238,10 @@ public fun ExtendedFloatingActionButton(
     )
 }
 
+/**
+ * A single-choice segmented button row, Material3's inline alternative to
+ * [SegmentedControl] for choosing exactly one option from [options].
+ */
 @Composable
 public fun SingleChoiceSegmentedButtonRow(
     options: List<String>,
