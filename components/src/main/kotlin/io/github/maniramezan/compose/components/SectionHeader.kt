@@ -18,9 +18,6 @@ import io.github.maniramezan.compose.theme.AppTheme
  * A section header for list-style screens — a title on the leading edge with
  * an optional, trailing text action. Pass both [actionLabel] and [onAction]
  * to show the action; pass neither to render a header-only variant.
- *
- * @param titleStyle Optional override for the title's text style. When `null`
- *   (the default), the theme's `typography.titleSmall` is used.
  */
 @Composable
 public fun SectionHeader(
@@ -28,7 +25,31 @@ public fun SectionHeader(
     modifier: Modifier = Modifier,
     actionLabel: String? = null,
     onAction: (() -> Unit)? = null,
-    titleStyle: TextStyle? = null,
+) {
+    SectionHeader(
+        title = title,
+        titleStyle = null,
+        modifier = modifier,
+        actionLabel = actionLabel,
+        onAction = onAction,
+    )
+}
+
+/**
+ * A section header for list-style screens — a title on the leading edge with
+ * an optional, trailing text action. Pass both [actionLabel] and [onAction]
+ * to show the action; pass neither to render a header-only variant.
+ *
+ * @param titleStyle Override for the title's text style. Pass `null` to use
+ *   the theme's `typography.titleSmall`.
+ */
+@Composable
+public fun SectionHeader(
+    title: String,
+    titleStyle: TextStyle?,
+    modifier: Modifier = Modifier,
+    actionLabel: String? = null,
+    onAction: (() -> Unit)? = null,
 ) {
     Row(
         modifier =
