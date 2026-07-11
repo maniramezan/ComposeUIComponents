@@ -239,6 +239,28 @@ public fun ExtendedFloatingActionButton(
 }
 
 /**
+ * Deprecated overload retained for one minor release for binary compatibility.
+ * The icon is always decorative (see the overload above), so [contentDescription]
+ * has no effect.
+ */
+@Deprecated(
+    message =
+        "contentDescription is unused; the icon is always decorative because the " +
+            "visible text label already names the action.",
+    replaceWith = ReplaceWith("ExtendedFloatingActionButton(text, icon, onClick, modifier)"),
+)
+@Composable
+public fun ExtendedFloatingActionButton(
+    text: String,
+    icon: IconToken,
+    @Suppress("UNUSED_PARAMETER") contentDescription: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    ExtendedFloatingActionButton(text = text, icon = icon, onClick = onClick, modifier = modifier)
+}
+
+/**
  * A single-choice segmented button row, Material3's inline alternative to
  * [SegmentedControl] for choosing exactly one option from [options].
  */
