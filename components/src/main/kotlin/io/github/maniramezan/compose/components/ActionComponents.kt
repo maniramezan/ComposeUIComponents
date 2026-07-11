@@ -120,7 +120,7 @@ public fun FAB(
 
 /**
  * A simple segmented control that renders one [Button] (selected) or a
- * [Button] with [AppColors.surfaceVariant] background (unselected) per entry
+ * [Button] with `AppColors.surfaceVariant` background (unselected) per entry
  * in [options].
  *
  * @param options Labels for each segment.

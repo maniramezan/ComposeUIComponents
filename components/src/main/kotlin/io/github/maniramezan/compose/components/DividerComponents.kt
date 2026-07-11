@@ -10,7 +10,7 @@ import androidx.compose.material3.HorizontalDivider as MaterialHorizontalDivider
 import androidx.compose.material3.VerticalDivider as MaterialVerticalDivider
 
 /**
- * A full-width horizontal rule. Defaults to [AppTheme.colors.outlineVariant] so it
+ * A full-width horizontal rule. Defaults to `AppTheme.colors.outlineVariant` so it
  * blends with themed surfaces without extra configuration.
  */
 @Composable
@@ -27,7 +27,7 @@ public fun HorizontalDivider(
 }
 
 /**
- * A full-height vertical rule. Defaults to [AppTheme.colors.outlineVariant] so it
+ * A full-height vertical rule. Defaults to `AppTheme.colors.outlineVariant` so it
  * blends with themed surfaces without extra configuration.
  */
 @Composable

@@ -14,7 +14,7 @@ import io.github.maniramezan.compose.theme.AppTheme
 /**
  * A subtle, rounded container intended to sit on top of media or photographic
  * content (video thumbnails, hero images, player overlays). Defaults to
- * [AppTheme.colors.overlaySubtle] and [AppTheme.shapes.large].
+ * `AppTheme.colors.overlaySubtle` and `AppTheme.shapes.large`.
  */
 @Composable
 public fun OverlayCard(
