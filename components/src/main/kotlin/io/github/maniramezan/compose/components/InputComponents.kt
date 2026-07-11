@@ -27,6 +27,7 @@ import androidx.compose.material3.Checkbox as MaterialCheckbox
 import androidx.compose.material3.Slider as MaterialSlider
 import androidx.compose.material3.Switch as MaterialSwitch
 
+/** A themed, single-line outlined text field with a floating [label]. */
 @Composable
 public fun TextField(
     value: String,
@@ -53,6 +54,12 @@ public fun TextField(
     )
 }
 
+/**
+ * A themed, single-line outlined text field that masks its value by default.
+ *
+ * @param revealPassword Whether to show plaintext instead of masking; wire this to a
+ *   caller-owned "show password" toggle (e.g. via [trailingIcon]).
+ */
 @Composable
 public fun PasswordField(
     value: String,
@@ -80,6 +87,7 @@ public fun PasswordField(
     )
 }
 
+/** A themed, single-line outlined text field styled for search, with an optional [placeholder]. */
 @Composable
 public fun SearchField(
     value: String,
@@ -104,6 +112,7 @@ public fun SearchField(
     )
 }
 
+/** A themed checkbox row with a tappable [label]; the whole row toggles [checked]. */
 @Composable
 public fun Checkbox(
     checked: Boolean,
@@ -134,6 +143,7 @@ public fun Checkbox(
     }
 }
 
+/** A themed single-choice radio button list; each row's full width is tappable. */
 @Composable
 public fun RadioGroup(
     options: List<String>,
@@ -168,6 +178,7 @@ public fun RadioGroup(
     }
 }
 
+/** A themed switch row with a tappable [label]; the whole row toggles [checked]. */
 @Composable
 public fun Switch(
     checked: Boolean,

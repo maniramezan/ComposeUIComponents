@@ -19,6 +19,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import io.github.maniramezan.compose.theme.AppTheme
 
+/** A themed list row with a [headline], optional [supportingText], and optional leading/trailing slots. */
 @Composable
 public fun ListItem(
     headline: String,
@@ -57,6 +58,7 @@ public fun ListItem(
     }
 }
 
+/** A themed `LazyColumn` with the design system's default full-width layout and vertical padding. */
 @Composable
 public fun LazyList(
     modifier: Modifier = Modifier,
@@ -70,6 +72,7 @@ public fun LazyList(
     )
 }
 
+/** A centered placeholder for a list or screen with no content, with an optional [action]. */
 @Composable
 public fun EmptyState(
     title: String,
@@ -96,6 +99,7 @@ public fun EmptyState(
     }
 }
 
+/** A centered loading placeholder with a spinner and [label]; announced to screen readers as a live region. */
 @Composable
 public fun LoadingState(
     label: String,
@@ -114,6 +118,7 @@ public fun LoadingState(
     }
 }
 
+/** A centered error placeholder with an optional [action]; announced to screen readers as a live region. */
 @Composable
 public fun ErrorState(
     title: String,

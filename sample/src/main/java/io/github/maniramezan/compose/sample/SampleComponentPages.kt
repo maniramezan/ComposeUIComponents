@@ -506,7 +506,7 @@ internal fun TabRowPage() {
     val tabs = listOf("General", "Billing", "Security")
 
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        TabRow(tabs = tabs, selectedIndex = index, onTabSelected = { index = it })
+        TabRow(tabs = tabs, selectedIndex = index, onItemSelected = { index = it })
         Text("Selected: ${tabs[index]}")
     }
 }

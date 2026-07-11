@@ -63,7 +63,6 @@ public fun ActionComponentsPreview(): Unit =
             ExtendedFloatingActionButton(
                 text = "Create",
                 icon = AppTheme.icons.check,
-                contentDescription = "Create",
                 onClick = {},
             )
         }

@@ -245,7 +245,6 @@ public class AccessibilityComponentsTest {
                 ExtendedFloatingActionButton(
                     text = "Create",
                     icon = AppTheme.icons.check,
-                    contentDescription = "Create icon",
                     onClick = {},
                 )
             }

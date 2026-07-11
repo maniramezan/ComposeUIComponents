@@ -33,7 +33,7 @@ public fun TabRowShowkase(): Unit =
         TabRow(
             tabs = listOf("Overview", "Activity", "Settings"),
             selectedIndex = 0,
-            onTabSelected = {},
+            onItemSelected = {},
         )
     }
 

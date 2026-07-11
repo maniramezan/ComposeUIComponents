@@ -30,6 +30,7 @@ import androidx.compose.material3.LargeTopAppBar as MaterialLargeTopAppBar
 import androidx.compose.material3.MediumTopAppBar as MaterialMediumTopAppBar
 import androidx.compose.material3.TopAppBar as MaterialTopAppBar
 
+/** A destination entry shared by [BottomBar], [NavRail], and [AdaptiveNavScaffold]. */
 @Immutable
 public data class NavigationItem(
     public val label: String,
@@ -49,6 +50,7 @@ public data class NavigationItem(
     public val badgeContentDescription: String? = null,
 )
 
+/** A themed top app bar with a [title] and optional [navigationIcon]/[actions] slots. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 public fun TopAppBar(
@@ -72,6 +74,7 @@ public fun TopAppBar(
     )
 }
 
+/** A bottom navigation bar for compact-width screens; see [AdaptiveNavScaffold] for width-aware switching. */
 @Composable
 public fun BottomBar(
     items: List<NavigationItem>,
@@ -92,11 +95,12 @@ public fun BottomBar(
     }
 }
 
+/** A primary tab row for switching between [tabs] at the same navigation level. */
 @Composable
 public fun TabRow(
     tabs: List<String>,
     selectedIndex: Int,
-    onTabSelected: (Int) -> Unit,
+    onItemSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     PrimaryTabRow(
@@ -106,7 +110,7 @@ public fun TabRow(
         tabs.forEachIndexed { index, tab ->
             Tab(
                 selected = index == selectedIndex,
-                onClick = { onTabSelected(index) },
+                onClick = { onItemSelected(index) },
                 modifier = Modifier.minimumTouchTargetHeight(minimumTouchTargetSize()),
                 text = { Text(text = tab) },
             )
@@ -114,6 +118,7 @@ public fun TabRow(
     }
 }
 
+/** A side navigation rail for medium/expanded-width screens; see [AdaptiveNavScaffold] for width-aware switching. */
 @Composable
 public fun NavRail(
     items: List<NavigationItem>,
@@ -134,6 +139,7 @@ public fun NavRail(
     }
 }
 
+/** A themed medium (two-line) top app bar with a [title] and optional [navigationIcon]/[actions] slots. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 public fun MediumTopAppBar(
@@ -157,6 +163,7 @@ public fun MediumTopAppBar(
     )
 }
 
+/** A themed large (three-line) top app bar with a [title] and optional [navigationIcon]/[actions] slots. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 public fun LargeTopAppBar(

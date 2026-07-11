@@ -23,7 +23,7 @@ public fun NavigationComponentsPreview(): Unit =
             TabRow(
                 tabs = listOf("Overview", "Activity", "Settings"),
                 selectedIndex = 0,
-                onTabSelected = {},
+                onItemSelected = {},
             )
             BottomBar(
                 items = items,
