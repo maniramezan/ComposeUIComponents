@@ -186,6 +186,42 @@ public interface ShowcaseFeedScope {
     )
 
     /**
+     * A vertical section: a [SectionHeader] above items emitted directly into
+     * the feed's outer `LazyColumn` — unlike [section], whose row is one
+     * opaque item, each item here is individually lazy. Use this for content
+     * that pages in as the user scrolls (infinite scroll), since [section]
+     * has no way to append to an already-composed row.
+     *
+     * @param title Section heading; caller-supplied and localised.
+     * @param items Backing data source for this section's items so far.
+     * @param key Stable key for the whole section (header + items + footer)
+     *   within the vertical list; also namespaces the header/footer's own
+     *   keys, so pass one when a feed has more than one vertical section.
+     * @param itemKey Stable key for each item.
+     * @param titleStyle Optional override for the header title's text style.
+     *   When `null` (the default), [SectionHeader]'s standard style is used.
+     * @param hasMore Whether more items exist beyond [items]. While `true`, a
+     *   [LoadMoreFooter] is emitted as the section's last item; scrolling it
+     *   into view invokes [onLoadMore].
+     * @param isLoadingMore Shows a spinner below the load-more trigger while
+     *   `true`.
+     * @param onLoadMore Invoked when the load-more footer scrolls into view.
+     *   Required when [hasMore] is `true`; ignored otherwise.
+     * @param itemContent Renders a single item.
+     */
+    public fun <T> verticalSection(
+        title: String,
+        items: List<T>,
+        key: Any? = null,
+        itemKey: ((index: Int, item: T) -> Any)? = null,
+        titleStyle: TextStyle? = null,
+        hasMore: Boolean = false,
+        isLoadingMore: Boolean = false,
+        onLoadMore: (() -> Unit)? = null,
+        itemContent: @Composable (item: T) -> Unit,
+    )
+
+    /**
      * A fully custom section: [content] is placed directly into the vertical
      * list, so callers can render a hero banner, promo, grid, or anything else.
      *
@@ -276,6 +312,33 @@ private class ShowcaseFeedScopeImpl : ShowcaseFeedScope {
                         rowHeight = rowHeight,
                         key = itemKey,
                         itemContent = itemContent,
+                    )
+                }
+            }
+        }
+    }
+
+    override fun <T> verticalSection(
+        title: String,
+        items: List<T>,
+        key: Any?,
+        itemKey: ((index: Int, item: T) -> Any)?,
+        titleStyle: TextStyle?,
+        hasMore: Boolean,
+        isLoadingMore: Boolean,
+        onLoadMore: (() -> Unit)?,
+        itemContent: @Composable (item: T) -> Unit,
+    ) {
+        entries += {
+            item(key = key?.let { "$it#header" }) {
+                SectionHeader(title = title, titleStyle = titleStyle)
+            }
+            itemsIndexed(items = items, key = itemKey) { _, item -> itemContent(item) }
+            if (hasMore) {
+                item(key = key?.let { "$it#load-more" }) {
+                    LoadMoreFooter(
+                        isLoadingMore = isLoadingMore,
+                        onLoadMore = { onLoadMore?.invoke() },
                     )
                 }
             }
