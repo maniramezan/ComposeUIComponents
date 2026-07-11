@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import io.github.maniramezan.compose.theme.AppTheme
 import androidx.compose.foundation.lazy.grid.itemsIndexed as gridItemsIndexed
@@ -165,6 +166,8 @@ public interface ShowcaseFeedScope {
      *   the scrolling row. Caller-supplied; when `null` the row stays silent
      *   and TalkBack traverses the items directly.
      * @param itemKey Stable key for each item in the row.
+     * @param titleStyle Optional override for the header title's text style.
+     *   When `null` (the default), [SectionHeader]'s standard style is used.
      * @param itemContent Renders a single item.
      */
     public fun <T> section(
@@ -178,6 +181,7 @@ public interface ShowcaseFeedScope {
         rowHeight: Dp? = null,
         rowContentDescription: String? = null,
         itemKey: ((index: Int, item: T) -> Any)? = null,
+        titleStyle: TextStyle? = null,
         itemContent: @Composable (item: T) -> Unit,
     )
 
@@ -246,6 +250,7 @@ private class ShowcaseFeedScopeImpl : ShowcaseFeedScope {
         rowHeight: Dp?,
         rowContentDescription: String?,
         itemKey: ((index: Int, item: T) -> Any)?,
+        titleStyle: TextStyle?,
         itemContent: @Composable (item: T) -> Unit,
     ) {
         entries += {
@@ -255,6 +260,7 @@ private class ShowcaseFeedScopeImpl : ShowcaseFeedScope {
                         title = title,
                         actionLabel = actionLabel,
                         onAction = onAction,
+                        titleStyle = titleStyle,
                     )
                     val rowModifier =
                         if (rowContentDescription != null) {

@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import io.github.maniramezan.compose.theme.AppTheme
 
 /**
@@ -21,6 +22,31 @@ import io.github.maniramezan.compose.theme.AppTheme
 @Composable
 public fun SectionHeader(
     title: String,
+    modifier: Modifier = Modifier,
+    actionLabel: String? = null,
+    onAction: (() -> Unit)? = null,
+) {
+    SectionHeader(
+        title = title,
+        titleStyle = null,
+        modifier = modifier,
+        actionLabel = actionLabel,
+        onAction = onAction,
+    )
+}
+
+/**
+ * A section header for list-style screens — a title on the leading edge with
+ * an optional, trailing text action. Pass both [actionLabel] and [onAction]
+ * to show the action; pass neither to render a header-only variant.
+ *
+ * @param titleStyle Override for the title's text style. Pass `null` to use
+ *   the theme's `typography.titleSmall`.
+ */
+@Composable
+public fun SectionHeader(
+    title: String,
+    titleStyle: TextStyle?,
     modifier: Modifier = Modifier,
     actionLabel: String? = null,
     onAction: (() -> Unit)? = null,
@@ -36,7 +62,7 @@ public fun SectionHeader(
         Text(
             text = title,
             modifier = Modifier.semantics { heading() },
-            style = AppTheme.typography.titleSmall,
+            style = titleStyle ?: AppTheme.typography.titleSmall,
             color = AppTheme.colors.onSurface,
         )
         if (actionLabel != null && onAction != null) {
