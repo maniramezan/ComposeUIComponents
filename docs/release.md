@@ -6,7 +6,7 @@ Releases are fully automated via [Release Please](https://github.com/googleapis/
 
 1. Merge PRs to `main` using [Conventional Commit](https://www.conventionalcommits.org/) titles.
 2. After CI passes on `main`, the Release Please workflow opens (or updates) a release PR that bumps `VERSION_NAME` in `gradle.properties`, updates `.release-please-manifest.json`, and drafts release notes.
-3. When ready to ship, merge the release PR. Release Please pushes the `vX.Y.Z` tag, which triggers the release workflow to publish Maven artifacts and create the GitHub Release.
+3. When ready to ship, merge the release PR. Release Please creates the `vX.Y.Z` tag and invokes the release workflow to publish Maven artifacts and create the GitHub Release.
 
 ## Controlling the version bump
 
@@ -27,12 +27,15 @@ The Release Please workflow can be run manually from the Actions tab via `workfl
 
 Before merging the Release Please PR, verify:
 
-- `apiCheck` passes.
+- `apiCheck` and every module's `binaryCompatibilityCheck` pass.
 - Dokka generation passes.
 - Catalog and sample debug APKs assemble.
 - Component Roborazzi screenshots record successfully.
 - GitHub Pages deployment succeeds from `main`.
 - Maven Central publishing credentials and signing are configured in CI secrets.
+
+After a release, update `API_BASELINE_VERSION` in `gradle.properties` to the released
+version. The next release compares each published Android AAR against that baseline.
 
 ## 1.0.0 Gate
 

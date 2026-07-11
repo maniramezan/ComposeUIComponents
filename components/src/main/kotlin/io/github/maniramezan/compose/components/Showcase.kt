@@ -15,7 +15,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
@@ -68,6 +70,8 @@ public sealed interface ShowcaseItemWidth {
  *   "Top Charts" look) and requires [rowHeight]. If [rowHeight] is `null`, the
  *   row falls back to a single row.
  * @param rowHeight Height of one row; required when [rows] is greater than `1`.
+ * @param state Hoisted scroll state for a single-row [LazyRow].
+ * @param gridState Hoisted scroll state for a multi-row [LazyHorizontalGrid].
  * @param contentPadding Padding around the scrolling content. The horizontal
  *   padding is factored into the peek width so the first and last items align
  *   with the row edges.
@@ -85,6 +89,7 @@ public fun <T> ShowcaseRow(
     rows: Int = 1,
     rowHeight: Dp? = null,
     state: LazyListState = rememberLazyListState(),
+    gridState: LazyGridState = rememberLazyGridState(),
     contentPadding: PaddingValues = PaddingValues(horizontal = AppTheme.spacing.x2),
     itemSpacing: Dp = AppTheme.spacing.x1_5,
     key: ((index: Int, item: T) -> Any)? = null,
@@ -112,6 +117,7 @@ public fun <T> ShowcaseRow(
         if (useGrid) {
             LazyHorizontalGrid(
                 rows = GridCells.Fixed(rows),
+                state = gridState,
                 modifier = Modifier.height(rowHeight * rows + itemSpacing * (rows - 1)),
                 contentPadding = contentPadding,
                 horizontalArrangement = Arrangement.spacedBy(itemSpacing),
