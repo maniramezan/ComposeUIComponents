@@ -10,8 +10,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -80,26 +80,27 @@ public fun <ID : Any> SelectionListContent(
             )
         }
 
-        Column(
+        LazyColumn(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .weight(1f, fill = false)
-                    .verticalScroll(rememberScrollState()),
+                    .weight(1f, fill = false),
         ) {
             if (visibleNodes.isEmpty() && isSearching && noResultsText.isNotBlank()) {
-                Text(
-                    text = noResultsText,
-                    style = AppTheme.typography.bodyMedium,
-                    color = AppTheme.colors.onSurfaceVariant,
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(AppTheme.spacing.x3),
-                )
+                item {
+                    Text(
+                        text = noResultsText,
+                        style = AppTheme.typography.bodyMedium,
+                        color = AppTheme.colors.onSurfaceVariant,
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(AppTheme.spacing.x3),
+                    )
+                }
             }
 
-            visibleNodes.forEach { node ->
+            items(visibleNodes, key = { it.id }) { node ->
                 if (node.isLeaf) {
                     SelectionListRow(
                         title = node.title,
@@ -112,9 +113,11 @@ public fun <ID : Any> SelectionListContent(
                     )
                 } else {
                     val expanded = isSearching || node.id in expandedIds
+                    val childrenSummary =
+                        remember(node, selectedIds) { selectedChildrenSummary(node, selectedIds) }
                     SelectionListRow(
                         title = node.title,
-                        subtitle = selectedChildrenSummary(node, selectedIds) ?: node.subtitle,
+                        subtitle = childrenSummary ?: node.subtitle,
                         leadingGlyph = node.leadingGlyph,
                         isSelected = false,
                         isIndented = false,
