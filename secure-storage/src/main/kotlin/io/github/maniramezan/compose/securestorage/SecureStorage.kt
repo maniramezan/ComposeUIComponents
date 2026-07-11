@@ -30,7 +30,7 @@ import android.content.Context
  *   and Base64-encoded in `SharedPreferences` and are a poor fit.
  *
  * ### Lifetime & threading
- * Obtain an instance with [create] and reuse it as a singleton per [name]: building the
+ * Obtain an instance with [create] and reuse it as a singleton per `name`: building the
  * keyset is comparatively expensive and is not meant to be repeated per access.
  * Implementations are safe to call from any thread.
  *
