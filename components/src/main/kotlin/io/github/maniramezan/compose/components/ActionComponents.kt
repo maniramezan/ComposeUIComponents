@@ -210,7 +210,7 @@ public fun SegmentedControl(
 /**
  * An extended FAB that pairs [icon] with a visible [text] label.
  *
- * The icon is always rendered decoratively (`contentDescription = null`): the
+ * The icon is always rendered decoratively (description omitted): the
  * visible [text] already labels the action, and Material3 merges the icon and
  * text into a single accessibility node, so a separate icon description would
  * only cause TalkBack to announce the label twice.
@@ -230,7 +230,7 @@ public fun ExtendedFloatingActionButton(
         icon = {
             Icon(
                 imageVector = icon.imageVector,
-                contentDescription = null, // decorative; text already labels the action
+                contentDescription = null, // @check:suppress — decorative; text already labels the action
                 modifier = Modifier.size(standardIconSize()),
             )
         },
