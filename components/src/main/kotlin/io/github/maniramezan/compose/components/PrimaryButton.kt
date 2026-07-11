@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.utils.minimumTouchTargetHeight
 
+/** A themed, filled high-emphasis button for a screen's primary action. */
 @Composable
 public fun PrimaryButton(
     text: String,

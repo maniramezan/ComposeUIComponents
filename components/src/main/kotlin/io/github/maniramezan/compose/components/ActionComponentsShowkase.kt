@@ -110,7 +110,6 @@ public fun ExtendedFABShowkase(): Unit =
         ExtendedFloatingActionButton(
             text = "Create",
             icon = AppTheme.icons.check,
-            contentDescription = "Create",
             onClick = {},
         )
     }

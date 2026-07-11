@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import io.github.maniramezan.compose.theme.AppTheme
 
+/** Semantic text roles for [AppText], each resolving to a theme typography token. */
 public enum class AppTextStyle {
     Display,
     Title,
@@ -14,6 +15,7 @@ public enum class AppTextStyle {
     Label,
 }
 
+/** A themed text component that resolves [style] to the current [AppTheme] typography token. */
 @Composable
 public fun AppText(
     text: String,

@@ -25,6 +25,7 @@ import androidx.compose.material3.Snackbar as MaterialSnackbar
 import androidx.compose.material3.Surface as MaterialSurface
 import androidx.compose.material3.TextButton as MaterialTextButton
 
+/** A themed, elevated container for grouping related content, optionally tappable via [onClick]. */
 @Composable
 public fun Card(
     modifier: Modifier = Modifier,
@@ -46,6 +47,7 @@ public fun Card(
     }
 }
 
+/** A themed, flat (non-elevated) container for grouping related content. */
 @Composable
 public fun Surface(
     modifier: Modifier = Modifier,
@@ -65,6 +67,9 @@ public fun Surface(
     }
 }
 
+/**
+ * A labeled content group: a heading row (with optional trailing [actions]) above [content].
+ */
 @Composable
 public fun Section(
     title: String,
@@ -87,6 +92,7 @@ public fun Section(
     }
 }
 
+/** A themed modal bottom sheet that is always fully expanded (never partially). */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 public fun BottomSheet(
@@ -107,6 +113,12 @@ public fun BottomSheet(
     }
 }
 
+/**
+ * A themed alert dialog with a required confirm action and an optional dismiss action.
+ *
+ * @param dismissText Label for a secondary dismiss button; omit (`null`) for a
+ *   confirm-only dialog.
+ */
 @Composable
 public fun Dialog(
     title: String,
@@ -138,6 +150,12 @@ public fun Dialog(
     )
 }
 
+/**
+ * A themed snackbar message, usable standalone or as `SnackbarHost`'s `snackbar` slot.
+ *
+ * @param actionLabel Label for an optional trailing action button; supply together
+ *   with [onAction], or omit both for a message-only snackbar.
+ */
 @Composable
 public fun Snackbar(
     message: String,
