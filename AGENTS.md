@@ -105,10 +105,10 @@ For release-oriented changes, also account for:
 
 ## Release Hygiene
 
-- Releases are automated via Release Please. Do NOT manually bump `VERSION_NAME` or create tags.
-- Merge PRs to `main` using conventional commit titles (`fix:`, `feat:`, `feat!:`, etc.). Release Please reads those commits and keeps a release PR open and up-to-date.
-- When ready to ship, merge the Release Please PR. It bumps `VERSION_NAME` in `gradle.properties`, updates `.release-please-manifest.json`, and pushes the `vX.Y.Z` tag.
-- The tag push triggers `.github/workflows/release.yml`, which publishes to Maven Central and attaches APK/screenshot artifacts to the GitHub Release.
+- Releases are automated from `main` after `CI` succeeds. Do not manually create release tags from a local machine.
+- Merge PRs to `main` using conventional commit titles (`fix:`, `feat:`, `feat!:`, etc.). The release workflow reads those commits to determine the next version.
+- The release workflow creates the `X.Y.Z` tag (no `v` prefix), publishes to Maven Central, and attaches APK/screenshot artifacts to the GitHub Release.
+- After a release, update `VERSION_NAME` and `API_BASELINE_VERSION` in `gradle.properties` on `main` to match the released version.
 - Do not commit signing keys, Maven credentials, local SDK paths, generated build outputs, or personal IDE files.
 - Keep `.claude/settings.local.json` ignored.
 - Do not update binary compatibility baselines or screenshots casually; only update them when the API/visual change is intentional.
