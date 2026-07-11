@@ -277,6 +277,7 @@ public fun SingleChoiceSegmentedButtonRow(
             SegmentedButton(
                 selected = index == selectedIndex,
                 onClick = { onOptionSelected(index) },
+                modifier = Modifier.minimumTouchTargetHeight(minimumTouchTargetSize()),
                 shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
                 enabled = enabled,
                 icon = { SegmentedButtonDefaults.Icon(active = index == selectedIndex) },

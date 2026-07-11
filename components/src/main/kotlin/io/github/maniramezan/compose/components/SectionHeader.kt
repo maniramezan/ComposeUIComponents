@@ -13,6 +13,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import io.github.maniramezan.compose.theme.AppTheme
+import io.github.maniramezan.compose.utils.minimumTouchTargetHeight
 
 /**
  * A section header for list-style screens — a title on the leading edge with
@@ -66,7 +67,10 @@ public fun SectionHeader(
             color = AppTheme.colors.onSurface,
         )
         if (actionLabel != null && onAction != null) {
-            TextButton(onClick = onAction) {
+            TextButton(
+                onClick = onAction,
+                modifier = Modifier.minimumTouchTargetHeight(minimumTouchTargetSize()),
+            ) {
                 Text(
                     text = actionLabel,
                     style = AppTheme.typography.labelMedium,
