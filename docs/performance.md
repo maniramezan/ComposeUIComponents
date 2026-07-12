@@ -25,7 +25,7 @@ Roborazzi captures representative previews for each Phase 1 component category p
 
 ## Baseline Profile Scope
 
-Baseline profiles target consumer-like flows in `:sample`, not exhaustive catalog browsing. The `:baselineprofile` module contains the startup macrobenchmark and baseline profile generator. The generated profile artifact should be reviewed and copied into `sample/src/main/baseline-prof.txt` when startup behavior changes.
+Baseline profiles target consumer-like flows in `:sample`, not exhaustive catalog browsing. The `:baselineprofile` module contains the startup macrobenchmark and baseline profile generator. `:sample` applies the `androidx.baselineprofile` consumer plugin (see `sample/build.gradle.kts`) with `mergeIntoMain = true`, so the generated profile is written directly to `sample/src/main/generated/baselineProfiles/baseline-prof.txt` and is picked up automatically for release builds — no manual copy step. Review and commit that file when startup behavior changes.
 
 Build the benchmark APK locally with:
 
@@ -33,10 +33,10 @@ Build the benchmark APK locally with:
 ./gradlew :baselineprofile:assembleDebug
 ```
 
-Generate baseline profile data on a connected device or managed emulator with:
+Generate (and write into `sample/src/main/generated/baselineProfiles/baseline-prof.txt`) baseline profile data on a connected device or managed emulator with:
 
 ```bash
-./gradlew :baselineprofile:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.enabledRules=BaselineProfile
+./gradlew :sample:generateBaselineProfile
 ```
 
 Run the startup macrobenchmark on a connected device or managed emulator with:
@@ -44,3 +44,11 @@ Run the startup macrobenchmark on a connected device or managed emulator with:
 ```bash
 ./gradlew :baselineprofile:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.enabledRules=Macrobenchmark
 ```
+
+Confirm the profile is actually baked into a release build with:
+
+```bash
+./gradlew :sample:assembleRelease
+unzip -l sample/build/outputs/apk/release/sample-release-unsigned.apk | grep dexopt
+```
+

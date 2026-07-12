@@ -89,8 +89,8 @@ Use focused checks first, then broader checks when the change is significant.
 ./gradlew :components:ktlintCheck :components:detekt :components:lintDebug
 ./gradlew composeCompilerReports -PenableComposeCompilerReports=true
 ./gradlew check
-./gradlew ktlintCheck detekt check :components:recordRoborazziDebug :catalog:assembleDebug :sample:assembleDebug :baselineprofile:assembleDebug
-./gradlew check dokkaGenerate :components:recordRoborazziDebug :catalog:assembleDebug :sample:assembleDebug :baselineprofile:assembleDebug
+./gradlew ktlintCheck detekt check :components:recordRoborazziDebug :catalog:assembleDebug :sample:assembleDebug :baselineprofile:assemble
+./gradlew check dokkaGenerate :components:recordRoborazziDebug :catalog:assembleDebug :sample:assembleDebug :baselineprofile:assemble
 mkdocs build --strict
 ```
 
