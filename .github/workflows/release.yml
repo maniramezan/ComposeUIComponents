@@ -1,78 +1,201 @@
 name: Release
 
-# Reusable publish workflow. Invoked automatically by Release Please once it
-# creates a release (see release-please.yml), and available as a manual
-# fallback via workflow_dispatch. It is intentionally NOT triggered by tag
-# pushes: release-please creates tags with GITHUB_TOKEN, and GitHub does not
-# fire tag-push workflows from GITHUB_TOKEN events, so that path never worked.
+# Tags the repository and publishes to Maven Central with a GitHub Release
+# whenever the "CI" workflow succeeds on main. Versions are derived from
+# Conventional Commit subjects since the previous tag, with a manual override
+# available through workflow_dispatch.
 on:
-  workflow_call:
-    inputs:
-      tag:
-        description: Tag to build and publish (e.g. v0.5.1)
-        required: true
-        type: string
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+    branches: [main]
   workflow_dispatch:
     inputs:
-      tag:
-        description: Tag to build and publish (e.g. v0.5.1)
-        required: true
+      force_version:
+        description: Exact version to release, e.g. 0.12.0
+        required: false
         type: string
 
 permissions:
   contents: write
 
+concurrency:
+  group: release
+  cancel-in-progress: false
+
 jobs:
   release:
     runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ inputs.tag }}
+          ref: ${{ github.event.workflow_run.head_sha || github.ref }}
+          fetch-depth: 0
+
+      - name: Compute next version
+        id: version
+        env:
+          FORCE_VERSION: ${{ inputs.force_version }}
+        run: |
+          set -euo pipefail
+
+          # Tags are bare SemVer (no "v" prefix) going forward. Older releases were
+          # tagged as vX.Y.Z, so match both formats to find the true latest release,
+          # but always emit new tags without the "v" prefix.
+          all_release_tags="$(git tag --list | grep -E '^v?[0-9]+\.[0-9]+\.[0-9]+$' || true)"
+          latest_tag=""
+          latest_version=""
+          if [ -n "$all_release_tags" ]; then
+            latest_version="$(printf '%s\n' "$all_release_tags" | sed 's/^v//' | sort -V | tail -n1)"
+            if printf '%s\n' "$all_release_tags" | grep -qx "v${latest_version}"; then
+              latest_tag="v${latest_version}"
+            else
+              latest_tag="${latest_version}"
+            fi
+          fi
+
+          if [ -n "${FORCE_VERSION:-}" ]; then
+            next="${FORCE_VERSION#v}"
+            echo "Forcing version $next"
+            echo "version=$next" >> "$GITHUB_OUTPUT"
+            echo "tag=$next" >> "$GITHUB_OUTPUT"
+            echo "release=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [ -z "$latest_tag" ]; then
+            echo "No existing tags; bootstrapping 0.1.0"
+            echo "version=0.1.0" >> "$GITHUB_OUTPUT"
+            echo "tag=0.1.0" >> "$GITHUB_OUTPUT"
+            echo "release=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "Latest tag: $latest_tag"
+          version="$latest_version"
+          major="${version%%.*}"
+          rest="${version#*.}"
+          minor="${rest%%.*}"
+          patch="${rest#*.}"
+
+          range="${latest_tag}..HEAD"
+          if [ -z "$(git log "$range" --format='%H')" ]; then
+            echo "No commits since $latest_tag; nothing to release."
+            echo "release=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          breaking=false; feat=false; fix=false
+          if git log "$range" --format='%s' | grep -Eq '^[a-zA-Z]+(\([^)]+\))?!:'; then breaking=true; fi
+          if git log "$range" --format='%B' | grep -Eq 'BREAKING[ -]CHANGE'; then breaking=true; fi
+          if git log "$range" --format='%s' | grep -Eq '^feat(\([^)]+\))?!?:'; then feat=true; fi
+          if git log "$range" --format='%s' | grep -Eq '^(fix|perf|refactor)(\([^)]+\))?!?:'; then fix=true; fi
+
+          bump="none"
+          if [ "$major" -eq 0 ]; then
+            if [ "$breaking" = true ] || [ "$feat" = true ]; then bump="minor"
+            elif [ "$fix" = true ]; then bump="patch"
+            fi
+          else
+            if [ "$breaking" = true ]; then bump="major"
+            elif [ "$feat" = true ]; then bump="minor"
+            elif [ "$fix" = true ]; then bump="patch"
+            fi
+          fi
+
+          if [ "$bump" = "none" ]; then
+            echo "No releasable commits (feat/fix/perf/refactor/breaking) since $latest_tag."
+            echo "release=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          case "$bump" in
+            major) major=$((major + 1)); minor=0; patch=0 ;;
+            minor) minor=$((minor + 1)); patch=0 ;;
+            patch) patch=$((patch + 1)) ;;
+          esac
+
+          next="${major}.${minor}.${patch}"
+          echo "Bump: $bump -> $next"
+          echo "version=$next" >> "$GITHUB_OUTPUT"
+          echo "tag=$next" >> "$GITHUB_OUTPUT"
+          echo "release=true" >> "$GITHUB_OUTPUT"
+
+      - name: Stop when nothing should be released
+        if: steps.version.outputs.release != 'true'
+        run: exit 0
+
+      - name: Create tag
+        if: steps.version.outputs.release == 'true'
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          set -euo pipefail
+
+          if git rev-parse --verify --quiet "refs/tags/${TAG}"; then
+            echo "Tag ${TAG} already exists; skipping."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "$TAG" -m "$TAG"
+          git push origin "$TAG"
+
       - uses: actions/setup-java@v5
+        if: steps.version.outputs.release == 'true'
         with:
           distribution: temurin
           java-version: '17'
       - uses: gradle/actions/setup-gradle@v6
+        if: steps.version.outputs.release == 'true'
 
-      # Fail fast if the resolved tag doesn't match VERSION_NAME in
-      # gradle.properties. Without this, publishing a version that's already on
-      # Maven Central fails late during upload. The sed/tr strips any trailing
-      # release-please marker comment and whitespace from the value.
-      - name: Verify tag matches VERSION_NAME
+      - name: Verify computed version is newer than checked-in VERSION_NAME
+        if: steps.version.outputs.release == 'true'
         env:
-          TAG_INPUT: ${{ inputs.tag }}
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
         run: |
-          TAG="${TAG_INPUT#v}"
-          VER="$(grep '^VERSION_NAME=' gradle.properties | cut -d= -f2 | sed 's/#.*//' | tr -d '[:space:]')"
-          echo "Tag version: $TAG | VERSION_NAME: $VER"
-          if [ "$TAG" != "$VER" ]; then
-            echo "::error::Tag $TAG_INPUT does not match VERSION_NAME=$VER. Bump VERSION_NAME and re-tag."
+          CURRENT_VERSION="$(grep '^VERSION_NAME=' gradle.properties | cut -d= -f2 | sed 's/#.*//' | tr -d '[:space:]')"
+          echo "Computed release version: $RELEASE_VERSION | Checked-in VERSION_NAME: $CURRENT_VERSION"
+          if [ "$RELEASE_VERSION" = "$CURRENT_VERSION" ]; then
+            echo "VERSION_NAME already matches the computed release version."
+          elif [ "$(printf '%s\n%s\n' "$CURRENT_VERSION" "$RELEASE_VERSION" | sort -V | tail -n1)" != "$RELEASE_VERSION" ]; then
+            echo "::error::Computed release version $RELEASE_VERSION is older than checked-in VERSION_NAME=$CURRENT_VERSION."
             exit 1
           fi
 
       - name: Check
-        run: ./gradlew check
+        if: steps.version.outputs.release == 'true'
+        run: ./gradlew check -PVERSION_NAME=${{ steps.version.outputs.version }}
       - name: Record component screenshots
-        run: ./gradlew :components:recordRoborazziDebug
+        if: steps.version.outputs.release == 'true'
+        run: ./gradlew :components:recordRoborazziDebug -PVERSION_NAME=${{ steps.version.outputs.version }}
       - name: Assemble release assets
-        run: ./gradlew :catalog:assembleDebug :sample:assembleDebug
+        if: steps.version.outputs.release == 'true'
+        run: ./gradlew :catalog:assembleDebug :sample:assembleDebug -PVERSION_NAME=${{ steps.version.outputs.version }}
 
       - name: Publish to Maven Central
+        if: steps.version.outputs.release == 'true'
         env:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_IN_MEMORY_KEY }}
           ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_IN_MEMORY_KEY_PASSWORD }}
-        run: ./gradlew publishAndReleaseToMavenCentral --no-configuration-cache
+        run: ./gradlew publishAndReleaseToMavenCentral --no-configuration-cache -PVERSION_NAME=${{ steps.version.outputs.version }}
 
       - name: Package component screenshots
+        if: steps.version.outputs.release == 'true'
         run: tar -czf component-screenshots.tar.gz -C components/build outputs/roborazzi reports/roborazzi
 
       - uses: softprops/action-gh-release@v3
+        if: steps.version.outputs.release == 'true'
         with:
-          tag_name: ${{ inputs.tag }}
-          name: ${{ inputs.tag }}
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: ${{ steps.version.outputs.tag }}
+          generate_release_notes: true
           files: |
             catalog/build/outputs/apk/debug/catalog-debug.apk
             sample/build/outputs/apk/debug/sample-debug.apk

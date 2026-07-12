@@ -35,9 +35,9 @@ mkdocs build --strict
 
 ## Releases
 
-Releases are tag-driven with tags matching `vX.Y.Z`.
+Releases are automated after `CI` succeeds on `main`, with tags matching `X.Y.Z` (no `v` prefix).
 
-- Bump `VERSION_NAME` in `gradle.properties` first so the published Maven coordinates match the release version in the tag you plan to push.
-- Push the version bump to `main` before pushing the release tag.
-- Pushing the tag runs `.github/workflows/release.yml`, publishes to Maven Central, and creates the GitHub Release automatically.
+- Use Conventional Commit PR titles such as `fix:`, `feat:`, and `feat!:` so the workflow can compute the correct version bump.
+- The release workflow creates the tag, publishes to Maven Central, and creates the GitHub Release automatically.
+- After a release, update `VERSION_NAME` and `API_BASELINE_VERSION` in `gradle.properties` on `main` to match the released version.
 - Do not commit signing keys or Maven credentials; configure them as repository secrets.

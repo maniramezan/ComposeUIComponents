@@ -1,12 +1,17 @@
 # Release Process
 
-Releases are fully automated via [Release Please](https://github.com/googleapis/release-please). Do not manually bump `VERSION_NAME` or create tags.
+Releases are automated from `main` after `CI` succeeds. Do not manually create release tags from a local machine.
 
 ## How it works
 
 1. Merge PRs to `main` using [Conventional Commit](https://www.conventionalcommits.org/) titles.
-2. After CI passes on `main`, the Release Please workflow opens (or updates) a release PR that bumps `VERSION_NAME` in `gradle.properties`, updates `.release-please-manifest.json`, and drafts release notes.
-3. When ready to ship, merge the release PR. Release Please creates the `vX.Y.Z` tag and invokes the release workflow to publish Maven artifacts and create the GitHub Release.
+2. After `CI` passes on `main`, `.github/workflows/release.yml` analyzes commits since the latest `X.Y.Z` tag.
+3. If releasable commits are present, the workflow creates the next `X.Y.Z` tag (no `v` prefix), publishes Maven artifacts, and creates the GitHub Release automatically.
+
+Releases through `0.11.0` were tagged as `vX.Y.Z`. Tags from `0.12.0` onward use bare
+SemVer with no `v` prefix. The version-computation step recognizes both formats when
+finding the latest release, so this transition is automatic and requires no manual
+intervention.
 
 ## Controlling the version bump
 
@@ -21,11 +26,14 @@ The bump is determined by the highest-impact commit since the last release:
 
 ## Triggering manually
 
-The Release Please workflow can be run manually from the Actions tab via `workflow_dispatch`. This is useful if the automatic post-CI trigger was skipped or failed. It performs the same steps as the automatic run.
+The Release workflow can be run manually from the Actions tab via `workflow_dispatch`.
+
+- Leave `force_version` empty to use commit analysis.
+- Set `force_version` to `0.12.0` to publish that exact version.
 
 ## Pre-release checklist
 
-Before merging the Release Please PR, verify:
+Before merging a releasable PR to `main`, verify:
 
 - `apiCheck` and every module's `binaryCompatibilityCheck` pass.
 - Dokka generation passes.
@@ -34,8 +42,7 @@ Before merging the Release Please PR, verify:
 - GitHub Pages deployment succeeds from `main`.
 - Maven Central publishing credentials and signing are configured in CI secrets.
 
-After a release, update `API_BASELINE_VERSION` in `gradle.properties` to the released
-version. The next release compares each published Android AAR against that baseline.
+After a release, bump `VERSION_NAME` and `API_BASELINE_VERSION` in `gradle.properties` on `main` to the released version so checked-in metadata stays aligned with the published artifacts and next binary compatibility baseline.
 
 ## 1.0.0 Gate
 
