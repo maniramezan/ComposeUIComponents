@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -439,15 +440,28 @@ internal fun DefaultPageTitle(
     title: String,
     progress: Float,
 ) {
-    val color by animateColorAsState(
-        targetValue = if (progress > 0.5f) AppTheme.colors.primary else AppTheme.colors.outline,
+    val containerColor by animateColorAsState(
+        targetValue = if (progress > 0.5f) AppTheme.colors.primary else Color.Transparent,
+        label = "pageTitleContainerColor",
+    )
+    val textColor by animateColorAsState(
+        targetValue = if (progress > 0.5f) AppTheme.colors.onPrimary else AppTheme.colors.outline,
         label = "pageTitleColor",
     )
-    Text(
-        text = title,
-        style = AppTheme.typography.titleSmall,
-        color = color,
-    )
+    Box(
+        modifier =
+            Modifier
+                .clip(AppTheme.shapes.pill)
+                .background(containerColor)
+                .padding(horizontal = AppTheme.spacing.x2, vertical = AppTheme.spacing.half),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = title,
+            style = AppTheme.typography.titleSmall,
+            color = textColor,
+        )
+    }
 }
 
 @Composable
