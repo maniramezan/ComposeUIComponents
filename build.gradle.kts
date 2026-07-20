@@ -122,7 +122,13 @@ subprojects {
                 newClasspath.from(extractCurrent.map { File(it.destinationDir, "classes.jar") })
                 onlyModified = true
                 onlyBinaryIncompatibleModified = true
-                failOnModification = true
+                // Deliberate breaking changes (pre-1.0, no back-compat requirement) are expected
+                // to fail this check against the last Maven Central release. Pass
+                // -PacceptBinaryBreakingChange=true (see release.yml's `accept_binary_breaking_change`
+                // workflow_dispatch input) to acknowledge and proceed with a release anyway. Default
+                // stays strict so normal (non-breaking) changes are still caught automatically.
+                failOnModification =
+                    !providers.gradleProperty("acceptBinaryBreakingChange").getOrElse("false").toBoolean()
                 ignoreMissingClasses = true
                 txtOutputFile =
                     layout.buildDirectory.file("reports/binary-compatibility/japicmp.txt").get().asFile

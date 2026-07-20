@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import io.github.maniramezan.compose.components.AppText
 import io.github.maniramezan.compose.components.AppTextStyle
-import io.github.maniramezan.compose.components.BottomBar
 import io.github.maniramezan.compose.components.Card
 import io.github.maniramezan.compose.components.Checkbox
 import io.github.maniramezan.compose.components.ContentRow
@@ -49,7 +48,6 @@ import io.github.maniramezan.compose.components.LevelBadge
 import io.github.maniramezan.compose.components.ListItem
 import io.github.maniramezan.compose.components.LoadingState
 import io.github.maniramezan.compose.components.NavRail
-import io.github.maniramezan.compose.components.NavigationItem
 import io.github.maniramezan.compose.components.OverlayCard
 import io.github.maniramezan.compose.components.PageDirection
 import io.github.maniramezan.compose.components.PageFooterStyle
@@ -79,6 +77,8 @@ import io.github.maniramezan.compose.components.SkeletonBlock
 import io.github.maniramezan.compose.components.Slider
 import io.github.maniramezan.compose.components.Snackbar
 import io.github.maniramezan.compose.components.Switch
+import io.github.maniramezan.compose.components.TabBar
+import io.github.maniramezan.compose.components.TabBarItemData
 import io.github.maniramezan.compose.components.TabRow
 import io.github.maniramezan.compose.components.TextButton
 import io.github.maniramezan.compose.components.TextField
@@ -515,16 +515,30 @@ internal fun TabRowPage() {
 internal fun BottomBarPage() {
     var index by remember { mutableIntStateOf(0) }
     var showBadge by remember { mutableStateOf(true) }
+    val labels = listOf("Home", "Tasks", "Close")
     val items =
         listOf(
-            NavigationItem("Home", AppTheme.icons.check),
-            NavigationItem("Tasks", AppTheme.icons.check, badge = if (showBadge) "5" else null),
-            NavigationItem("Close", AppTheme.icons.close),
+            TabBarItemData(
+                value = 0,
+                icon = { Icon(imageVector = AppTheme.icons.check.imageVector, contentDescription = null) },
+                label = { Text(labels[0]) },
+            ),
+            TabBarItemData(
+                value = 1,
+                icon = { Icon(imageVector = AppTheme.icons.check.imageVector, contentDescription = null) },
+                label = { Text(labels[1]) },
+                badge = if (showBadge) ({ Text("5") }) else null,
+            ),
+            TabBarItemData(
+                value = 2,
+                icon = { Icon(imageVector = AppTheme.icons.close.imageVector, contentDescription = null) },
+                label = { Text(labels[2]) },
+            ),
         )
 
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        BottomBar(items = items, selectedIndex = index, onItemSelected = { index = it })
-        Text("Selected: ${items[index].label}")
+        TabBar(items = items, selection = index, onSelectionChange = { index = it })
+        Text("Selected: ${labels[index]}")
         ControlsDivider()
         ControlSwitch(label = "Show badge", checked = showBadge, onCheckedChange = { showBadge = it })
     }
@@ -534,19 +548,33 @@ internal fun BottomBarPage() {
 internal fun NavRailPage() {
     var index by remember { mutableIntStateOf(0) }
     var showBadge by remember { mutableStateOf(true) }
+    val labels = listOf("Home", "Tasks", "Close")
     val items =
         listOf(
-            NavigationItem("Home", AppTheme.icons.check),
-            NavigationItem("Tasks", AppTheme.icons.check, badge = if (showBadge) "3" else null),
-            NavigationItem("Close", AppTheme.icons.close),
+            TabBarItemData(
+                value = 0,
+                icon = { Icon(imageVector = AppTheme.icons.check.imageVector, contentDescription = null) },
+                label = { Text(labels[0]) },
+            ),
+            TabBarItemData(
+                value = 1,
+                icon = { Icon(imageVector = AppTheme.icons.check.imageVector, contentDescription = null) },
+                label = { Text(labels[1]) },
+                badge = if (showBadge) ({ Text("3") }) else null,
+            ),
+            TabBarItemData(
+                value = 2,
+                icon = { Icon(imageVector = AppTheme.icons.close.imageVector, contentDescription = null) },
+                label = { Text(labels[2]) },
+            ),
         )
 
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
         Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-            NavRail(items = items, selectedIndex = index, onItemSelected = { index = it })
+            NavRail(items = items, selection = index, onSelectionChange = { index = it })
             Column {
                 SectionHeader(title = "NavRail")
-                Text("Selected: ${items[index].label}")
+                Text("Selected: ${labels[index]}")
             }
         }
         ControlsDivider()

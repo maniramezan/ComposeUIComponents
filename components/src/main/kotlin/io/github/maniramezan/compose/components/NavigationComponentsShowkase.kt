@@ -15,16 +15,17 @@ public fun TopAppBarShowkase(): Unit =
         TopAppBar(title = "Dashboard")
     }
 
-@ShowkaseComposable(name = "Bottom Bar", group = "Navigation")
+@ShowkaseComposable(name = "Tab Bar", group = "Navigation")
 @Composable
-public fun BottomBarShowkase(): Unit =
-    AppTheme {
-        BottomBar(
-            items = showkaseNavigationItems(),
-            selectedIndex = 0,
-            onItemSelected = {},
-        )
-    }
+public fun TabBarShowkase(): Unit = NavigationComponentsPreview()
+
+@ShowkaseComposable(name = "Tab Bar Centered", group = "Navigation")
+@Composable
+public fun TabBarCenteredShowkase(): Unit = TabBarCenteredPreview()
+
+@ShowkaseComposable(name = "Tab Bar Disabled Item", group = "Navigation")
+@Composable
+public fun TabBarDisabledItemShowkase(): Unit = TabBarDisabledItemPreview()
 
 @ShowkaseComposable(name = "Tab Row", group = "Navigation")
 @Composable
@@ -52,11 +53,3 @@ public fun LargeTopAppBarShowkase(): Unit = LargeTopAppBarPreview()
 @ShowkaseComposable(name = "Adaptive Nav Scaffold", group = "Navigation")
 @Composable
 public fun AdaptiveNavScaffoldShowkase(): Unit = AdaptiveNavScaffoldPreview()
-
-@Composable
-private fun showkaseNavigationItems(): List<NavigationItem> =
-    listOf(
-        NavigationItem(label = "Home", icon = AppTheme.icons.check),
-        NavigationItem(label = "Tasks", icon = AppTheme.icons.check, badge = "3"),
-        NavigationItem(label = "Close", icon = AppTheme.icons.close),
-    )

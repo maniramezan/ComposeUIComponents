@@ -31,6 +31,8 @@ public data class AppSpacing(
     public val x4: Dp,
     public val x5: Dp,
     public val x6: Dp,
+    public val x7: Dp,
+    public val x8: Dp,
     public val x9: Dp,
     // ===== T-shirt scale (back-compat) =====
     public val xs: Dp,
@@ -68,6 +70,8 @@ public data class AppSpacing(
                 x4 = AppReferenceSpacing.Space32,
                 x5 = AppReferenceSpacing.Space40,
                 x6 = AppReferenceSpacing.Space48,
+                x7 = AppReferenceSpacing.Space56,
+                x8 = AppReferenceSpacing.Space64,
                 x9 = AppReferenceSpacing.Space72,
                 xs = AppReferenceSpacing.Space4,
                 sm = AppReferenceSpacing.Space8,
@@ -103,6 +107,8 @@ public object AppSpacingDefaults {
     public val x4: Dp = AppReferenceSpacing.Space32
     public val x5: Dp = AppReferenceSpacing.Space40
     public val x6: Dp = AppReferenceSpacing.Space48
+    public val x7: Dp = AppReferenceSpacing.Space56
+    public val x8: Dp = AppReferenceSpacing.Space64
     public val x9: Dp = AppReferenceSpacing.Space72
     public val padding: Dp = AppReferenceSpacing.Space16
     public val contentPadding: Dp = AppReferenceSpacing.Space24

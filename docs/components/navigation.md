@@ -7,7 +7,7 @@ Navigation components provide themed Material 3 wrappers for common app structur
 - `TopAppBar`
 - `MediumTopAppBar`
 - `LargeTopAppBar`
-- `BottomBar`
+- `TabBar`
 - `TabRow`
 - `NavRail`
 - `AdaptiveNavScaffold`
@@ -16,19 +16,91 @@ Navigation components provide themed Material 3 wrappers for common app structur
 
 ![Navigation components](https://maniramezan.github.io/ComposeUIComponents/images/screenshots/navigation-components.png)
 
-## Example
+## TabBar
+
+A bottom navigation bar for switching between top-level destinations. Selection is driven by
+a caller-owned value (`selection`/`onSelectionChange`) rather than list position, so reordering
+`items` never changes which destination is selected — closer to SwiftUI's `TabView(selection:)`
+than a plain index.
 
 ```kotlin
 AppTheme {
-    BottomBar(
-        items = items,
-        selectedIndex = selectedIndex,
-        onItemSelected = onItemSelected,
+    TabBar(
+        items = items, // List<TabBarItemData<Destination>>
+        selection = selection,
+        onSelectionChange = { selection = it },
     )
 }
 ```
 
+`TabBarItemData.icon` and `label` are full composable slots, not raw `ImageVector`/`String`
+params, so badges, selected-icon swaps, or any custom rendering fall out of the slot API with
+no extra parameters needed:
+
+```kotlin
+TabBarItemData(
+    value = Destination.Home,
+    icon = { Icon(Icons.Filled.Home, contentDescription = null) },
+    label = { Text("Home") },
+    badge = { Text("3") },
+)
+```
+
+Use `arrangement = TabBarArrangement.Centered` to group destinations in the horizontal center
+of the bar (sized to content) instead of the default `EqualWeight` (every destination fills
+equal width — the common 3–5 destination case).
+
+For full control over individual items — e.g. per-item composition a plain data model can't
+express — use the primitive overload with `TabBarItem` calls inside `content`:
+
+```kotlin
+TabBar {
+    TabBarItem(value = Destination.Home, selection = selection, onSelectionChange = { selection = it }, icon = { ... })
+    TabBarItem(value = Destination.Account, selection = selection, onSelectionChange = { selection = it }, icon = { ... })
+}
+```
+
+### Scroll-to-hide
+
+Pass a `scrollBehavior` (from `rememberTabBarScrollBehavior()`) to have the bar hide itself as
+the caller's scrollable content scrolls down, and reappear on scroll up. Attach the same
+behavior's `nestedScrollConnection` to that scrollable content:
+
+```kotlin
+val scrollBehavior = rememberTabBarScrollBehavior()
+
+LazyColumn(modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) { ... }
+
+TabBar(
+    items = items,
+    selection = selection,
+    onSelectionChange = { selection = it },
+    scrollBehavior = scrollBehavior,
+)
+```
+
+## NavRail / AdaptiveNavScaffold
+
+`NavRail` and `AdaptiveNavScaffold` share `TabBarItemData`/`TabBarItemColors` with `TabBar`, so
+a rail and a bar built from the same `items` stay visually consistent. `AdaptiveNavScaffold`
+shows a `TabBar` on compact screens (< 600 dp wide) and a `NavRail` on medium/expanded screens;
+`scrollBehavior` only applies to the compact-width `TabBar` — the rail stays persistent.
+
+```kotlin
+AppTheme {
+    AdaptiveNavScaffold(
+        items = items,
+        selection = selection,
+        onSelectionChange = { selection = it },
+        topBar = { TopAppBar(title = "Dashboard") },
+    ) { innerPadding ->
+        // Your screen content here
+    }
+}
+```
+
 Navigation state is owned by the caller. Pass callbacks instead of navigation controllers to keep components reusable.
+
 
 ## PaginatedContent
 

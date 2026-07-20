@@ -2,6 +2,7 @@ package io.github.maniramezan.compose.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -277,17 +278,20 @@ public class AccessibilityComponentsTest {
     public fun navigationItemIconsAreDecorativeWhenLabelIsVisible() {
         composeRule.setContent {
             AppTheme(icons = defaultAppIcons()) {
-                BottomBar(
+                TabBar(
                     items =
                         listOf(
-                            NavigationItem(
-                                label = "Home",
-                                icon = AppTheme.icons.check,
+                            TabBarItemData(
+                                value = 0,
+                                icon = {
+                                    Icon(imageVector = AppTheme.icons.check.imageVector, contentDescription = null)
+                                },
+                                label = { Text("Home") },
                                 contentDescription = "Home icon",
                             ),
                         ),
-                    selectedIndex = 0,
-                    onItemSelected = {},
+                    selection = 0,
+                    onSelectionChange = {},
                 )
             }
         }

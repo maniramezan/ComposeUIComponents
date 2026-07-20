@@ -139,7 +139,7 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
         ),
         SampleComponentDemo(
             id = "bottom-bar",
-            title = "BottomBar",
+            title = "TabBar",
             category = "Navigation",
             description = "Bottom navigation bar for top-level destinations.",
             content = { BottomBarPage() },

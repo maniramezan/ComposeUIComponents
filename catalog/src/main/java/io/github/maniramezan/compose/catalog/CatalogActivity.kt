@@ -15,20 +15,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import io.github.maniramezan.compose.components.AppText
 import io.github.maniramezan.compose.components.AppTextStyle
-import io.github.maniramezan.compose.components.BottomBar
 import io.github.maniramezan.compose.components.Card
 import io.github.maniramezan.compose.components.Checkbox
 import io.github.maniramezan.compose.components.EmptyState
 import io.github.maniramezan.compose.components.FAB
 import io.github.maniramezan.compose.components.IconButton
 import io.github.maniramezan.compose.components.ListItem
-import io.github.maniramezan.compose.components.NavigationItem
 import io.github.maniramezan.compose.components.PasswordField
 import io.github.maniramezan.compose.components.PrimaryButton
 import io.github.maniramezan.compose.components.ProgressIndicator
@@ -41,6 +40,8 @@ import io.github.maniramezan.compose.components.Skeleton
 import io.github.maniramezan.compose.components.Slider
 import io.github.maniramezan.compose.components.Snackbar
 import io.github.maniramezan.compose.components.Switch
+import io.github.maniramezan.compose.components.TabBar
+import io.github.maniramezan.compose.components.TabBarItemData
 import io.github.maniramezan.compose.components.TabRow
 import io.github.maniramezan.compose.components.TextButton
 import io.github.maniramezan.compose.components.TextField
@@ -133,15 +134,34 @@ public class CatalogActivity : ComponentActivity() {
                                 selectedIndex = 0,
                                 onItemSelected = {},
                             )
-                            BottomBar(
+                            TabBar(
                                 items =
                                     listOf(
-                                        NavigationItem("Home", AppTheme.icons.check),
-                                        NavigationItem("Tasks", AppTheme.icons.check, badge = "3"),
-                                        NavigationItem("Close", AppTheme.icons.close),
+                                        TabBarItemData(
+                                            value = 0,
+                                            icon = {
+                                                Icon(imageVector = AppTheme.icons.check.imageVector, contentDescription = null)
+                                            },
+                                            label = { Text("Home") },
+                                        ),
+                                        TabBarItemData(
+                                            value = 1,
+                                            icon = {
+                                                Icon(imageVector = AppTheme.icons.check.imageVector, contentDescription = null)
+                                            },
+                                            label = { Text("Tasks") },
+                                            badge = { Text("3") },
+                                        ),
+                                        TabBarItemData(
+                                            value = 2,
+                                            icon = {
+                                                Icon(imageVector = AppTheme.icons.close.imageVector, contentDescription = null)
+                                            },
+                                            label = { Text("Close") },
+                                        ),
                                     ),
-                                selectedIndex = 0,
-                                onItemSelected = {},
+                                selection = 0,
+                                onSelectionChange = {},
                             )
                             Text("Feedback")
                             ProgressIndicator(progress = 0.65f, label = "Syncing")
