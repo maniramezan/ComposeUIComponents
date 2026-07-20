@@ -68,6 +68,20 @@ public class ComponentCategoryScreenshotTest {
     }
 
     @Test
+    public fun tabBarCenteredMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/tab-bar-centered.png") {
+            TabBarCenteredPreview()
+        }
+    }
+
+    @Test
+    public fun tabBarDisabledItemMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/tab-bar-disabled-item.png") {
+            TabBarDisabledItemPreview()
+        }
+    }
+
+    @Test
     public fun navigationRailMatchesGolden() {
         captureRoboImage("build/outputs/roborazzi/navigation-rail.png") {
             NavRailPreview()
