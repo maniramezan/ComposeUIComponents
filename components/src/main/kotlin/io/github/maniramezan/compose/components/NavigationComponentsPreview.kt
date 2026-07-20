@@ -3,8 +3,13 @@ package io.github.maniramezan.compose.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import io.github.maniramezan.compose.theme.AppTheme
@@ -17,7 +22,7 @@ import io.github.maniramezan.compose.utils.PreviewLightDark
 @Composable
 public fun NavigationComponentsPreview(): Unit =
     AppTheme {
-        val items = previewNavigationItems()
+        var selection by remember { mutableIntStateOf(0) }
         Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
             TopAppBar(title = "Dashboard")
             TabRow(
@@ -25,12 +30,43 @@ public fun NavigationComponentsPreview(): Unit =
                 selectedIndex = 0,
                 onItemSelected = {},
             )
-            BottomBar(
-                items = items,
-                selectedIndex = 0,
-                onItemSelected = {},
+            TabBar(
+                items = previewTabBarItems(),
+                selection = selection,
+                onSelectionChange = { selection = it },
             )
         }
+    }
+
+@PreviewLightDark
+@PreviewFontScale
+@Preview(name = "Tab Bar (Centered)", group = "Navigation")
+@Composable
+public fun TabBarCenteredPreview(): Unit =
+    AppTheme {
+        var selection by remember { mutableIntStateOf(1) }
+        TabBar(
+            items = previewTabBarItems(),
+            selection = selection,
+            onSelectionChange = { selection = it },
+            arrangement = TabBarArrangement.Centered,
+        )
+    }
+
+@PreviewLightDark
+@Preview(name = "Tab Bar (Disabled Item)", group = "Navigation")
+@Composable
+public fun TabBarDisabledItemPreview(): Unit =
+    AppTheme {
+        var selection by remember { mutableIntStateOf(0) }
+        TabBar(
+            items =
+                previewTabBarItems().mapIndexed { index, item ->
+                    if (index == 2) item.copy(enabled = false) else item
+                },
+            selection = selection,
+            onSelectionChange = { selection = it },
+        )
     }
 
 @PreviewLightDark
@@ -39,10 +75,11 @@ public fun NavigationComponentsPreview(): Unit =
 @Composable
 public fun NavRailPreview(): Unit =
     AppTheme {
+        var selection by remember { mutableIntStateOf(1) }
         NavRail(
-            items = previewNavigationItems(),
-            selectedIndex = 1,
-            onItemSelected = {},
+            items = previewTabBarItems(),
+            selection = selection,
+            onSelectionChange = { selection = it },
         )
     }
 
@@ -67,10 +104,11 @@ public fun LargeTopAppBarPreview(): Unit =
 @Composable
 public fun AdaptiveNavScaffoldPreview(): Unit =
     AppTheme {
+        var selection by remember { mutableIntStateOf(0) }
         AdaptiveNavScaffold(
-            items = previewNavigationItems(),
-            selectedIndex = 0,
-            onItemSelected = {},
+            items = previewTabBarItems(),
+            selection = selection,
+            onSelectionChange = { selection = it },
             topBar = { TopAppBar(title = "Dashboard") },
         ) { innerPadding ->
             Text(
@@ -81,9 +119,22 @@ public fun AdaptiveNavScaffoldPreview(): Unit =
     }
 
 @Composable
-private fun previewNavigationItems(): List<NavigationItem> =
+private fun previewTabBarItems(): List<TabBarItemData<Int>> =
     listOf(
-        NavigationItem(label = "Home", icon = AppTheme.icons.check),
-        NavigationItem(label = "Tasks", icon = AppTheme.icons.check, badge = "3"),
-        NavigationItem(label = "Close", icon = AppTheme.icons.close),
+        TabBarItemData(
+            value = 0,
+            icon = { Icon(imageVector = AppTheme.icons.check.imageVector, contentDescription = null) },
+            label = { Text(text = "Home") },
+        ),
+        TabBarItemData(
+            value = 1,
+            icon = { Icon(imageVector = AppTheme.icons.expand.imageVector, contentDescription = null) },
+            label = { Text(text = "Tasks") },
+            badge = { Text(text = "3") },
+        ),
+        TabBarItemData(
+            value = 2,
+            icon = { Icon(imageVector = AppTheme.icons.close.imageVector, contentDescription = null) },
+            label = { Text(text = "Account") },
+        ),
     )
