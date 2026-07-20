@@ -577,12 +577,11 @@ private fun SegmentSlot(
     val titleVerticalPadding =
         if (density == SegmentDensity.Compact) AppTheme.spacing.half else AppTheme.spacing.x1
     val visualWidthModifier = if (fillVisualWidth) Modifier.fillMaxWidth() else Modifier
-    val visualSizeModifier =
-        if (density == SegmentDensity.Regular) {
-            visualWidthModifier.minimumTouchTarget(minimumTouchTargetSize())
-        } else {
-            visualWidthModifier
-        }
+    // Hug the visual box to the same 48dp minimum as the touch target (the
+    // pattern PillChip already uses) so the background always fills the full
+    // slot instead of floating smaller inside it. Density only ever controls
+    // internal padding, which still shows up once content grows past 48dp.
+    val visualSizeModifier = visualWidthModifier.minimumTouchTarget(minimumTouchTargetSize())
     val touchTargetModifier = Modifier.minimumTouchTarget(minimumTouchTargetSize())
     val interactionSource = remember { MutableInteractionSource() }
     val indication = LocalIndication.current
@@ -614,15 +613,24 @@ private fun SegmentSlot(
         ) {
             segmentTitle(index, item, isSelected)
             // Tab-style underline pinned to the bottom edge of the visual slot.
+            // matchParentSize (not fillMaxWidth) because outside EvenSegmentRow this
+            // Box's incoming constraints are unbounded (Intrinsic/Scrollable rows
+            // don't stretch the slot) — fillMaxWidth would resolve to zero there.
+            // matchParentSize instead tracks the slot's resolved size, which the
+            // title content (the other child) already determines.
             if (indicator == SegmentSelectionIndicator.Underline) {
                 Box(
-                    modifier =
-                        Modifier
-                            .align(Alignment.BottomCenter)
-                            .fillMaxWidth()
-                            .height(AppTheme.spacing.strokeThick)
-                            .background(underlineColor),
-                )
+                    modifier = Modifier.matchParentSize(),
+                    contentAlignment = Alignment.BottomCenter,
+                ) {
+                    Box(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .height(AppTheme.spacing.strokeThick)
+                                .background(underlineColor),
+                    )
+                }
             }
         }
     }
