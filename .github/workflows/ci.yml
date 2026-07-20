@@ -63,7 +63,7 @@ jobs:
           path: |
             **/build/compose-metrics
             **/build/compose-reports
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.13'
       - name: Install docs dependencies
@@ -106,7 +106,7 @@ jobs:
           mkdir -p docs/images/screenshots
           find screenshots -name "*.png" -exec cp {} docs/images/screenshots/ \;
 
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.13'
 
