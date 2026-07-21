@@ -162,11 +162,11 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             content = { SegmentedContentPage() },
         ),
         SampleComponentDemo(
-            id = "bottom-bar",
+            id = "tab-bar",
             title = "TabBar",
             category = "Pagination",
             description = "Bottom navigation bar that swaps the view above it per tab, with badge and RTL support.",
-            content = { BottomBarPage() },
+            content = { TabBarPage() },
         ),
         SampleComponentDemo(
             id = "showcase-feed",

@@ -841,7 +841,7 @@ private fun TabBarViewPlaceholder(title: String) {
 }
 
 @Composable
-internal fun BottomBarPage() {
+internal fun TabBarPage() {
     var selection by remember { mutableIntStateOf(0) }
     var showBadge by remember { mutableStateOf(true) }
     var rtlMode by remember { mutableStateOf(false) }
