@@ -1,12 +1,8 @@
 package io.github.maniramezan.compose.components
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -46,7 +42,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
@@ -149,12 +147,19 @@ public object TabBarDefaults {
                 WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom,
             )
 
-    /** Builds a [TabBarItemColors], defaulting every slot to an [AppTheme] color. */
+    /**
+     * Builds a [TabBarItemColors], defaulting every slot to an [AppTheme] color.
+     *
+     * [selectedIndicatorColor] defaults to [Color.Transparent] — plain Material tab styling
+     * conveys selection via icon/label tint alone, with no background highlight. Pass a real
+     * color (e.g. `AppTheme.colors.primaryContainer`) to render a selected-destination pill
+     * instead.
+     */
     @Composable
     public fun itemColors(
         selectedIconColor: Color = AppTheme.colors.primary,
         selectedTextColor: Color = AppTheme.colors.primary,
-        selectedIndicatorColor: Color = AppTheme.colors.primaryContainer,
+        selectedIndicatorColor: Color = Color.Transparent,
         unselectedIconColor: Color = AppTheme.colors.onSurfaceVariant,
         unselectedTextColor: Color = AppTheme.colors.onSurfaceVariant,
         disabledIconColor: Color = unselectedIconColor.copy(alpha = 0.38f),
@@ -355,8 +360,15 @@ public fun <T> RowScope.TabBarItem(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.half),
     ) {
-        Box(contentAlignment = Alignment.Center) {
-            SelectionIndicator(visible = selected, color = colors.selectedIndicatorColor)
+        Box(
+            modifier = Modifier.size(width = TabBarDefaults.IndicatorWidth, height = TabBarDefaults.IndicatorHeight),
+            contentAlignment = Alignment.Center,
+        ) {
+            SelectionIndicatorBackground(
+                visible = selected,
+                color = colors.selectedIndicatorColor,
+                modifier = Modifier.matchParentSize(),
+            )
             CompositionLocalProvider(LocalContentColor provides iconColor) {
                 BadgeAwareIcon(icon = icon, badge = badge)
             }
@@ -372,31 +384,33 @@ public fun <T> RowScope.TabBarItem(
     }
 }
 
+/**
+ * The selected-destination indicator, drawn as a background fill behind the icon.
+ *
+ * Sized via [Modifier.matchParentSize] against a *fixed*-size parent (see [TabBarItem]) rather
+ * than [androidx.compose.animation.AnimatedVisibility], and animated via alpha/scale instead of
+ * entering/exiting the composition — so the indicator never changes the icon slot's layout
+ * size, and selecting a destination never shifts the label's position. Pass
+ * `color = Color.Transparent` (see [TabBarDefaults.itemColors]) to render no indicator at all
+ * and rely on icon/label tint alone to convey selection, matching plain Material tab styling.
+ */
 @Composable
-private fun SelectionIndicator(
+private fun SelectionIndicatorBackground(
     visible: Boolean,
     color: Color,
+    modifier: Modifier = Modifier,
 ) {
-    AnimatedVisibility(
-        visible = visible,
-        enter =
-            fadeIn(tween(AppTheme.motion.mediumMillis, easing = AppTheme.motion.emphasizedEasing)) +
-                scaleIn(
-                    tween(AppTheme.motion.mediumMillis, easing = AppTheme.motion.emphasizedEasing),
-                    initialScale = 0.6f,
-                ),
-        exit =
-            fadeOut(tween(AppTheme.motion.shortMillis)) +
-                scaleOut(tween(AppTheme.motion.shortMillis), targetScale = 0.6f),
-    ) {
-        Box(
-            modifier =
-                Modifier
-                    .size(width = TabBarDefaults.IndicatorWidth, height = TabBarDefaults.IndicatorHeight)
-                    .clip(AppTheme.shapes.pill)
-                    .background(color),
-        )
-    }
+    val motionSpec = tween<Float>(durationMillis = AppTheme.motion.mediumMillis, easing = AppTheme.motion.emphasizedEasing)
+    val alpha by animateFloatAsState(targetValue = if (visible) 1f else 0f, animationSpec = motionSpec, label = "TabBarIndicatorAlpha")
+    val scale by animateFloatAsState(targetValue = if (visible) 1f else 0.6f, animationSpec = motionSpec, label = "TabBarIndicatorScale")
+    Box(
+        modifier =
+            modifier
+                .alpha(alpha)
+                .scale(scale)
+                .clip(AppTheme.shapes.pill)
+                .background(color),
+    )
 }
 
 @Composable
