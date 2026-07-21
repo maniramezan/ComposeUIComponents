@@ -432,7 +432,7 @@ private fun BadgeAwareIcon(
                 modifier =
                     Modifier
                         .align(Alignment.TopEnd)
-                        .offset(x = AppTheme.spacing.half, y = -AppTheme.spacing.half),
+                        .offset(x = AppTheme.spacing.x1, y = -AppTheme.spacing.x1),
             ) {
                 badge()
             }
