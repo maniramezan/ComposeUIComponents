@@ -22,7 +22,10 @@ internal data class SampleComponentDemo(
     val content: @Composable () -> Unit,
 )
 
-/** Ordered list of all component demos. Category grouping is derived from [SampleComponentDemo.category]. */
+/**
+ * List of all component demos. Category grouping is derived from [SampleComponentDemo.category];
+ * see [groupedByCategory] for the display order (categories and entries are sorted alphabetically).
+ */
 internal fun sampleDemos(): List<SampleComponentDemo> =
     listOf(
         SampleComponentDemo(
@@ -138,13 +141,6 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             content = { TabRowPage() },
         ),
         SampleComponentDemo(
-            id = "bottom-bar",
-            title = "TabBar",
-            category = "Navigation",
-            description = "Bottom navigation bar for top-level destinations.",
-            content = { BottomBarPage() },
-        ),
-        SampleComponentDemo(
             id = "nav-rail",
             title = "NavRail",
             category = "Navigation",
@@ -164,6 +160,13 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             category = "Pagination",
             description = "Tap-driven segmented picker with scrolling overflow and edge fades.",
             content = { SegmentedContentPage() },
+        ),
+        SampleComponentDemo(
+            id = "tab-bar",
+            title = "TabBar",
+            category = "Pagination",
+            description = "Bottom navigation bar that swaps the view above it per tab, with badge and RTL support.",
+            content = { TabBarPage() },
         ),
         SampleComponentDemo(
             id = "showcase-feed",
@@ -293,9 +296,14 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
         ),
     )
 
-/** Returns demo entries grouped by [SampleComponentDemo.category] in insertion order. */
+/**
+ * Returns demo entries grouped by [SampleComponentDemo.category], with categories sorted
+ * alphabetically and entries within each category sorted alphabetically by [SampleComponentDemo.title].
+ */
 internal fun List<SampleComponentDemo>.groupedByCategory(): Map<String, List<SampleComponentDemo>> =
-    groupByTo(LinkedHashMap()) { it.category }
+    groupBy { it.category }
+        .toSortedMap()
+        .mapValues { (_, entries) -> entries.sortedBy { it.title } }
 
 /**
  * Case-insensitive filter over title, category, and description. A blank query
