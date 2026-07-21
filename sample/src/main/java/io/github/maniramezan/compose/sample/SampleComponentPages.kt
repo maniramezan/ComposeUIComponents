@@ -225,6 +225,9 @@ internal fun SegmentedControlPage() {
     var selected by remember { mutableIntStateOf(0) }
     var enabled by remember { mutableStateOf(true) }
     val options = listOf("Free", "Plus", "Pro")
+    val densityOptions = listOf("Regular", "Compact")
+    var densityIndex by remember { mutableIntStateOf(0) }
+    val density = if (densityIndex == 0) SegmentDensity.Regular else SegmentDensity.Compact
 
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
         SegmentedControl(
@@ -232,10 +235,17 @@ internal fun SegmentedControlPage() {
             selectedIndex = selected,
             onOptionSelected = { selected = it },
             enabled = enabled,
+            density = density,
         )
         Text(text = "Selected: ${options[selected]}")
         ControlsDivider()
         ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
+        ControlSegmented(
+            label = "Density",
+            options = densityOptions,
+            selectedIndex = densityIndex,
+            onOptionSelected = { densityIndex = it },
+        )
     }
 }
 
