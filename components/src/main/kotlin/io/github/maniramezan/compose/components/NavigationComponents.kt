@@ -1,12 +1,8 @@
 package io.github.maniramezan.compose.components
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,7 +22,6 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
@@ -46,15 +41,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
 import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.utils.minimumTouchTarget
 import io.github.maniramezan.compose.utils.minimumTouchTargetHeight
@@ -79,7 +76,7 @@ import androidx.compose.material3.TopAppBar as MaterialTopAppBar
  *   explicit tint.
  * @param label the destination's text label, or `null` for an icon-only destination. Rendered
  *   with the resolved content color and [AppTheme]'s `labelSmall` style already applied.
- * @param badge an optional composable rendered as a [BadgedBox] badge above the icon (e.g. an
+ * @param badge an optional composable pinned to the icon's top-end corner (e.g. an
  *   unread count). Supply your own `contentDescription` semantics on the badge content if it
  *   conveys information beyond what [contentDescription] already announces.
  * @param enabled whether this destination can be selected. Disabled items render with
@@ -122,11 +119,15 @@ public enum class TabBarArrangement {
 
 /** Default values, colors, and sizing tokens used by [TabBar], [NavRail], and [AdaptiveNavScaffold]. */
 public object TabBarDefaults {
-    /** Minimum content height of a [TabBar], excluding system bar insets. */
+    /** Minimum content height of a [TabBar], excluding system bar insets. Matches Material 3's
+     *  own NavigationBarTokens.ContainerHeight (64dp) — the same value used by stock Android
+     *  bottom navigation (e.g. Play Store, Gmail). */
     public val MinHeight: Dp
         @Composable get() = AppTheme.spacing.x8
 
-    /** Width of the selected-destination indicator pill. */
+    /** Width of the selected-destination indicator pill. Matches Material 3's own
+     *  NavigationBarVerticalItemTokens.ActiveIndicatorWidth (56dp) — the same value
+     *  used by stock Android bottom navigation (e.g. Play Store, Gmail). */
     public val IndicatorWidth: Dp
         @Composable get() = AppTheme.spacing.x7
 
@@ -145,7 +146,14 @@ public object TabBarDefaults {
                 WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom,
             )
 
-    /** Builds a [TabBarItemColors], defaulting every slot to an [AppTheme] color. */
+    /**
+     * Builds a [TabBarItemColors], defaulting every slot to an [AppTheme] color.
+     *
+     * [selectedIndicatorColor] defaults to `AppTheme.colors.primaryContainer` — a
+     * selected-destination pill behind the icon, matching stock Android bottom navigation (e.g.
+     * Play Store, Gmail). Pass [Color.Transparent] for tint-only selection styling instead, with
+     * no background highlight.
+     */
     @Composable
     public fun itemColors(
         selectedIconColor: Color = AppTheme.colors.primary,
@@ -263,9 +271,22 @@ public fun TabBar(
         color = containerColor,
         modifier =
             modifier
-                .onSizeChanged { size ->
-                    scrollBehavior?.updateHeightOffsetLimit(-size.height.toFloat())
-                }.offset { IntOffset(x = 0, y = -heightOffset.roundToInt()) },
+                .layout { measurable, constraints ->
+                    val placeable = measurable.measure(constraints)
+                    // Report the bar's full natural height as the scroll behavior's collapse
+                    // limit, then report a *shrunk* layout size to our own parent (e.g. Scaffold)
+                    // as the bar hides — not just a draw-time offset — so the parent's reserved
+                    // space (and therefore the content above it) actually shrinks/expands as the
+                    // bar hides/reappears, instead of always reserving the bar's full height.
+                    scrollBehavior?.updateHeightOffsetLimit(-placeable.height.toFloat())
+                    val shrunkHeight = (placeable.height + heightOffset.roundToInt()).coerceIn(0, placeable.height)
+                    layout(placeable.width, shrunkHeight) {
+                        // Keep the bar's bottom edge pinned to the shrunk box's bottom edge, so it
+                        // collapses top-down (sinks toward the bottom of the screen) rather than
+                        // from the bottom up.
+                        placeable.place(0, shrunkHeight - placeable.height)
+                    }
+                }.graphicsLayer { clip = true },
     ) {
         CompositionLocalProvider(LocalTabBarArrangement provides arrangement) {
             Row(
@@ -342,7 +363,6 @@ public fun <T> RowScope.TabBarItem(
                 role = Role.Tab,
                 onClick = { onSelectionChange(value) },
             ).minimumTouchTarget(minimumTouchTargetSize())
-            .padding(vertical = AppTheme.spacing.x1)
     if (label == null && contentDescription.isNotBlank()) {
         itemModifier = itemModifier.semantics { this.contentDescription = contentDescription }
     }
@@ -352,8 +372,15 @@ public fun <T> RowScope.TabBarItem(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.half),
     ) {
-        Box(contentAlignment = Alignment.Center) {
-            SelectionIndicator(visible = selected, color = colors.selectedIndicatorColor)
+        Box(
+            modifier = Modifier.size(width = TabBarDefaults.IndicatorWidth, height = TabBarDefaults.IndicatorHeight),
+            contentAlignment = Alignment.Center,
+        ) {
+            SelectionIndicatorBackground(
+                visible = selected,
+                color = colors.selectedIndicatorColor,
+                modifier = Modifier.matchParentSize(),
+            )
             CompositionLocalProvider(LocalContentColor provides iconColor) {
                 BadgeAwareIcon(icon = icon, badge = badge)
             }
@@ -369,40 +396,60 @@ public fun <T> RowScope.TabBarItem(
     }
 }
 
+/**
+ * The selected-destination indicator, drawn as a background fill behind the icon.
+ *
+ * Sized via [Modifier.matchParentSize] against a *fixed*-size parent (see [TabBarItem]) rather
+ * than [androidx.compose.animation.AnimatedVisibility], and animated via alpha/scale instead of
+ * entering/exiting the composition — so the indicator never changes the icon slot's layout
+ * size, and selecting a destination never shifts the label's position. Pass
+ * `color = Color.Transparent` (see [TabBarDefaults.itemColors]) to render no indicator at all
+ * and rely on icon/label tint alone to convey selection, matching plain Material tab styling.
+ */
 @Composable
-private fun SelectionIndicator(
+private fun SelectionIndicatorBackground(
     visible: Boolean,
     color: Color,
+    modifier: Modifier = Modifier,
 ) {
-    AnimatedVisibility(
-        visible = visible,
-        enter =
-            fadeIn(tween(AppTheme.motion.mediumMillis, easing = AppTheme.motion.emphasizedEasing)) +
-                scaleIn(
-                    tween(AppTheme.motion.mediumMillis, easing = AppTheme.motion.emphasizedEasing),
-                    initialScale = 0.6f,
-                ),
-        exit =
-            fadeOut(tween(AppTheme.motion.shortMillis)) +
-                scaleOut(tween(AppTheme.motion.shortMillis), targetScale = 0.6f),
-    ) {
-        Box(
-            modifier =
-                Modifier
-                    .size(width = TabBarDefaults.IndicatorWidth, height = TabBarDefaults.IndicatorHeight)
-                    .clip(AppTheme.shapes.pill)
-                    .background(color),
-        )
-    }
+    val motionSpec = tween<Float>(durationMillis = AppTheme.motion.mediumMillis, easing = AppTheme.motion.emphasizedEasing)
+    val alpha by animateFloatAsState(targetValue = if (visible) 1f else 0f, animationSpec = motionSpec, label = "TabBarIndicatorAlpha")
+    val scale by animateFloatAsState(targetValue = if (visible) 1f else 0.6f, animationSpec = motionSpec, label = "TabBarIndicatorScale")
+    Box(
+        modifier =
+            modifier
+                .alpha(alpha)
+                .scale(scale)
+                .clip(AppTheme.shapes.pill)
+                .background(color),
+    )
 }
 
+/**
+ * Renders [icon], with [badge] (if non-null) pinned to its top-end corner.
+ *
+ * Uses a plain [Box] + [Alignment.TopEnd] + outward [Modifier.offset] instead of Material 3's
+ * `BadgedBox`, whose default placement overlaps the badge inward over the icon rather than
+ * sitting at the corner. The outward offset here pushes the badge to peek past the icon's
+ * bounds, closer to how corner badges commonly read (e.g. notification badges).
+ */
 @Composable
 private fun BadgeAwareIcon(
     icon: @Composable () -> Unit,
     badge: (@Composable () -> Unit)?,
 ) {
     if (badge != null) {
-        BadgedBox(badge = { badge() }) { icon() }
+        Box {
+            icon()
+            Box(
+                modifier =
+                    Modifier
+                        .align(Alignment.TopEnd)
+                        .offset(x = AppTheme.spacing.x1, y = -AppTheme.spacing.x1),
+            ) {
+                badge()
+            }
+        }
     } else {
         icon()
     }
