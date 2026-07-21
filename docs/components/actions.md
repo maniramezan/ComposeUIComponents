@@ -56,9 +56,39 @@ capsules that reuse a `LevelPalette` tier.
 | --- | --- | --- |
 | `label` | `String` | Chip text. |
 | `isSelected` | `Boolean` | Whether the chip renders in its selected state. |
-| `onClick` | `() -> Unit` | Invoked on tap. |
 | `modifier` | `Modifier` | Applied to the chip container. |
+| `onClick` | `(() -> Unit)?` | Invoked on tap. Leave `null` to render a static, non-interactive badge — no touch target, no click semantics. |
 | `selectedBackground` | `Color` | Background when selected. Defaults to `AppTheme.colors.primary`. |
 | `unselectedBackground` | `Color` | Background when unselected. Defaults to `AppTheme.colors.primaryContainer`. |
 | `selectedLabel` | `Color` | Label color when selected. Defaults to `AppTheme.colors.onPrimary`. |
 | `unselectedLabel` | `Color` | Label color when unselected. Defaults to `AppTheme.colors.onSurface`. |
+
+## PillChip as a tier badge
+
+A second `PillChip` overload renders a static, non-interactive badge tinted with a
+`LevelTier` from a `LevelPalette`. Use it for tiered indicators — skill level,
+difficulty, priority, and similar categorical scales — where the tint encodes the
+tier and the label spells it out.
+
+```kotlin
+AppTheme {
+    Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.x1)) {
+        PillChip(label = "Beginner", tier = AppTheme.colors.levels.tier(0))
+        PillChip(label = "Advanced", tier = AppTheme.colors.levels.tier(1))
+        PillChip(label = "Expert", tier = AppTheme.colors.levels.tier(2))
+    }
+}
+```
+
+Callers typically read a tier via `AppTheme.colors.levels.tier(level.ordinal)` and pass
+it here, decoupling the badge from the app's own level taxonomy. `LevelPalette` ships
+empty by default — supply your own tiers (background + foreground color pairs) when
+building `AppTheme`.
+
+### Parameters
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `label` | `String` | Badge text. |
+| `tier` | `LevelTier` | Background/foreground color pair for this tier. |
+| `modifier` | `Modifier` | Applied to the badge container. |

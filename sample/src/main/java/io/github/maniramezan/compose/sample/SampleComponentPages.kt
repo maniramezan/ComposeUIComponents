@@ -45,7 +45,6 @@ import io.github.maniramezan.compose.components.FAB
 import io.github.maniramezan.compose.components.FlipAxis
 import io.github.maniramezan.compose.components.FlipCard
 import io.github.maniramezan.compose.components.IconButton
-import io.github.maniramezan.compose.components.LevelBadge
 import io.github.maniramezan.compose.components.ListItem
 import io.github.maniramezan.compose.components.LoadingState
 import io.github.maniramezan.compose.components.NavRail
@@ -933,7 +932,7 @@ internal fun ContentRowPage() {
             onClick = if (tappable) ({}) else null,
             trailingContent =
                 if (showTrailing) {
-                    { LevelBadge(label = "C1", tier = AppTheme.colors.levels.tier(2)) }
+                    { PillChip(label = "C1", tier = AppTheme.colors.levels.tier(2)) }
                 } else {
                     null
                 },
@@ -1443,14 +1442,14 @@ internal fun PillChipPage() {
 }
 
 @Composable
-internal fun LevelBadgePage() {
+internal fun PillChipTierBadgePage() {
     val tiers = listOf("Tier 0", "Tier 1", "Tier 2")
     var tierIndex by remember { mutableIntStateOf(0) }
     val labels = listOf("A1", "A2", "B1", "B2", "C1", "C2")
     var labelIndex by remember { mutableIntStateOf(0) }
 
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        LevelBadge(
+        PillChip(
             label = labels[labelIndex],
             tier = AppTheme.colors.levels.tier(tierIndex),
         )
