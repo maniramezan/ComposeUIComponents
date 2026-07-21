@@ -46,12 +46,14 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.utils.minimumTouchTarget
+import io.github.maniramezan.compose.utils.minimumTouchTargetWidth
 
 /**
  * Represents a single segment in [SegmentedContent].
@@ -541,6 +543,9 @@ private fun Modifier.edgeFade(
         }
     }
 
+/** Test tag prefix on each [SegmentSlot]'s visual (background/padding) box, suffixed with its index. */
+internal const val SEGMENT_SLOT_VISUAL_TEST_TAG = "segment-slot-visual"
+
 @Composable
 private fun SegmentSlot(
     index: Int,
@@ -577,11 +582,14 @@ private fun SegmentSlot(
     val titleVerticalPadding =
         if (density == SegmentDensity.Compact) AppTheme.spacing.half else AppTheme.spacing.x1
     val visualWidthModifier = if (fillVisualWidth) Modifier.fillMaxWidth() else Modifier
-    // Hug the visual box to the same 48dp minimum as the touch target (the
-    // pattern PillChip already uses) so the background always fills the full
-    // slot instead of floating smaller inside it. Density only ever controls
-    // internal padding, which still shows up once content grows past 48dp.
-    val visualSizeModifier = visualWidthModifier.minimumTouchTarget(minimumTouchTargetSize())
+    // Hug the visual box to the same 48dp minimum *width* as the touch target
+    // (the pattern PillChip already uses) so the background always fills the
+    // full slot horizontally instead of floating narrower inside it. Height is
+    // intentionally left to content + [titleVerticalPadding] — that's what
+    // actually makes Compact visually shorter than Regular. The 48dp touch
+    // target itself is still guaranteed by [touchTargetModifier] on the outer
+    // Box below, regardless of how short the visual box renders.
+    val visualSizeModifier = visualWidthModifier.minimumTouchTargetWidth(minimumTouchTargetSize())
     val touchTargetModifier = Modifier.minimumTouchTarget(minimumTouchTargetSize())
     val interactionSource = remember { MutableInteractionSource() }
     val indication = LocalIndication.current
@@ -601,10 +609,13 @@ private fun SegmentSlot(
                 .then(touchTargetModifier),
         contentAlignment = Alignment.Center,
     ) {
-        // Title centred both axes within the (≥48dp) slot.
+        // Title centred both axes within the visual box (≥48dp wide, height
+        // driven by content + density padding) and centred again within the
+        // ≥48dp-tall/wide touch target above.
         Box(
             modifier =
                 visualSizeModifier
+                    .testTag("$SEGMENT_SLOT_VISUAL_TEST_TAG-$index")
                     .clip(slotShape)
                     .background(segmentBg)
                     .indication(interactionSource, indication)
