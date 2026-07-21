@@ -4,6 +4,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.SemanticsProperties
@@ -12,6 +15,7 @@ import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.assertWidthIsAtLeast
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -21,6 +25,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.maniramezan.compose.icons.defaultAppIcons
+import io.github.maniramezan.compose.testing.MinimumTouchTargetSize
 import io.github.maniramezan.compose.testing.assertMinimumTouchTarget
 import io.github.maniramezan.compose.testing.onNodeWithRequiredContentDescription
 import io.github.maniramezan.compose.theme.AppTheme
@@ -151,6 +156,50 @@ public class AccessibilityComponentsTest {
     }
 
     @Test
+    public fun segmentedControlCompactDensityIsNotFlooredToMinimumTouchTarget() {
+        var density by mutableStateOf(SegmentDensity.Regular)
+        composeRule.setContent {
+            AppTheme {
+                SegmentedControl(
+                    options = listOf("Day", "Week", "Month"),
+                    selectedIndex = 0,
+                    onOptionSelected = {},
+                    density = density,
+                )
+            }
+        }
+        val minTouchTargetPx = with(composeRule.density) { MinimumTouchTargetSize.roundToPx() }
+        val regularHeight =
+            composeRule
+                .onNodeWithText("Day")
+                .fetchSemanticsNode()
+                .size.height
+
+        density = SegmentDensity.Compact
+        composeRule.waitForIdle()
+
+        val compactHeight =
+            composeRule
+                .onNodeWithText("Day")
+                .fetchSemanticsNode()
+                .size.height
+
+        // Same bug class as SegmentedContent: if Compact were ever pinned to the same 48dp
+        // minimum height as Regular again, this fails outright -- a "smaller" difference of a
+        // couple of px (from content alone crossing the 48dp floor at different margins) is not
+        // enough; Compact must render strictly *below* the minimum touch target Regular meets.
+        assert(regularHeight >= minTouchTargetPx) {
+            "Expected Regular ($regularHeight px) to still meet the $MinimumTouchTargetSize " +
+                "minimum touch target ($minTouchTargetPx px)"
+        }
+        assert(compactHeight < minTouchTargetPx) {
+            "Expected Compact ($compactHeight px) to render below the $MinimumTouchTargetSize " +
+                "minimum touch target ($minTouchTargetPx px) -- otherwise density does nothing " +
+                "visually once content is tall enough to cross that floor either way"
+        }
+    }
+
+    @Test
     public fun extractedInteractiveComponentsMeetMinimumTouchTargetSize() {
         composeRule.setContent {
             AppTheme {
@@ -174,7 +223,7 @@ public class AccessibilityComponentsTest {
     }
 
     @Test
-    public fun compactSegmentedContentMeetsMinimumTouchTargetSize() {
+    public fun compactSegmentedContentMeetsMinimumTouchTargetWidth() {
         composeRule.setContent {
             AppTheme {
                 SegmentedContent(
@@ -187,8 +236,15 @@ public class AccessibilityComponentsTest {
             }
         }
 
-        composeRule.onNode(hasText("One") and hasClickAction()).assertMinimumTouchTarget()
-        composeRule.onNode(hasText("Two") and hasClickAction()).assertMinimumTouchTarget()
+        // Compact intentionally does not enforce a 48dp minimum *height* — see
+        // SegmentDensity.Compact's KDoc. Width still hugs 48dp for horizontal tap
+        // comfort. Critically, the highlighted/clickable area is always a single
+        // box (never a smaller highlight floating inside a larger invisible touch
+        // target), so whatever height Compact renders at, tapping anywhere in the
+        // highlight always registers — see
+        // SegmentedContentInteractionTest.compactDensityRendersAVisuallyShorterSlotThanRegular.
+        composeRule.onNode(hasText("One") and hasClickAction()).assertWidthIsAtLeast(48.dp)
+        composeRule.onNode(hasText("Two") and hasClickAction()).assertWidthIsAtLeast(48.dp)
     }
 
     @Test
