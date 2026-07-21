@@ -32,7 +32,7 @@ public fun SkeletonBlockShowkase(): Unit =
     AppTheme {
         Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.x1)) {
             SkeletonBlock(height = 20.dp, width = 160.dp)
-            SkeletonBlock(height = 16.dp)
+            SkeletonBlock(height = AppTheme.spacing.x2)
         }
     }
 

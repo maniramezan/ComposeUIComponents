@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.utils.PreviewFontScale
 import io.github.maniramezan.compose.utils.PreviewLightDark
@@ -29,7 +28,7 @@ public fun DividerComponentsPreview(): Unit =
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(text = "Left")
-                VerticalDivider(modifier = Modifier.height(24.dp))
+                VerticalDivider(modifier = Modifier.height(AppTheme.spacing.x3))
                 Text(text = "Right")
             }
         }

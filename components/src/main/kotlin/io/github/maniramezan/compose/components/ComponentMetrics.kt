@@ -7,7 +7,7 @@ import io.github.maniramezan.compose.theme.AppTheme
 
 @Composable
 @ReadOnlyComposable
-internal fun minimumTouchTargetSize(): Dp = AppTheme.spacing.xl * 2f
+internal fun minimumTouchTargetSize(): Dp = AppTheme.spacing.x6
 
 @Composable
 @ReadOnlyComposable
