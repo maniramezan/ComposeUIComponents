@@ -518,21 +518,22 @@ private fun PageProgressFooter(
     modifier: Modifier = Modifier,
     pagePositionDescription: ((Int, Int) -> String)? = null,
 ) {
-    // Read both values here so per-frame recomposition during scroll is
-    // scoped to PageProgressFooter alone, not to PaginatedContent.
+    // Read the settled page here so per-frame recomposition during scroll is
+    // scoped to PageProgressFooter alone, not to PaginatedContent. The
+    // frequently-changing offset fraction is read lazily inside the progress
+    // lambda instead, so it drives draw-phase updates rather than recomposition.
     val currentPage = pagerState.currentPage
-    val offsetFraction = pagerState.currentPageOffsetFraction
-    val progress =
-        if (pageCount <= 1) {
-            1f
-        } else {
-            ((currentPage + offsetFraction) / (pageCount - 1)).coerceIn(0f, 1f)
-        }
     // The bar is a visual position cue; expose the settled page as a spoken
     // node (and announce changes) when the caller supplies a formatter.
     val positionDescription = pagePositionDescription?.invoke(currentPage, pageCount)
     LinearProgressIndicator(
-        progress = { progress },
+        progress = {
+            if (pageCount <= 1) {
+                1f
+            } else {
+                ((currentPage + pagerState.currentPageOffsetFraction) / (pageCount - 1)).coerceIn(0f, 1f)
+            }
+        },
         modifier =
             if (positionDescription != null) {
                 modifier.clip(CircleShape).semantics {

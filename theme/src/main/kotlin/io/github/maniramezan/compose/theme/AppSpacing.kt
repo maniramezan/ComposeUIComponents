@@ -58,6 +58,8 @@ public data class AppSpacing(
     public val maxContentWidthForm: Dp = 0.dp,
     public val maxContentWidthList: Dp = 0.dp,
     public val maxContentWidthPlayer: Dp = 0.dp,
+    // ===== Window size breakpoints =====
+    public val expandedNavigationBreakpoint: Dp = 0.dp,
 ) {
     public companion object {
         public fun default(): AppSpacing =
@@ -87,6 +89,7 @@ public data class AppSpacing(
                 strokeThick = AppReferenceSpacing.Space4,
                 minTapTarget = AppReferenceSpacing.Space44,
                 maxContentWidthForm = AppReferenceSpacing.Space600,
+                expandedNavigationBreakpoint = AppReferenceSpacing.Space600,
             )
     }
 }
@@ -119,4 +122,5 @@ public object AppSpacingDefaults {
     public val strokeThick: Dp = AppReferenceSpacing.Space4
     public val minTapTarget: Dp = AppReferenceSpacing.Space44
     public val maxContentWidthForm: Dp = AppReferenceSpacing.Space600
+    public val expandedNavigationBreakpoint: Dp = AppReferenceSpacing.Space600
 }

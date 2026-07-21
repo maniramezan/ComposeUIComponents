@@ -94,11 +94,13 @@ public fun ShowcaseGridSectionPreview(): Unit =
 @Composable
 private fun ShowcaseCard(
     label: String,
-    modifier: Modifier = Modifier.fillMaxWidth().height(AppTheme.spacing.xl * 3.5f),
+    modifier: Modifier = Modifier,
 ) {
     Box(
         modifier =
             modifier
+                .fillMaxWidth()
+                .height(AppTheme.spacing.xl * 3.5f)
                 .clip(AppTheme.shapes.large)
                 .background(AppTheme.colors.surfaceVariant),
         contentAlignment = Alignment.Center,
