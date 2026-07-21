@@ -7,3 +7,5 @@ import androidx.compose.ui.unit.Dp
 public fun Modifier.minimumTouchTarget(size: Dp): Modifier = defaultMinSize(minWidth = size, minHeight = size)
 
 public fun Modifier.minimumTouchTargetHeight(height: Dp): Modifier = defaultMinSize(minHeight = height)
+
+public fun Modifier.minimumTouchTargetWidth(width: Dp): Modifier = defaultMinSize(minWidth = width)

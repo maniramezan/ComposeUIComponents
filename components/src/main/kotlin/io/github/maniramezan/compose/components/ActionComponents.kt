@@ -142,9 +142,12 @@ public fun FAB(
  * @param onOptionSelected Called with the tapped index.
  * @param modifier Modifier applied to the outer [Row].
  * @param enabled Whether all segments respond to interaction.
- * @param density [SegmentDensity.Regular] uses standard button padding;
- *   [SegmentDensity.Compact] reduces vertical padding for a shorter control.
- *   The 48dp minimum touch target is preserved in both modes.
+ * @param density [SegmentDensity.Regular] uses standard button padding with a
+ *   48dp minimum touch target. [SegmentDensity.Compact] reduces vertical
+ *   padding **and** does not enforce that 48dp minimum, so the whole control
+ *   actually renders shorter — not just its internal padding. Only use
+ *   Compact where a shorter-than-48dp tap target is acceptable (see
+ *   [SegmentDensity.Compact]'s KDoc).
  * @param widthMode [SegmentWidthMode.Fill] distributes buttons evenly across
  *   the full available width; [SegmentWidthMode.Fit] lets each button wrap to
  *   its content width.
@@ -174,8 +177,13 @@ public fun SegmentedControl(
             val selected = index == selectedIndex
             val baseModifier =
                 Modifier
-                    .minimumTouchTargetHeight(minimumTouchTargetSize())
-                    .semantics { this.selected = selected }
+                    .then(
+                        if (density == SegmentDensity.Compact) {
+                            Modifier
+                        } else {
+                            Modifier.minimumTouchTargetHeight(minimumTouchTargetSize())
+                        },
+                    ).semantics { this.selected = selected }
             val segmentModifier =
                 if (widthMode == SegmentWidthMode.Fill) baseModifier.weight(1f) else baseModifier
             if (selected) {
