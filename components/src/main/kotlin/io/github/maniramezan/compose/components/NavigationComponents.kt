@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
@@ -77,7 +76,7 @@ import androidx.compose.material3.TopAppBar as MaterialTopAppBar
  *   explicit tint.
  * @param label the destination's text label, or `null` for an icon-only destination. Rendered
  *   with the resolved content color and [AppTheme]'s `labelSmall` style already applied.
- * @param badge an optional composable rendered as a [BadgedBox] badge above the icon (e.g. an
+ * @param badge an optional composable pinned to the icon's top-end corner (e.g. an
  *   unread count). Supply your own `contentDescription` semantics on the badge content if it
  *   conveys information beyond what [contentDescription] already announces.
  * @param enabled whether this destination can be selected. Disabled items render with
@@ -150,16 +149,16 @@ public object TabBarDefaults {
     /**
      * Builds a [TabBarItemColors], defaulting every slot to an [AppTheme] color.
      *
-     * [selectedIndicatorColor] defaults to [Color.Transparent] — plain Material tab styling
-     * conveys selection via icon/label tint alone, with no background highlight. Pass a real
-     * color (e.g. `AppTheme.colors.primaryContainer`) to render a selected-destination pill
-     * instead.
+     * [selectedIndicatorColor] defaults to `AppTheme.colors.primaryContainer` — a
+     * selected-destination pill behind the icon, matching stock Android bottom navigation (e.g.
+     * Play Store, Gmail). Pass [Color.Transparent] for tint-only selection styling instead, with
+     * no background highlight.
      */
     @Composable
     public fun itemColors(
         selectedIconColor: Color = AppTheme.colors.primary,
         selectedTextColor: Color = AppTheme.colors.primary,
-        selectedIndicatorColor: Color = Color.Transparent,
+        selectedIndicatorColor: Color = AppTheme.colors.primaryContainer,
         unselectedIconColor: Color = AppTheme.colors.onSurfaceVariant,
         unselectedTextColor: Color = AppTheme.colors.onSurfaceVariant,
         disabledIconColor: Color = unselectedIconColor.copy(alpha = 0.38f),
@@ -413,13 +412,31 @@ private fun SelectionIndicatorBackground(
     )
 }
 
+/**
+ * Renders [icon], with [badge] (if non-null) pinned to its top-end corner.
+ *
+ * Uses a plain [Box] + [Alignment.TopEnd] + outward [Modifier.offset] instead of Material 3's
+ * `BadgedBox`, whose default placement overlaps the badge inward over the icon rather than
+ * sitting at the corner. The outward offset here pushes the badge to peek past the icon's
+ * bounds, closer to how corner badges commonly read (e.g. notification badges).
+ */
 @Composable
 private fun BadgeAwareIcon(
     icon: @Composable () -> Unit,
     badge: (@Composable () -> Unit)?,
 ) {
     if (badge != null) {
-        BadgedBox(badge = { badge() }) { icon() }
+        Box {
+            icon()
+            Box(
+                modifier =
+                    Modifier
+                        .align(Alignment.TopEnd)
+                        .offset(x = AppTheme.spacing.half, y = -AppTheme.spacing.half),
+            ) {
+                badge()
+            }
+        }
     } else {
         icon()
     }
