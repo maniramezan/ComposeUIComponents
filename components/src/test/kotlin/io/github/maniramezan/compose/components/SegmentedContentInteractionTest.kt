@@ -12,6 +12,8 @@ import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.hasClickAction
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -137,12 +139,46 @@ public class SegmentedContentInteractionTest {
                 .fetchSemanticsNode()
                 .size.height
 
-        // Compact's whole point is a visually shorter/denser highlight than Regular; the
-        // 48dp touch target is still met by the outer slot regardless (see the test above and
-        // AccessibilityComponentsTest.compactSegmentedContentMeetsMinimumTouchTargetSize).
+        // Compact's whole point is a visually shorter/denser highlight than Regular —
+        // and because the highlighted box and the clickable/touch-target box are the
+        // exact same node (see highlightedAreaIsAlwaysExactlyTheClickableArea below),
+        // that shorter highlight IS the whole slot's footprint, not just its padding.
         assert(compactVisualHeight < regularVisualHeight) {
             "Expected Compact's visual slot ($compactVisualHeight px) to be shorter than " +
                 "Regular's ($regularVisualHeight px)"
+        }
+    }
+
+    @Test
+    public fun highlightedAreaIsAlwaysExactlyTheClickableArea() {
+        var density by mutableStateOf(SegmentDensity.Regular)
+        composeRule.setContent {
+            AppTheme {
+                SegmentedContent(
+                    items = items,
+                    selectedIndex = 0,
+                    onSelectionChanged = {},
+                    density = density,
+                ) { _, item -> Text("${item.title} body") }
+            }
+        }
+
+        for (nextDensity in SegmentDensity.entries) {
+            density = nextDensity
+            composeRule.waitForIdle()
+
+            // The node carrying the highlight/underline test tag must be the *same* node
+            // as the one carrying the click action -- never a smaller highlight floating
+            // inside a separately-sized, larger tappable area (or vice versa). If they were
+            // ever split into two boxes again, this combined matcher would find no node.
+            composeRule
+                .onNode(
+                    hasTestTag("$SEGMENT_SLOT_VISUAL_TEST_TAG-0") and hasClickAction(),
+                    useUnmergedTree = true,
+                ).assertExists(
+                    "Expected the highlighted box and the clickable area to be the exact " +
+                        "same node for density=$nextDensity",
+                )
         }
     }
 
