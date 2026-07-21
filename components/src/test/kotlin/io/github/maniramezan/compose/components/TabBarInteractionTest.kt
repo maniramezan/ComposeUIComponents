@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertHeightIsAtLeast
+import androidx.compose.ui.test.assertHeightIsEqualTo
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertIsNotSelected
@@ -14,6 +15,7 @@ import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -149,5 +151,33 @@ public class TabBarInteractionTest {
         composeRule.onNodeWithText("Item 0").assertIsSelected()
         composeRule.onNodeWithText("Item 1").assertIsNotSelected()
         composeRule.onNodeWithText("Item 2").assertIsNotSelected()
+    }
+
+    @Test
+    public fun scrollBehaviorCollapsesTheBarsMeasuredHeightNotJustItsDrawPosition() {
+        lateinit var scrollBehavior: TabBarScrollBehavior
+        composeRule.setContent {
+            AppTheme {
+                scrollBehavior = rememberTabBarScrollBehavior()
+                TabBar(
+                    items = items(),
+                    selection = 0,
+                    onSelectionChange = {},
+                    scrollBehavior = scrollBehavior,
+                )
+            }
+        }
+        composeRule.waitForIdle()
+
+        val limit = scrollBehavior.heightOffsetLimit
+        assert(limit < 0f) { "Expected TabBar to report a real collapse limit once measured, got $limit" }
+
+        // Simulate a full scroll-to-hide.
+        composeRule.runOnIdle { scrollBehavior.heightOffset = limit }
+        composeRule.waitForIdle()
+
+        // The bar's own layout size — not just its draw offset — must shrink to zero, so a
+        // parent (e.g. Scaffold) reclaims the space for content above it.
+        composeRule.onRoot().assertHeightIsEqualTo(0.dp)
     }
 }
