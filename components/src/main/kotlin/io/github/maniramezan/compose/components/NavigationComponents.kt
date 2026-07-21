@@ -122,13 +122,17 @@ public enum class TabBarArrangement {
 
 /** Default values, colors, and sizing tokens used by [TabBar], [NavRail], and [AdaptiveNavScaffold]. */
 public object TabBarDefaults {
-    /** Minimum content height of a [TabBar], excluding system bar insets. */
+    /** Minimum content height of a [TabBar], excluding system bar insets. Matches Material 3's
+     *  own NavigationBarTokens.ContainerHeight (64dp) — the same value used by stock Android
+     *  bottom navigation (e.g. Play Store, Gmail). */
     public val MinHeight: Dp
-        @Composable get() = AppTheme.spacing.x7
+        @Composable get() = AppTheme.spacing.x8
 
-    /** Width of the selected-destination indicator pill. */
+    /** Width of the selected-destination indicator pill. Matches Material 3's own
+     *  NavigationBarVerticalItemTokens.ActiveIndicatorWidth (56dp) — the same value
+     *  used by stock Android bottom navigation (e.g. Play Store, Gmail). */
     public val IndicatorWidth: Dp
-        @Composable get() = AppTheme.spacing.x5
+        @Composable get() = AppTheme.spacing.x7
 
     /** Height of the selected-destination indicator pill. */
     public val IndicatorHeight: Dp
@@ -342,7 +346,6 @@ public fun <T> RowScope.TabBarItem(
                 role = Role.Tab,
                 onClick = { onSelectionChange(value) },
             ).minimumTouchTarget(minimumTouchTargetSize())
-            .padding(vertical = AppTheme.spacing.half)
     if (label == null && contentDescription.isNotBlank()) {
         itemModifier = itemModifier.semantics { this.contentDescription = contentDescription }
     }
