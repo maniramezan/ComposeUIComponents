@@ -3,7 +3,6 @@ package io.github.maniramezan.compose.components
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.airbnb.android.showkase.annotation.ShowkaseComposable
 import io.github.maniramezan.compose.theme.AppTheme
 
@@ -22,5 +21,5 @@ public fun HorizontalDividerShowkase(): Unit =
 @Composable
 public fun VerticalDividerShowkase(): Unit =
     AppTheme {
-        VerticalDivider(modifier = Modifier.height(24.dp))
+        VerticalDivider(modifier = Modifier.height(AppTheme.spacing.x3))
     }
