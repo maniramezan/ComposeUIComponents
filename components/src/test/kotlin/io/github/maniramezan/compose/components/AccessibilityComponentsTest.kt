@@ -12,6 +12,7 @@ import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.assertWidthIsAtLeast
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -174,7 +175,7 @@ public class AccessibilityComponentsTest {
     }
 
     @Test
-    public fun compactSegmentedContentMeetsMinimumTouchTargetSize() {
+    public fun compactSegmentedContentMeetsMinimumTouchTargetWidth() {
         composeRule.setContent {
             AppTheme {
                 SegmentedContent(
@@ -187,8 +188,15 @@ public class AccessibilityComponentsTest {
             }
         }
 
-        composeRule.onNode(hasText("One") and hasClickAction()).assertMinimumTouchTarget()
-        composeRule.onNode(hasText("Two") and hasClickAction()).assertMinimumTouchTarget()
+        // Compact intentionally does not enforce a 48dp minimum *height* — see
+        // SegmentDensity.Compact's KDoc. Width still hugs 48dp for horizontal tap
+        // comfort. Critically, the highlighted/clickable area is always a single
+        // box (never a smaller highlight floating inside a larger invisible touch
+        // target), so whatever height Compact renders at, tapping anywhere in the
+        // highlight always registers — see
+        // SegmentedContentInteractionTest.compactDensityRendersAVisuallyShorterSlotThanRegular.
+        composeRule.onNode(hasText("One") and hasClickAction()).assertWidthIsAtLeast(48.dp)
+        composeRule.onNode(hasText("Two") and hasClickAction()).assertWidthIsAtLeast(48.dp)
     }
 
     @Test

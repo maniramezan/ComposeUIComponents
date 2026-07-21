@@ -113,8 +113,13 @@ public enum class SegmentDensity {
     Regular,
 
     /**
-     * Reduced internal padding matching a native compact segmented control,
-     * while preserving the same 48dp minimum touch target as [Regular].
+     * Reduced internal padding matching a native compact segmented control.
+     * Unlike [Regular], Compact does **not** enforce a 48dp minimum height —
+     * the whole slot (highlight/underline, clickable area, and bar height)
+     * shrinks together, with no floating gap between what's tappable and
+     * what's drawn. Only use Compact where a shorter-than-48dp tap target is
+     * acceptable (e.g. a dense secondary control with generous surrounding
+     * spacing) — not as a primary, standalone navigation control.
      */
     Compact,
 }
@@ -543,7 +548,11 @@ private fun Modifier.edgeFade(
         }
     }
 
-/** Test tag prefix on each [SegmentSlot]'s visual (background/padding) box, suffixed with its index. */
+/**
+ * Test tag on each [SegmentSlot]'s single clickable/highlighted box, suffixed
+ * with its index. There's only one box per slot (see [SegmentSlot]) — this
+ * tag's bounds are both the tappable area and the drawn highlight.
+ */
 internal const val SEGMENT_SLOT_VISUAL_TEST_TAG = "segment-slot-visual"
 
 @Composable
@@ -582,15 +591,19 @@ private fun SegmentSlot(
     val titleVerticalPadding =
         if (density == SegmentDensity.Compact) AppTheme.spacing.half else AppTheme.spacing.x1
     val visualWidthModifier = if (fillVisualWidth) Modifier.fillMaxWidth() else Modifier
-    // Hug the visual box to the same 48dp minimum *width* as the touch target
-    // (the pattern PillChip already uses) so the background always fills the
-    // full slot horizontally instead of floating narrower inside it. Height is
-    // intentionally left to content + [titleVerticalPadding] — that's what
-    // actually makes Compact visually shorter than Regular. The 48dp touch
-    // target itself is still guaranteed by [touchTargetModifier] on the outer
-    // Box below, regardless of how short the visual box renders.
-    val visualSizeModifier = visualWidthModifier.minimumTouchTargetWidth(minimumTouchTargetSize())
-    val touchTargetModifier = Modifier.minimumTouchTarget(minimumTouchTargetSize())
+    // The clickable/highlighted area is a single box — never a smaller visual
+    // box floating inside a larger invisible touch target — so highlighting a
+    // segment always highlights the *whole* tappable slot, with no gap.
+    // Regular hugs a full 48dp minimum (width + height); Compact only hugs
+    // width (for horizontal tap comfort and to fill EvenSegmentRow slots) and
+    // otherwise sizes to content + [titleVerticalPadding], so the whole slot
+    // — bar height included — actually gets shorter, not just its padding.
+    val slotSizeModifier =
+        if (density == SegmentDensity.Compact) {
+            visualWidthModifier.minimumTouchTargetWidth(minimumTouchTargetSize())
+        } else {
+            visualWidthModifier.minimumTouchTarget(minimumTouchTargetSize())
+        }
     val interactionSource = remember { MutableInteractionSource() }
     val indication = LocalIndication.current
     val selectableModifier =
@@ -606,42 +619,33 @@ private fun SegmentSlot(
         modifier =
             modifier
                 .then(selectableModifier)
-                .then(touchTargetModifier),
+                .then(slotSizeModifier)
+                .testTag("$SEGMENT_SLOT_VISUAL_TEST_TAG-$index")
+                .clip(slotShape)
+                .background(segmentBg)
+                .indication(interactionSource, indication)
+                .padding(horizontal = AppTheme.spacing.x2, vertical = titleVerticalPadding),
         contentAlignment = Alignment.Center,
     ) {
-        // Title centred both axes within the visual box (≥48dp wide, height
-        // driven by content + density padding) and centred again within the
-        // ≥48dp-tall/wide touch target above.
-        Box(
-            modifier =
-                visualSizeModifier
-                    .testTag("$SEGMENT_SLOT_VISUAL_TEST_TAG-$index")
-                    .clip(slotShape)
-                    .background(segmentBg)
-                    .indication(interactionSource, indication)
-                    .padding(horizontal = AppTheme.spacing.x2, vertical = titleVerticalPadding),
-            contentAlignment = Alignment.Center,
-        ) {
-            segmentTitle(index, item, isSelected)
-            // Tab-style underline pinned to the bottom edge of the visual slot.
-            // matchParentSize (not fillMaxWidth) because outside EvenSegmentRow this
-            // Box's incoming constraints are unbounded (Intrinsic/Scrollable rows
-            // don't stretch the slot) — fillMaxWidth would resolve to zero there.
-            // matchParentSize instead tracks the slot's resolved size, which the
-            // title content (the other child) already determines.
-            if (indicator == SegmentSelectionIndicator.Underline) {
+        segmentTitle(index, item, isSelected)
+        // Tab-style underline pinned to the bottom edge of the slot.
+        // matchParentSize (not fillMaxWidth) because outside EvenSegmentRow this
+        // Box's incoming constraints are unbounded (Intrinsic/Scrollable rows
+        // don't stretch the slot) — fillMaxWidth would resolve to zero there.
+        // matchParentSize instead tracks the slot's resolved size, which the
+        // title content (the other child) already determines.
+        if (indicator == SegmentSelectionIndicator.Underline) {
+            Box(
+                modifier = Modifier.matchParentSize(),
+                contentAlignment = Alignment.BottomCenter,
+            ) {
                 Box(
-                    modifier = Modifier.matchParentSize(),
-                    contentAlignment = Alignment.BottomCenter,
-                ) {
-                    Box(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .height(AppTheme.spacing.strokeThick)
-                                .background(underlineColor),
-                    )
-                }
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(AppTheme.spacing.strokeThick)
+                            .background(underlineColor),
+                )
             }
         }
     }
