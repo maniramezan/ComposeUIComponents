@@ -47,7 +47,8 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.layout
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -592,7 +593,9 @@ public fun <T> AdaptiveNavScaffold(
     scrollBehavior: TabBarScrollBehavior? = null,
     content: @Composable (PaddingValues) -> Unit,
 ) {
-    val isExpandedWidth = LocalConfiguration.current.screenWidthDp >= 600
+    val containerWidthPx = LocalWindowInfo.current.containerSize.width
+    val screenWidthDp = with(LocalDensity.current) { containerWidthPx.toDp() }
+    val isExpandedWidth = screenWidthDp >= AppTheme.spacing.expandedNavigationBreakpoint
     if (isExpandedWidth) {
         Scaffold(topBar = topBar, modifier = modifier) { innerPadding ->
             Row(modifier = Modifier.padding(innerPadding)) {

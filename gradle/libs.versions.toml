@@ -8,7 +8,7 @@ baselineProfileGradlePlugin = "1.5.0-alpha07"
 binaryCompatibilityValidator = "0.18.1"
 japicmp = "0.4.6"
 composeBom = "2026.06.01"
-detekt = "1.23.8"
+detekt = "2.0.0-alpha.5"
 dokka = "2.2.0"
 junitJupiter = "6.1.2"
 junitPlatform = "6.1.2"
@@ -70,7 +70,7 @@ android-test = { id = "com.android.test", version.ref = "agp" }
 androidx-baselineprofile = { id = "androidx.baselineprofile", version.ref = "baselineProfileGradlePlugin" }
 binary-compatibility-validator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "binaryCompatibilityValidator" }
 japicmp = { id = "me.champeau.gradle.japicmp", version.ref = "japicmp" }
-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+detekt = { id = "dev.detekt", version.ref = "detekt" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

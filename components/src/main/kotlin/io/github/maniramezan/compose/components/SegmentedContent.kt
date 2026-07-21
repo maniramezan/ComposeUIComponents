@@ -565,8 +565,8 @@ private fun SegmentSlot(
     density: SegmentDensity,
     unselectedSegmentColor: Color,
     segmentTitle: @Composable (Int, SegmentedItem, Boolean) -> Unit,
-    fillVisualWidth: Boolean = false,
     modifier: Modifier = Modifier,
+    fillVisualWidth: Boolean = false,
 ) {
     val segmentBg by animateColorAsState(
         targetValue =
