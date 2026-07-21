@@ -44,8 +44,8 @@ tasks.register("composeCompilerReports") {
     )
 }
 
-tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
-    jvmTarget = "17"
+tasks.withType<dev.detekt.gradle.Detekt>().configureEach {
+    jvmTarget.set("17")
 }
 
 abstract class DownloadBaselineAar : DefaultTask() {
@@ -85,17 +85,17 @@ abstract class DownloadBaselineAar : DefaultTask() {
 }
 
 subprojects {
-    pluginManager.apply("io.gitlab.arturbosch.detekt")
+    pluginManager.apply("dev.detekt")
     pluginManager.apply("org.jlleitschuh.gradle.ktlint")
 
-    extensions.configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
+    extensions.configure<dev.detekt.gradle.extensions.DetektExtension> {
         buildUponDefaultConfig = true
         config.setFrom(rootProject.files("config/detekt/detekt.yml"))
         parallel = true
     }
 
-    tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
-        jvmTarget = "17"
+    tasks.withType<dev.detekt.gradle.Detekt>().configureEach {
+        jvmTarget.set("17")
     }
 
     pluginManager.withPlugin("com.android.library") {
