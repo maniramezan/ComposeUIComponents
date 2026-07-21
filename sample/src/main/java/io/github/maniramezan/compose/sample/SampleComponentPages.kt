@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Badge
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -512,39 +513,6 @@ internal fun TabRowPage() {
 }
 
 @Composable
-internal fun BottomBarPage() {
-    var index by remember { mutableIntStateOf(0) }
-    var showBadge by remember { mutableStateOf(true) }
-    val labels = listOf("Home", "Tasks", "Close")
-    val items =
-        listOf(
-            TabBarItemData(
-                value = 0,
-                icon = { Icon(imageVector = AppTheme.icons.check.imageVector, contentDescription = null) },
-                label = { Text(labels[0]) },
-            ),
-            TabBarItemData(
-                value = 1,
-                icon = { Icon(imageVector = AppTheme.icons.check.imageVector, contentDescription = null) },
-                label = { Text(labels[1]) },
-                badge = if (showBadge) ({ Text("5") }) else null,
-            ),
-            TabBarItemData(
-                value = 2,
-                icon = { Icon(imageVector = AppTheme.icons.close.imageVector, contentDescription = null) },
-                label = { Text(labels[2]) },
-            ),
-        )
-
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        TabBar(items = items, selection = index, onSelectionChange = { index = it })
-        Text("Selected: ${labels[index]}")
-        ControlsDivider()
-        ControlSwitch(label = "Show badge", checked = showBadge, onCheckedChange = { showBadge = it })
-    }
-}
-
-@Composable
 internal fun NavRailPage() {
     var index by remember { mutableIntStateOf(0) }
     var showBadge by remember { mutableStateOf(true) }
@@ -853,6 +821,70 @@ internal fun SegmentedContentPage() {
             label = "Custom title slot (icon + label)",
             checked = useIconTitle,
             onCheckedChange = { useIconTitle = it },
+        )
+    }
+}
+
+@Composable
+private fun TabBarViewPlaceholder(title: String) {
+    Box(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(96.dp)
+                .clip(AppTheme.shapes.large)
+                .background(AppTheme.colors.surfaceContainer),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(text = "$title view", style = AppTheme.typography.titleSmall)
+    }
+}
+
+@Composable
+internal fun BottomBarPage() {
+    var selection by remember { mutableIntStateOf(0) }
+    var showBadge by remember { mutableStateOf(true) }
+    var rtlMode by remember { mutableStateOf(false) }
+    val layoutDirection = if (rtlMode) LayoutDirection.Rtl else LayoutDirection.Ltr
+    val labels = listOf("Home", "Tasks", "Alerts")
+
+    val items =
+        listOf(
+            TabBarItemData(
+                value = 0,
+                icon = { Icon(imageVector = AppTheme.icons.check.imageVector, contentDescription = null) },
+                label = { Text(labels[0]) },
+            ),
+            TabBarItemData(
+                value = 1,
+                icon = { Icon(imageVector = AppTheme.icons.check.imageVector, contentDescription = null) },
+                label = { Text(labels[1]) },
+            ),
+            TabBarItemData(
+                value = 2,
+                icon = { Icon(imageVector = AppTheme.icons.close.imageVector, contentDescription = null) },
+                label = { Text(labels[2]) },
+                // Reuses Material's Badge composable — BadgedBox anchors it to the icon's
+                // top-end corner, which mirrors to top-start automatically under RTL.
+                badge = if (showBadge) ({ Badge { Text("5") } }) else null,
+            ),
+        )
+
+    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
+        CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
+            Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
+                // Tapping a tab swaps the view shown above the bar, mimicking real navigation
+                // between top-level destinations.
+                TabBarViewPlaceholder(title = labels[selection])
+                TabBar(items = items, selection = selection, onSelectionChange = { selection = it })
+            }
+        }
+        ControlsDivider()
+        ControlSwitch(label = "Show badge", checked = showBadge, onCheckedChange = { showBadge = it })
+        ControlSwitch(
+            label = "RTL layout",
+            checked = rtlMode,
+            onCheckedChange = { rtlMode = it },
         )
     }
 }
