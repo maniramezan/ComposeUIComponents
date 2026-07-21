@@ -272,6 +272,9 @@ public fun TabBar(
         color = containerColor,
         modifier =
             modifier
+                // Clip outside the size-reporting layout so hidden content cannot draw into the
+                // space that the parent reclaims as this bar collapses.
+                .graphicsLayer { clip = true }
                 .layout { measurable, constraints ->
                     val placeable = measurable.measure(constraints)
                     // Report the bar's full natural height as the scroll behavior's collapse
@@ -287,7 +290,7 @@ public fun TabBar(
                         // from the bottom up.
                         placeable.place(0, shrunkHeight - placeable.height)
                     }
-                }.graphicsLayer { clip = true },
+                },
     ) {
         CompositionLocalProvider(LocalTabBarArrangement provides arrangement) {
             Row(
