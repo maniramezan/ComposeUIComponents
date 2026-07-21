@@ -15,13 +15,6 @@ on:
         description: Exact version to release, e.g. 0.12.0
         required: false
         type: string
-      accept_binary_breaking_change:
-        description: >-
-          Acknowledge and proceed despite a failing binaryCompatibilityCheck (pre-1.0
-          intentional breaking change, e.g. a feat!/BREAKING CHANGE release).
-        required: false
-        type: boolean
-        default: false
 
 permissions:
   contents: write
@@ -176,9 +169,7 @@ jobs:
 
       - name: Check
         if: steps.version.outputs.release == 'true'
-        run: >-
-          ./gradlew check -PVERSION_NAME=${{ steps.version.outputs.version }}
-          -PacceptBinaryBreakingChange=${{ inputs.accept_binary_breaking_change || false }}
+        run: ./gradlew check -PVERSION_NAME=${{ steps.version.outputs.version }}
       - name: Record component screenshots
         if: steps.version.outputs.release == 'true'
         run: ./gradlew :components:recordRoborazziDebug -PVERSION_NAME=${{ steps.version.outputs.version }}
