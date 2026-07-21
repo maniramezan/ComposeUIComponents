@@ -45,13 +45,13 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
 import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.utils.minimumTouchTarget
 import io.github.maniramezan.compose.utils.minimumTouchTargetHeight
@@ -271,9 +271,22 @@ public fun TabBar(
         color = containerColor,
         modifier =
             modifier
-                .onSizeChanged { size ->
-                    scrollBehavior?.updateHeightOffsetLimit(-size.height.toFloat())
-                }.offset { IntOffset(x = 0, y = -heightOffset.roundToInt()) },
+                .layout { measurable, constraints ->
+                    val placeable = measurable.measure(constraints)
+                    // Report the bar's full natural height as the scroll behavior's collapse
+                    // limit, then report a *shrunk* layout size to our own parent (e.g. Scaffold)
+                    // as the bar hides — not just a draw-time offset — so the parent's reserved
+                    // space (and therefore the content above it) actually shrinks/expands as the
+                    // bar hides/reappears, instead of always reserving the bar's full height.
+                    scrollBehavior?.updateHeightOffsetLimit(-placeable.height.toFloat())
+                    val shrunkHeight = (placeable.height + heightOffset.roundToInt()).coerceIn(0, placeable.height)
+                    layout(placeable.width, shrunkHeight) {
+                        // Keep the bar's bottom edge pinned to the shrunk box's bottom edge, so it
+                        // collapses top-down (sinks toward the bottom of the screen) rather than
+                        // from the bottom up.
+                        placeable.place(0, shrunkHeight - placeable.height)
+                    }
+                }.graphicsLayer { clip = true },
     ) {
         CompositionLocalProvider(LocalTabBarArrangement provides arrangement) {
             Row(
