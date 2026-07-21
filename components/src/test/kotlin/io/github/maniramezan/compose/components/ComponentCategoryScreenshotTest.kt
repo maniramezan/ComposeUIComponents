@@ -117,6 +117,13 @@ public class ComponentCategoryScreenshotTest {
     }
 
     @Test
+    public fun pillChipTierBadgeMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/pill-chip-tier-badge.png") {
+            PillChipTierBadgePreview()
+        }
+    }
+
+    @Test
     public fun selectionListMatchesGolden() {
         captureRoboImage("build/outputs/roborazzi/selection-list.png") {
             SelectionListSingleChoicePreview()
@@ -162,13 +169,6 @@ public class ComponentCategoryScreenshotTest {
     public fun contentRowMatchesGolden() {
         captureRoboImage("build/outputs/roborazzi/content-row.png") {
             ContentRowPreview()
-        }
-    }
-
-    @Test
-    public fun levelBadgeMatchesGolden() {
-        captureRoboImage("build/outputs/roborazzi/level-badge.png") {
-            LevelBadgePreview()
         }
     }
 

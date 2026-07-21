@@ -15,7 +15,6 @@ class ExtractedComponentsTest {
                 "AdaptiveContentContainer",
                 "SectionHeader",
                 "ContentRow",
-                "LevelBadge",
                 "SkeletonBlock",
             ),
         ).containsExactly(
@@ -24,7 +23,6 @@ class ExtractedComponentsTest {
             "AdaptiveContentContainer",
             "SectionHeader",
             "ContentRow",
-            "LevelBadge",
             "SkeletonBlock",
         ).inOrder()
     }

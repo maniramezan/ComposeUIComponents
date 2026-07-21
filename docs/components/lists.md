@@ -40,7 +40,7 @@ AppTheme {
         supportingText = "Lasting for a very short time.",
         onClick = { /* open detail */ },
         trailingContent = {
-            LevelBadge(label = "C1", tier = AppTheme.colors.levels.tier(2))
+            PillChip(label = "C1", tier = AppTheme.colors.levels.tier(2))
         },
     )
 }

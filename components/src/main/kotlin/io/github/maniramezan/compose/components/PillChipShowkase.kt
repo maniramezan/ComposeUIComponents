@@ -20,3 +20,17 @@ public fun PillChipShowkase(): Unit =
             PillChip(label = "Unselected", isSelected = false, onClick = {})
         }
     }
+
+@ShowkaseComposable(name = "Pill Chip Tier Badge", group = "Actions")
+@Composable
+public fun PillChipTierBadgeShowkase(): Unit =
+    AppTheme {
+        Row(
+            modifier = Modifier.padding(AppTheme.spacing.x2),
+            horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.x1),
+        ) {
+            PillChip(label = "Beginner", tier = AppTheme.colors.levels.tier(0))
+            PillChip(label = "Intermediate", tier = AppTheme.colors.levels.tier(1))
+            PillChip(label = "Advanced", tier = AppTheme.colors.levels.tier(2))
+        }
+    }

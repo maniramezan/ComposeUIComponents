@@ -18,7 +18,7 @@ public fun ContentRowPreview(): Unit =
             supportingText = "Lasting for a very short time.",
             onClick = {},
             trailingContent = {
-                LevelBadge(label = "C1", tier = AppTheme.colors.levels.tier(2))
+                PillChip(label = "C1", tier = AppTheme.colors.levels.tier(2))
             },
         )
     }

@@ -25,3 +25,19 @@ public fun PillChipPreview(): Unit =
             PillChip(label = "Advanced", isSelected = false, onClick = {})
         }
     }
+
+@PreviewLightDark
+@PreviewFontScale
+@Preview(name = "PillChip Tier Badge", group = "Actions")
+@Composable
+public fun PillChipTierBadgePreview(): Unit =
+    AppTheme {
+        Row(
+            modifier = Modifier.padding(AppTheme.spacing.x2),
+            horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.x1),
+        ) {
+            PillChip(label = "Beginner", tier = AppTheme.colors.levels.tier(0))
+            PillChip(label = "Advanced", tier = AppTheme.colors.levels.tier(1))
+            PillChip(label = "Expert", tier = AppTheme.colors.levels.tier(2))
+        }
+    }

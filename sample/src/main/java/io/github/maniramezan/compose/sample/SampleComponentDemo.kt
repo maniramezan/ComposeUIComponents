@@ -289,10 +289,10 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
         ),
         SampleComponentDemo(
             id = "level-badge",
-            title = "LevelBadge",
+            title = "PillChip (tier badge)",
             category = "Chips & Badges",
             description = "Coloured tier badge for proficiency or level indicators.",
-            content = { LevelBadgePage() },
+            content = { PillChipTierBadgePage() },
         ),
     )
 
