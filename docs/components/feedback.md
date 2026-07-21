@@ -9,7 +9,6 @@ Feedback components communicate loading, transient status, and placeholder state
 - `SkeletonBlock`
 - `Toast`
 - `ToastHost`
-- `LevelBadge`
 
 ![Feedback components](https://maniramezan.github.io/ComposeUIComponents/images/screenshots/feedback-components.png)
 
@@ -104,33 +103,3 @@ Box(Modifier.fillMaxSize()) {
     )
 }
 ```
-
-## LevelBadge
-
-`LevelBadge` is a small inline badge labeled with text and tinted with a `LevelTier`
-from a `LevelPalette`. Use it for tiered indicators — skill level, difficulty,
-priority, and similar categorical scales — where the tint encodes the tier and the
-label spells it out.
-
-```kotlin
-AppTheme {
-    Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.x1)) {
-        LevelBadge(label = "Beginner", tier = AppTheme.colors.levels.tier(0))
-        LevelBadge(label = "Advanced", tier = AppTheme.colors.levels.tier(1))
-        LevelBadge(label = "Expert", tier = AppTheme.colors.levels.tier(2))
-    }
-}
-```
-
-Callers typically read a tier via `AppTheme.colors.levels.tier(level.ordinal)` and pass
-it here, decoupling the badge from the app's own level taxonomy. `LevelPalette` ships
-empty by default — supply your own tiers (background + foreground color pairs) when
-building `AppTheme`.
-
-### Parameters
-
-| Parameter | Type | Description |
-| --- | --- | --- |
-| `label` | `String` | Badge text. |
-| `tier` | `LevelTier` | Background/foreground color pair for this tier. |
-| `modifier` | `Modifier` | Applied to the badge container. |
