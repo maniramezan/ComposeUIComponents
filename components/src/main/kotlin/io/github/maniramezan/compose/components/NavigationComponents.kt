@@ -124,11 +124,11 @@ public enum class TabBarArrangement {
 public object TabBarDefaults {
     /** Minimum content height of a [TabBar], excluding system bar insets. */
     public val MinHeight: Dp
-        @Composable get() = AppTheme.spacing.x8
+        @Composable get() = AppTheme.spacing.x7
 
     /** Width of the selected-destination indicator pill. */
     public val IndicatorWidth: Dp
-        @Composable get() = AppTheme.spacing.x7
+        @Composable get() = AppTheme.spacing.x5
 
     /** Height of the selected-destination indicator pill. */
     public val IndicatorHeight: Dp
@@ -342,7 +342,7 @@ public fun <T> RowScope.TabBarItem(
                 role = Role.Tab,
                 onClick = { onSelectionChange(value) },
             ).minimumTouchTarget(minimumTouchTargetSize())
-            .padding(vertical = AppTheme.spacing.x1)
+            .padding(vertical = AppTheme.spacing.half)
     if (label == null && contentDescription.isNotBlank()) {
         itemModifier = itemModifier.semantics { this.contentDescription = contentDescription }
     }
