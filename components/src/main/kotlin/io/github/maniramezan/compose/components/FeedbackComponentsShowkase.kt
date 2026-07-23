@@ -47,3 +47,15 @@ public fun ToastShowkase(): Unit =
             onAction = {},
         )
     }
+
+@ShowkaseComposable(name = "Chat Log", group = "Feedback")
+@Composable
+public fun ChatLogShowkase(): Unit = ChatLogPreview()
+
+@ShowkaseComposable(name = "Assistant Chat Surface", group = "Feedback")
+@Composable
+public fun AssistantChatSurfaceShowkase(): Unit = AssistantChatSurfacePreview()
+
+@ShowkaseComposable(name = "Assistant Quick Actions", group = "Feedback")
+@Composable
+public fun AssistantQuickActionChipsShowkase(): Unit = AssistantQuickActionChipsPreview()

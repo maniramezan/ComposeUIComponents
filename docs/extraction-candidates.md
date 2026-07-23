@@ -25,6 +25,8 @@ Audit source: `~/Developer/novalingo/mobile/Android`. Do not copy app code into 
 | ⏳ Pending | Search bar | — | `core-ui/SearchBar.kt`, `feature/home/HomeSearchBar.kt` | Library already ships `SearchField`. Audit Novalingo's variant against it before adding a second component. |
 | ⏳ Pending | Empty state | — | `core-ui/EmptyStateView.kt` | Library already ships `EmptyState`. Audit for icon/action parity before adding a second component. |
 | ⏳ Pending | Error retry state | — | `core-ui/ErrorRetryView.kt`, `feature/player/PlayerErrorOverlay.kt` | Library already ships `ErrorState`. Audit for icon/action-button styling parity. |
+| ✅ Done | Typewriter text reveal | `compose-utils/TypewriterReveal.kt` | `core-ui/aiassistant/AIAssistantChatLog.kt::AIMarkdownBubble` | `rememberTypewriterReveal` state hook: progressively reveals a growing target string (e.g. token-stream chunks) instead of popping in whole chunks; catches up on extension, restarts on divergence. Rendering-agnostic — returns the revealed prefix as `State<String>`, caller renders it with any text/markdown composable. |
+| ⏳ Pending | Chat bubble | — | `core-ui/aiassistant/AIAssistantChatLog.kt::{AIUserBubble, AIAssistantBubble}` | Novalingo shares left/right-aligned message bubbles (fraction-width `Row` + `Card`, generic over a chat-turn interface) between its word and grammar AI assistants. Audit before extracting: needs a rendering-agnostic content slot (the app mixes plain `Text` and third-party Markdown rendering per state) and a turn-type contract this library shouldn't own. |
 
 ## Token References
 
