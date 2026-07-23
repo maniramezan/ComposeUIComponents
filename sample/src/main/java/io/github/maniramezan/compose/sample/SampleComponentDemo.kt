@@ -281,6 +281,13 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             content = { TypewriterRevealPage() },
         ),
         SampleComponentDemo(
+            id = "assistant-chat",
+            title = "AssistantChat",
+            category = "Feedback",
+            description = "Full assistant surface with context, chat log, quick actions, status, and limit states.",
+            content = { AssistantChatPage() },
+        ),
+        SampleComponentDemo(
             id = "app-text",
             title = "AppText",
             category = "Typography",

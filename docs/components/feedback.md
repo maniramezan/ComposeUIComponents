@@ -9,6 +9,12 @@ Feedback components communicate loading, transient status, and placeholder state
 - `SkeletonBlock`
 - `Toast`
 - `ToastHost`
+- `ChatLog`
+- `AssistantContextCard`
+- `AssistantQuickActionChips`
+- `AssistantStatusBanner`
+- `AssistantLimitPromptCard`
+- `AssistantDisclaimerFooter`
 
 ![Feedback components](https://maniramezan.github.io/ComposeUIComponents/images/screenshots/feedback-components.png)
 
@@ -24,6 +30,91 @@ AppTheme {
 ```
 
 Use `progress = null` for indeterminate loading. `Toast` is an in-composition visual component, not a platform `android.widget.Toast` wrapper.
+
+## Chat logs
+
+`ChatLog` renders reusable conversation bubbles with user/assistant alignment,
+typing indicator state, and a retryable error bubble. Keep domain models in your
+app and map them into `ChatMessage` values at the UI boundary:
+
+```kotlin
+ChatLog(
+    messages = state.turns.map { turn ->
+        ChatMessage(
+            id = turn.id,
+            sender = ChatMessageSender.Assistant,
+            state = ChatMessageState.Content(turn.text),
+        )
+    },
+    idleHint = "Ask a question to get started.",
+    typingDescription = "Assistant is responding",
+    errorAction = ChatErrorAction(
+        message = "Could not load the response.",
+        retryLabel = "Retry",
+        onRetry = onRetry,
+    ),
+)
+```
+
+Use `ChatMessageState.Typing` for in-flight responses and provide a localized
+`typingDescription` so the state is announced accessibly. For markdown or rich
+text, pass `messageContent`; the design-system component intentionally does not
+depend on a markdown renderer:
+
+```kotlin
+ChatLog(
+    messages = messages,
+    idleHint = "",
+    errorAction = errorAction,
+    messageContent = { _, text ->
+        MarkdownText(markdown = text)
+    },
+)
+```
+
+## Assistant chat surfaces
+
+For quick-action assistant experiences, compose the chat log with the surrounding
+assistant components:
+
+```kotlin
+Column {
+    AssistantStatusBanner(message = unavailableMessage)
+
+    AssistantContextCard(
+        title = contextTitle,
+        highlight = contextHighlight,
+        body = AssistantContextBody(text = sourceText, isQuoted = true),
+        footnote = contextFootnote,
+    )
+
+    ChatLog(
+        messages = messages,
+        idleHint = idleHint,
+        errorAction = errorAction,
+        modifier = Modifier.weight(1f),
+    )
+
+    AssistantQuickActionChips(
+        actions = actions,
+        actionState = { action ->
+            AssistantQuickActionState(
+                isSelected = action in usedActions,
+                isEnabled = serviceAvailable && !isResponding && action !in usedActions,
+            )
+        },
+        label = { action -> action.label },
+        onAction = onAction,
+    )
+
+    AssistantDisclaimerFooter(text = disclaimer)
+}
+```
+
+`AssistantQuickActionChips` is generic over the action type, so apps can reuse it
+for one-shot actions, re-runnable actions, selected/in-flight actions, or disabled
+quota states. `AssistantLimitPromptCard` covers quota, upgrade, and gated-action
+prompts with caller-supplied copy and callbacks.
 
 ## Skeleton loading placeholders
 
