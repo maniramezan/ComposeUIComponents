@@ -22,7 +22,7 @@ import androidx.compose.ui.text.font.FontStyle
 import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.utils.minimumTouchTargetHeight
 
-private const val DisabledQuickActionAlpha = 0.45f
+private const val DISABLED_QUICK_ACTION_ALPHA = 0.45f
 
 /** Optional body line for [AssistantContextCard]. */
 @Immutable
@@ -134,11 +134,11 @@ public fun <T> AssistantQuickActionChips(
                         selectedContainerColor = AppTheme.colors.primaryContainer,
                         selectedLabelColor = AppTheme.colors.onPrimaryContainer,
                         disabledContainerColor = AppTheme.colors.surfaceVariant,
-                        disabledLabelColor = AppTheme.colors.onSurfaceVariant.copy(alpha = DisabledQuickActionAlpha),
+                        disabledLabelColor = AppTheme.colors.onSurfaceVariant.copy(alpha = DISABLED_QUICK_ACTION_ALPHA),
                         disabledSelectedContainerColor =
-                            AppTheme.colors.primaryContainer.copy(alpha = DisabledQuickActionAlpha),
+                            AppTheme.colors.primaryContainer.copy(alpha = DISABLED_QUICK_ACTION_ALPHA),
                         disabledLeadingIconColor =
-                            AppTheme.colors.onSurfaceVariant.copy(alpha = DisabledQuickActionAlpha),
+                            AppTheme.colors.onSurfaceVariant.copy(alpha = DISABLED_QUICK_ACTION_ALPHA),
                     ),
             )
         }

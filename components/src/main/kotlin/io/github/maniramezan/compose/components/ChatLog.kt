@@ -35,7 +35,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import io.github.maniramezan.compose.theme.AppTheme
 
-private const val ChatBubbleMaxWidthFraction = 0.85f
+private const val CHAT_BUBBLE_MAX_WIDTH_FRACTION = 0.85f
 
 /** Sender alignment and color treatment for a chat message bubble. */
 public enum class ChatMessageSender {
@@ -174,7 +174,7 @@ private fun ChatBubble(
         }
 
     Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = horizontalArrangement) {
-        Box(modifier = Modifier.fillMaxWidth(ChatBubbleMaxWidthFraction), contentAlignment = contentAlignment) {
+        Box(modifier = Modifier.fillMaxWidth(CHAT_BUBBLE_MAX_WIDTH_FRACTION), contentAlignment = contentAlignment) {
             when (message.state) {
                 is ChatMessageState.Content -> ChatContentBubble(message = message, content = content)
                 ChatMessageState.Typing -> ChatTypingBubble(typingDescription = typingDescription)
