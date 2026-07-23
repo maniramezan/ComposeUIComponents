@@ -274,6 +274,13 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             content = { SkeletonBlockPage() },
         ),
         SampleComponentDemo(
+            id = "typewriter-reveal",
+            title = "rememberTypewriterReveal",
+            category = "Feedback",
+            description = "Progressively reveals a growing target string, e.g. a token stream.",
+            content = { TypewriterRevealPage() },
+        ),
+        SampleComponentDemo(
             id = "app-text",
             title = "AppText",
             category = "Typography",
