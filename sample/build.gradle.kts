@@ -30,6 +30,7 @@ dependencies {
     implementation(project(":theme"))
     implementation(project(":icons"))
     implementation(project(":components"))
+    implementation(project(":compose-utils"))
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.activity.compose)
     implementation(libs.androidx.compose.foundation)

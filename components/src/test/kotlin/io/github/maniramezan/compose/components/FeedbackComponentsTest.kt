@@ -10,14 +10,28 @@ class FeedbackComponentsTest {
             listOf(
                 "ProgressIndicator",
                 "Skeleton",
+                "SkeletonBlock",
                 "Toast",
                 "ToastHost",
+                "ChatLog",
+                "AssistantContextCard",
+                "AssistantQuickActionChips",
+                "AssistantStatusBanner",
+                "AssistantLimitPromptCard",
+                "AssistantDisclaimerFooter",
             ),
         ).containsExactly(
             "ProgressIndicator",
             "Skeleton",
+            "SkeletonBlock",
             "Toast",
             "ToastHost",
+            "ChatLog",
+            "AssistantContextCard",
+            "AssistantQuickActionChips",
+            "AssistantStatusBanner",
+            "AssistantLimitPromptCard",
+            "AssistantDisclaimerFooter",
         ).inOrder()
     }
 }
