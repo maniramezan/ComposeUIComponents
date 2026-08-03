@@ -150,7 +150,7 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: gradle/actions/setup-gradle@v6
+      - uses: gradle/actions/setup-gradle@v6.2.0
         if: steps.version.outputs.release == 'true'
 
       - name: Verify computed version is newer than checked-in VERSION_NAME
