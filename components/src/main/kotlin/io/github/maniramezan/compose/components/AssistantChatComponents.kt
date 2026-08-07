@@ -13,11 +13,13 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontStyle
 import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.utils.minimumTouchTargetHeight
@@ -102,6 +104,8 @@ public fun AssistantContextCard(
  * Generic horizontal quick-action chip row for assistant/chat flows.
  *
  * Callers own the action type, labels, selection rules, and enablement rules.
+ * [icon] is optional and defaults to no leading icon, mirroring the
+ * `systemImage` parameter on iOS's `AssistantQuickActionChipRow`.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -111,6 +115,7 @@ public fun <T> AssistantQuickActionChips(
     label: @Composable (T) -> String,
     onAction: (T) -> Unit,
     modifier: Modifier = Modifier,
+    icon: (T) -> ImageVector? = { null },
 ) {
     Row(
         modifier =
@@ -121,11 +126,16 @@ public fun <T> AssistantQuickActionChips(
     ) {
         actions.forEach { action ->
             val state = actionState(action)
+            val actionIcon = icon(action)
             FilterChip(
                 selected = state.isSelected,
                 enabled = state.isEnabled,
                 onClick = { onAction(action) },
                 label = { Text(label(action)) },
+                leadingIcon =
+                    actionIcon?.let {
+                        { Icon(imageVector = it, contentDescription = null) }
+                    },
                 modifier = Modifier.minimumTouchTargetHeight(minimumTouchTargetSize()),
                 colors =
                     FilterChipDefaults.filterChipColors(
