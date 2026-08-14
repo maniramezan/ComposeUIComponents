@@ -134,7 +134,9 @@ public fun <T> AssistantQuickActionChips(
                 label = { Text(label(action)) },
                 leadingIcon =
                     actionIcon?.let {
-                        { Icon(imageVector = it, contentDescription = null) }
+                        // Decorative: the chip's own label + selected state already
+                        // carry the accessible semantics for this action.
+                        { Icon(imageVector = it, contentDescription = null) } // @check:suppress
                     },
                 modifier = Modifier.minimumTouchTargetHeight(minimumTouchTargetSize()),
                 colors =
