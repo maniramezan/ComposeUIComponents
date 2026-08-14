@@ -104,6 +104,7 @@ Column {
             )
         },
         label = { action -> action.label },
+        icon = { action -> action.icon },
         onAction = onAction,
     )
 
@@ -113,8 +114,9 @@ Column {
 
 `AssistantQuickActionChips` is generic over the action type, so apps can reuse it
 for one-shot actions, re-runnable actions, selected/in-flight actions, or disabled
-quota states. `AssistantLimitPromptCard` covers quota, upgrade, and gated-action
-prompts with caller-supplied copy and callbacks.
+quota states. `icon` is optional and defaults to no leading icon per action.
+`AssistantLimitPromptCard` covers quota, upgrade, and gated-action prompts with
+caller-supplied copy and callbacks.
 
 ## Skeleton loading placeholders
 

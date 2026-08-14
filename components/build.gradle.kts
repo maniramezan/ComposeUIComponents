@@ -40,6 +40,7 @@ dependencies {
     testImplementation(libs.roborazzi.compose)
     testImplementation(libs.roborazzi.junit.rule)
     testImplementation(libs.androidx.compose.ui.test.junit4)
+    testImplementation(libs.androidx.compose.material.icons.core)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     testImplementation(libs.truth)
     testRuntimeOnly(libs.junit.platform.launcher)
