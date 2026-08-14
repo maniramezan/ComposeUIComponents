@@ -1,5 +1,7 @@
 package io.github.maniramezan.compose.components
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
@@ -61,6 +63,23 @@ public class AssistantChatComponentsTest {
         composeRule.runOnIdle {
             assert(selectedAction == "Explain") { "Expected Explain, got $selectedAction" }
         }
+    }
+
+    @Test
+    public fun quickActionChipsRenderCallerSuppliedLeadingIcon() {
+        composeRule.setContent {
+            AppTheme {
+                AssistantQuickActionChips(
+                    actions = listOf("Explain"),
+                    actionState = { AssistantQuickActionState(isSelected = false, isEnabled = true) },
+                    label = { it },
+                    onAction = {},
+                    icon = { Icons.Filled.Star },
+                )
+            }
+        }
+
+        composeRule.onNodeWithText("Explain").assertIsDisplayed()
     }
 
     @Test
