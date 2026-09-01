@@ -2,6 +2,7 @@ package io.github.maniramezan.compose.sample
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -9,6 +10,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import io.github.maniramezan.compose.components.ActionPill
 import io.github.maniramezan.compose.components.FAB
 import io.github.maniramezan.compose.components.IconButton
 import io.github.maniramezan.compose.components.PrimaryButton
@@ -30,6 +32,35 @@ internal fun PrimaryButtonPage() {
         PrimaryButton(text = "Primary Button", onClick = {}, enabled = enabled)
         ControlsDivider()
         ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
+    }
+}
+
+@Composable
+internal fun ActionPillPage() {
+    var showValue by remember { mutableStateOf(true) }
+    var prominent by remember { mutableStateOf(false) }
+    var compact by remember { mutableStateOf(false) }
+    var tapCount by remember { mutableIntStateOf(0) }
+
+    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
+        ActionPill(
+            onClick = { tapCount += 1 },
+            containerColor = if (prominent) AppTheme.colors.primary else AppTheme.colors.surfaceVariant,
+            contentColor = if (prominent) AppTheme.colors.onPrimary else AppTheme.colors.onSurfaceVariant,
+            contentPadding =
+                PaddingValues(
+                    horizontal = if (compact) AppTheme.spacing.x1 else AppTheme.spacing.x1_5,
+                    vertical = if (compact) AppTheme.spacing.half else AppTheme.spacing.x1,
+                ),
+        ) {
+            Text(text = "Status")
+            if (showValue) Text(text = "Active")
+        }
+        Text(text = "Tap count: $tapCount")
+        ControlsDivider()
+        ControlSwitch(label = "Show value", checked = showValue, onCheckedChange = { showValue = it })
+        ControlSwitch(label = "Prominent colors", checked = prominent, onCheckedChange = { prominent = it })
+        ControlSwitch(label = "Compact padding", checked = compact, onCheckedChange = { compact = it })
     }
 }
 
