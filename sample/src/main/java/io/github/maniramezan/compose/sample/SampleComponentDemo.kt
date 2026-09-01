@@ -183,6 +183,13 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             content = { ShowcaseFeedPage() },
         ),
         SampleComponentDemo(
+            id = "flow-layout",
+            title = "FlowLayout",
+            category = "Layout",
+            description = "Wrapping layout with configurable item count, label width, and spacing.",
+            content = { FlowLayoutPage() },
+        ),
+        SampleComponentDemo(
             id = "list-item",
             title = "ListItem",
             category = "Lists",
@@ -223,6 +230,13 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             category = "Containers",
             description = "Elevated surface card with padded column content.",
             content = { CardPage() },
+        ),
+        SampleComponentDemo(
+            id = "disclosure-card",
+            title = "DisclosureCard",
+            category = "Containers",
+            description = "Expandable card with configurable state, content length, and accessibility descriptions.",
+            content = { DisclosureCardPage() },
         ),
         SampleComponentDemo(
             id = "overlay-card",

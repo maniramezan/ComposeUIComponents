@@ -119,6 +119,12 @@ For release-oriented changes, also account for:
 - Catalog and sample are validation surfaces, not just demos; keep them aligned with reusable-component behavior and edge-to-edge expectations.
 - For input-heavy screens in sample/catalog, preserve IME-safe layout behavior and safe-drawing inset handling.
 
+## Sample-App Coverage (Required)
+
+- Every new public component must be registered in the `:sample` browser in the same PR that introduces it.
+- Its sample page must provide live controls for every meaningful configurable parameter and state so reviewers can exercise behavior without editing source code. A static preview, Showkase entry, screenshot test, or documentation snippet does not satisfy this requirement.
+- New-component PRs are incomplete until `:sample:assembleDebug` passes with the configurable demo included.
+
 ## Extraction From Apps
 
 - Treat Novalingo and other apps as sources of patterns, not code to copy wholesale.

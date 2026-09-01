@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import io.github.maniramezan.compose.components.Card
+import io.github.maniramezan.compose.components.DisclosureCard
 import io.github.maniramezan.compose.components.FlipAxis
 import io.github.maniramezan.compose.components.FlipCard
 import io.github.maniramezan.compose.components.OverlayCard
@@ -61,6 +62,41 @@ internal fun CardPage() {
             label = "Multi-line content",
             checked = multiLine,
             onCheckedChange = { multiLine = it },
+        )
+    }
+}
+
+@Composable
+internal fun DisclosureCardPage() {
+    var expanded by remember { mutableStateOf(false) }
+    var longDetail by remember { mutableStateOf(false) }
+    var announceState by remember { mutableStateOf(true) }
+
+    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
+        DisclosureCard(
+            expanded = expanded,
+            onExpandedChange = { expanded = it },
+            expandedStateDescription = if (announceState) "Expanded" else null,
+            collapsedStateDescription = if (announceState) "Collapsed" else null,
+            summary = { Text(text = "Section title") },
+            detail = {
+                Text(
+                    text =
+                        if (longDetail) {
+                            "Additional information can span multiple lines to validate wrapping and dynamic height."
+                        } else {
+                            "Additional information"
+                        },
+                )
+            },
+        )
+        ControlsDivider()
+        ControlSwitch(label = "Expanded", checked = expanded, onCheckedChange = { expanded = it })
+        ControlSwitch(label = "Long detail", checked = longDetail, onCheckedChange = { longDetail = it })
+        ControlSwitch(
+            label = "State descriptions",
+            checked = announceState,
+            onCheckedChange = { announceState = it },
         )
     }
 }
