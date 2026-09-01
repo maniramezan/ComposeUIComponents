@@ -19,7 +19,7 @@ import io.github.maniramezan.compose.utils.PreviewLightDark
 public fun FlowLayoutPreview(): Unit =
     AppTheme {
         FlowLayout {
-            listOf("Synonym", "A longer related term", "Antonym", "Variant").forEach { label ->
+            listOf("Alpha", "A longer item", "Beta", "Gamma").forEach { label ->
                 Text(
                     text = label,
                     modifier =

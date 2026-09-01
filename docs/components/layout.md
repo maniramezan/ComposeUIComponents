@@ -10,7 +10,7 @@ other compact collections.
 
 ```kotlin
 FlowLayout {
-    words.forEach { word -> Text(word) }
+    items.forEach { item -> Text(item.label) }
 }
 ```
 
