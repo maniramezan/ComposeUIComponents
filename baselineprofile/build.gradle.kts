@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "io.github.maniramezan.compose.baselineprofile"
-    compileSdk = 36
+    compileSdk = 37
     targetProjectPath = ":sample"
 
     defaultConfig {
         minSdk = 26
-        targetSdk = 36
+        targetSdk = 37
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
