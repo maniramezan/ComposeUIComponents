@@ -70,14 +70,13 @@ internal fun CardPage() {
 internal fun DisclosureCardPage() {
     var expanded by remember { mutableStateOf(false) }
     var longDetail by remember { mutableStateOf(false) }
-    var announceState by remember { mutableStateOf(true) }
 
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
         DisclosureCard(
             expanded = expanded,
             onExpandedChange = { expanded = it },
-            expandedStateDescription = if (announceState) "Expanded" else null,
-            collapsedStateDescription = if (announceState) "Collapsed" else null,
+            expandedStateDescription = "Expanded",
+            collapsedStateDescription = "Collapsed",
             summary = { Text(text = "Section title") },
             detail = {
                 Text(
@@ -93,11 +92,6 @@ internal fun DisclosureCardPage() {
         ControlsDivider()
         ControlSwitch(label = "Expanded", checked = expanded, onCheckedChange = { expanded = it })
         ControlSwitch(label = "Long detail", checked = longDetail, onCheckedChange = { longDetail = it })
-        ControlSwitch(
-            label = "State descriptions",
-            checked = announceState,
-            onCheckedChange = { announceState = it },
-        )
     }
 }
 
