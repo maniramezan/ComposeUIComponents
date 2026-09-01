@@ -2,6 +2,18 @@
 
 Layout components compose other components into higher-level, scrollable structures.
 
+## FlowLayout
+
+`FlowLayout` places content horizontally and wraps additional items onto the next
+row when they no longer fit. It is intended for dynamic-width pills, tags, and
+other compact collections.
+
+```kotlin
+FlowLayout {
+    words.forEach { word -> Text(word) }
+}
+```
+
 ## Components
 
 - `ShowcaseFeed`
