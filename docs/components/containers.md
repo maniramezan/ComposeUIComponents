@@ -87,8 +87,8 @@ Both faces are composed continuously, each on its own rotated graphics layer, so
 ## DisclosureCard
 
 `DisclosureCard` keeps summary content visible and expands supporting detail inline.
-Its summary and detail are slots, and callers supply localized expanded/collapsed
-state descriptions when those announcements are needed.
+Its summary and detail are slots, and callers must supply localized expanded/collapsed
+state descriptions so the control's state is announced to accessibility services.
 
 ```kotlin
 DisclosureCard(

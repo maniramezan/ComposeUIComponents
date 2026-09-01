@@ -25,15 +25,20 @@ import io.github.maniramezan.compose.utils.minimumTouchTarget
 /**
  * A themed card that keeps [summary] visible and reveals [detail] on demand.
  *
- * Accessibility state strings are caller-supplied to preserve localization.
+ * The expandable control's state is announced to accessibility services through
+ * [expandedStateDescription] and [collapsedStateDescription]. Supply localized strings for
+ * both; omitting them would leave the control without a readable expanded/collapsed state.
+ *
+ * @param expandedStateDescription Localized state description announced while [expanded]. Supply a localized string.
+ * @param collapsedStateDescription Localized state description announced while collapsed. Supply a localized string.
  */
 @Composable
 public fun DisclosureCard(
     expanded: Boolean,
     onExpandedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    expandedStateDescription: String? = null,
-    collapsedStateDescription: String? = null,
+    expandedStateDescription: String,
+    collapsedStateDescription: String,
     summary: @Composable RowScope.() -> Unit,
     detail: @Composable () -> Unit,
 ) {
@@ -54,7 +59,7 @@ public fun DisclosureCard(
                     .minimumTouchTarget(minimumTouchTargetSize())
                     .clickable(role = Role.Button) {
                         onExpandedChange(!expanded)
-                    }.semantics { stateLabel?.let { stateDescription = it } }
+                    }.semantics { stateDescription = stateLabel }
                     .padding(AppTheme.spacing.x2),
             verticalAlignment = Alignment.CenterVertically,
         ) {
