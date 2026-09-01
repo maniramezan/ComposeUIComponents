@@ -41,7 +41,7 @@ Before writing a new component or modifier, reuse the shared building blocks the
 **Sample browser scaffolding (`:sample`)**:
 - `SamplePage(preview = { … }, controls = { … })` — the standard demo-page skeleton (live preview, divider, controls panel). Every new component demo must be a `SamplePage`; use the `ControlSwitch`/`ControlSegmented`/`ControlSlider` control helpers for its controls.
 
-When adding a shared helper, follow the module-boundary rules from ADR 0002: theme-agnostic Modifier/utility helpers belong in `:compose-utils`; anything that reads `AppTheme` belongs in `:components`. Keep new shared helpers public and documented (KDoc) so later components reuse them instead of drifting.
+When adding a shared helper, follow the module-boundary rules from ADR 0002: theme-agnostic Modifier/utility helpers belong in `:compose-utils`; anything that reads `AppTheme` belongs in `:components`. Keep cross-module helpers public and documented with KDoc. Keep implementation helpers that are shared only within `:components` package-internal and document non-obvious behavior so later components reuse them instead of drifting.
 
 ## Verification
 

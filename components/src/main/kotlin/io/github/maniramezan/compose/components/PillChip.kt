@@ -42,10 +42,10 @@ public fun PillChip(
     val textColor = if (isSelected) selectedLabel else unselectedLabel
 
     var chipModifier = modifier
+    chipModifier = chipModifier.pillSurface(backgroundColor)
     if (onClick != null) {
         chipModifier = chipModifier.selectableRole(isSelected, onClick, minimumTouchTarget = minimumTouchTargetSize())
     }
-    chipModifier = chipModifier.pillSurface(backgroundColor)
     chipModifier = chipModifier.padding(horizontal = AppTheme.spacing.x2, vertical = AppTheme.spacing.x1)
 
     Box(
