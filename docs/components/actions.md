@@ -13,6 +13,7 @@ Action components wrap Material 3 controls with AppTheme colors, spacing, and mi
 - `SegmentedControl`
 - `SingleChoiceSegmentedButtonRow`
 - `PillChip`
+- `ActionPill`
 
 ![Actions components](https://maniramezan.github.io/ComposeUIComponents/images/screenshots/actions-components.png)
 
@@ -62,6 +63,18 @@ capsules that reuse a `LevelPalette` tier.
 | `unselectedBackground` | `Color` | Background when unselected. Defaults to `AppTheme.colors.primaryContainer`. |
 | `selectedLabel` | `Color` | Label color when selected. Defaults to `AppTheme.colors.onPrimary`. |
 | `unselectedLabel` | `Color` | Label color when unselected. Defaults to `AppTheme.colors.onSurface`. |
+
+## ActionPill
+
+`ActionPill` is a capsule-shaped command with slot-based content. It is for links
+and compact actions, so it exposes button semantics rather than selection state.
+
+```kotlin
+ActionPill(onClick = ::openWord) {
+    Text("past", fontWeight = FontWeight.Bold)
+    Text("walked")
+}
+```
 
 ## PillChip as a tier badge
 
