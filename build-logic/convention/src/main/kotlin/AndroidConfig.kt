@@ -8,9 +8,9 @@ import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension
 
-internal const val COMPILE_SDK = 36
+internal const val COMPILE_SDK = 37
 internal const val MIN_SDK = 26
-internal const val TARGET_SDK = 36
+internal const val TARGET_SDK = 37
 
 private val Project.libs
     get() = extensions.getByType<VersionCatalogsExtension>().named("libs")
