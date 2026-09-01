@@ -15,6 +15,7 @@ Container components provide themed layout surfaces and transient UI wrappers.
 - `VerticalDivider`
 - `OverlayCard`
 - `AdaptiveContentContainer`
+- `DisclosureCard`
 
 ![Container components](https://maniramezan.github.io/ComposeUIComponents/images/screenshots/container-components.png)
 
@@ -82,6 +83,23 @@ Column {
 - `FlipAxis.Vertical` — rotates around the horizontal (X) axis, flipping top over bottom.
 
 Both faces are composed continuously, each on its own rotated graphics layer, so the card reads as a single solid surface turning through edge-on (rather than one face blinking out and the other in). The face turned away from the viewer is culled — `alpha = 0` plus cleared semantics — so it is neither drawn nor announced, and the back face is counter-rotated so its content is never mirrored. The graphics-layer camera distance sets the perspective depth so the rotation reads as a 3D flip and the chosen axis is clearly distinguishable.
+
+## DisclosureCard
+
+`DisclosureCard` keeps summary content visible and expands supporting detail inline.
+Its summary and detail are slots, and callers must supply localized expanded/collapsed
+state descriptions so the control's state is announced to accessibility services.
+
+```kotlin
+DisclosureCard(
+    expanded = expanded,
+    onExpandedChange = { expanded = it },
+    expandedStateDescription = "Expanded",
+    collapsedStateDescription = "Collapsed",
+    summary = { Text("Section title") },
+    detail = { Text("Additional information") },
+)
+```
 
 ### Theming and motion
 
