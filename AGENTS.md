@@ -63,6 +63,11 @@ When adding or updating dependencies, check the latest stable version online fir
 - Add or update light/dark previews, font-scale previews, Showkase entries, docs, and tests for visible component changes.
 - Keep accessibility first: meaningful content descriptions, readable states, RTL-safe layout, and 200% font-scale behavior.
 - Keep actual interactive components at a 48dp minimum touch target in UI behavior and tests. The theme token `AppTheme.spacing.minTapTarget` currently defaults to 44dp for token/back-compat reasons, so do not assume the token alone fully expresses the accessibility bar.
+- **Reuse shared helpers before reinventing them.** Assemble new components from the canonical building blocks and promote any new pattern back into them (per `docs/contributing.md` → "Reuse shared helpers and utilities"):
+  - `:compose-utils` interaction modifiers: `Modifier.buttonRole(onClick, minimumTouchTarget)`, `Modifier.selectableRole(selected, onClick, minimumTouchTarget)`, and the `minimumTouchTarget*` primitives for `Role.Button` tappable surfaces.
+  - `:components` (package-internal) building blocks: `Modifier.pillSurface(containerColor, border)` for capsule/pill fills (instead of re-inlining `.clip(AppTheme.shapes.pill).background(...)`) and `RowScope.ListPrimaryTextBlock(...)` for merged-semantics list-row text blocks. Use the `minimumTouchTargetSize()`/`standardIconSize()`/`containerCornerRadius()` metrics from `ComponentMetrics.kt`.
+  - `:sample` scaffolding: every demo page must be a `SamplePage(preview = { … }, controls = { … })` using the `ControlSwitch`/`ControlSegmented`/`ControlSlider` controls.
+  - Follow ADR 0002 module boundaries: theme-agnostic Modifier/utility helpers go in `:compose-utils`; anything that reads `AppTheme` goes in `:components`. Keep cross-module helpers public with KDoc; keep helpers shared only within `:components` package-internal and document non-obvious behavior so later components reuse them rather than drifting.
 - For media/network-backed components, keep the public API independent of implementation-library types unless exposing that type is the explicit design goal.
 - Preserve the current extraction posture: extract patterns from product apps, but strip branding, product strings, analytics, and app-specific dependencies before they enter this repo.
 

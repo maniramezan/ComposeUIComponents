@@ -451,8 +451,7 @@ internal fun DefaultPageTitle(
     Box(
         modifier =
             Modifier
-                .clip(AppTheme.shapes.pill)
-                .background(containerColor)
+                .pillSurface(containerColor)
                 .padding(horizontal = AppTheme.spacing.x2, vertical = AppTheme.spacing.half),
         contentAlignment = Alignment.Center,
     ) {

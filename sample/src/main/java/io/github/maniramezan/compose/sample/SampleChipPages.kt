@@ -38,23 +38,26 @@ internal fun PillChipTierBadgePage() {
     val labels = listOf("A1", "A2", "B1", "B2", "C1", "C2")
     var labelIndex by remember { mutableIntStateOf(0) }
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        PillChip(
-            label = labels[labelIndex],
-            tier = AppTheme.colors.levels.tier(tierIndex),
-        )
-        ControlsDivider()
-        ControlSegmented(
-            label = "Tier",
-            options = tiers,
-            selectedIndex = tierIndex,
-            onOptionSelected = { tierIndex = it },
-        )
-        ControlSegmented(
-            label = "Label",
-            options = labels,
-            selectedIndex = labelIndex,
-            onOptionSelected = { labelIndex = it },
-        )
-    }
+    SamplePage(
+        preview = {
+            PillChip(
+                label = labels[labelIndex],
+                tier = AppTheme.colors.levels.tier(tierIndex),
+            )
+        },
+        controls = {
+            ControlSegmented(
+                label = "Tier",
+                options = tiers,
+                selectedIndex = tierIndex,
+                onOptionSelected = { tierIndex = it },
+            )
+            ControlSegmented(
+                label = "Label",
+                options = labels,
+                selectedIndex = labelIndex,
+                onOptionSelected = { labelIndex = it },
+            )
+        },
+    )
 }

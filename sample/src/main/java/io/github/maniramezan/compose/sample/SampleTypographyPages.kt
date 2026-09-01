@@ -1,7 +1,5 @@
 package io.github.maniramezan.compose.sample
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -9,7 +7,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import io.github.maniramezan.compose.components.AppText
 import io.github.maniramezan.compose.components.AppTextStyle
-import io.github.maniramezan.compose.theme.AppTheme
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Typography
@@ -27,17 +24,20 @@ internal fun AppTextPage() {
             else -> AppTextStyle.Body
         }
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        AppText(
-            text = "The quick brown fox jumps over the lazy dog.",
-            style = style,
-        )
-        ControlsDivider()
-        ControlSegmented(
-            label = "Style",
-            options = styles,
-            selectedIndex = styleIndex,
-            onOptionSelected = { styleIndex = it },
-        )
-    }
+    SamplePage(
+        preview = {
+            AppText(
+                text = "The quick brown fox jumps over the lazy dog.",
+                style = style,
+            )
+        },
+        controls = {
+            ControlSegmented(
+                label = "Style",
+                options = styles,
+                selectedIndex = styleIndex,
+                onOptionSelected = { styleIndex = it },
+            )
+        },
+    )
 }

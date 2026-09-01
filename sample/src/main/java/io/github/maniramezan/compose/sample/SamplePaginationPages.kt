@@ -109,56 +109,59 @@ internal fun PaginatedContentPage() {
     var rtlMode by remember { mutableStateOf(false) }
     val layoutDirection = if (rtlMode) LayoutDirection.Rtl else LayoutDirection.Ltr
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        Text(text = "Current page: $lastPage")
-        CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
-            key(hintResetKey) {
-                PaginatedContent(
-                    pages = pages,
-                    titleAlignment = titleAlignment,
-                    direction = direction,
-                    footerStyle = footerStyle,
-                    showScrollHint = true,
-                    onPageChanged = { lastPage = it },
-                ) { _, page -> PagerPlaceholder(page.title) }
+    SamplePage(
+        preview = {
+            Text(text = "Current page: $lastPage")
+            CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
+                key(hintResetKey) {
+                    PaginatedContent(
+                        pages = pages,
+                        titleAlignment = titleAlignment,
+                        direction = direction,
+                        footerStyle = footerStyle,
+                        showScrollHint = true,
+                        onPageChanged = { lastPage = it },
+                    ) { _, page -> PagerPlaceholder(page.title) }
+                }
             }
-        }
-        ControlsDivider()
-        SecondaryButton(
-            text = "Replay scroll hint",
-            onClick = { hintResetKey++ },
-            modifier = Modifier.fillMaxWidth(),
-        )
-        ControlSwitch(
-            label = "RTL layout",
-            checked = rtlMode,
-            onCheckedChange = { rtlMode = it },
-        )
-        ControlSlider(
-            label = "Pages: $pageCount",
-            value = pageCountSlider,
-            onValueChange = { pageCountSlider = it },
-            valueRange = minPages.toFloat()..maxPages.toFloat(),
-        )
-        ControlSegmented(
-            label = "Title alignment",
-            options = alignments,
-            selectedIndex = alignmentIndex,
-            onOptionSelected = { alignmentIndex = it },
-        )
-        ControlSegmented(
-            label = "Direction",
-            options = directions,
-            selectedIndex = directionIndex,
-            onOptionSelected = { directionIndex = it },
-        )
-        ControlSegmented(
-            label = "Footer",
-            options = footers,
-            selectedIndex = footerIndex,
-            onOptionSelected = { footerIndex = it },
-        )
-    }
+        },
+        controls = {
+            SecondaryButton(
+                text = "Replay scroll hint",
+                onClick = { hintResetKey++ },
+                modifier = Modifier.fillMaxWidth(),
+            )
+            ControlSwitch(
+                label = "RTL layout",
+                checked = rtlMode,
+                onCheckedChange = { rtlMode = it },
+            )
+            ControlSlider(
+                label = "Pages: $pageCount",
+                value = pageCountSlider,
+                onValueChange = { pageCountSlider = it },
+                valueRange = minPages.toFloat()..maxPages.toFloat(),
+            )
+            ControlSegmented(
+                label = "Title alignment",
+                options = alignments,
+                selectedIndex = alignmentIndex,
+                onOptionSelected = { alignmentIndex = it },
+            )
+            ControlSegmented(
+                label = "Direction",
+                options = directions,
+                selectedIndex = directionIndex,
+                onOptionSelected = { directionIndex = it },
+            )
+            ControlSegmented(
+                label = "Footer",
+                options = footers,
+                selectedIndex = footerIndex,
+                onOptionSelected = { footerIndex = it },
+            )
+        },
+    )
 }
 
 private val allDemoSegmentedItems =
@@ -271,54 +274,57 @@ internal fun SegmentedContentPage() {
     // Keep the selection valid when the segment count shrinks below it.
     val safeSelectedIndex = selectedIndex.coerceIn(0, items.lastIndex)
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        Text(text = "Selected: ${items[safeSelectedIndex].title}")
-        SegmentedContent(
-            items = items,
-            selectedIndex = safeSelectedIndex,
-            onSelectionChanged = { selectedIndex = it },
-            indicator = indicator,
-            fitMode = fitMode,
-            density = density,
-            segmentTitle = { _, item, isSelected ->
-                if (useIconTitle) {
-                    IconSegmentTitle(item.title, isSelected, indicator)
-                } else {
-                    PlainSegmentTitle(item.title, isSelected, indicator)
-                }
-            },
-        ) { _, item -> SegmentPlaceholder(item.title) }
-        ControlsDivider()
-        ControlSlider(
-            label = "Segments: $segmentCount",
-            value = segmentCountSlider,
-            onValueChange = { segmentCountSlider = it },
-            valueRange = minSegments.toFloat()..maxSegments.toFloat(),
-        )
-        ControlSegmented(
-            label = "Indicator",
-            options = indicatorOptions,
-            selectedIndex = indicatorIndex,
-            onOptionSelected = { indicatorIndex = it },
-        )
-        ControlSegmented(
-            label = "Fit mode",
-            options = fitOptions,
-            selectedIndex = fitIndex,
-            onOptionSelected = { fitIndex = it },
-        )
-        ControlSegmented(
-            label = "Density",
-            options = densityOptions,
-            selectedIndex = densityIndex,
-            onOptionSelected = { densityIndex = it },
-        )
-        ControlSwitch(
-            label = "Custom title slot (icon + label)",
-            checked = useIconTitle,
-            onCheckedChange = { useIconTitle = it },
-        )
-    }
+    SamplePage(
+        preview = {
+            Text(text = "Selected: ${items[safeSelectedIndex].title}")
+            SegmentedContent(
+                items = items,
+                selectedIndex = safeSelectedIndex,
+                onSelectionChanged = { selectedIndex = it },
+                indicator = indicator,
+                fitMode = fitMode,
+                density = density,
+                segmentTitle = { _, item, isSelected ->
+                    if (useIconTitle) {
+                        IconSegmentTitle(item.title, isSelected, indicator)
+                    } else {
+                        PlainSegmentTitle(item.title, isSelected, indicator)
+                    }
+                },
+            ) { _, item -> SegmentPlaceholder(item.title) }
+        },
+        controls = {
+            ControlSlider(
+                label = "Segments: $segmentCount",
+                value = segmentCountSlider,
+                onValueChange = { segmentCountSlider = it },
+                valueRange = minSegments.toFloat()..maxSegments.toFloat(),
+            )
+            ControlSegmented(
+                label = "Indicator",
+                options = indicatorOptions,
+                selectedIndex = indicatorIndex,
+                onOptionSelected = { indicatorIndex = it },
+            )
+            ControlSegmented(
+                label = "Fit mode",
+                options = fitOptions,
+                selectedIndex = fitIndex,
+                onOptionSelected = { fitIndex = it },
+            )
+            ControlSegmented(
+                label = "Density",
+                options = densityOptions,
+                selectedIndex = densityIndex,
+                onOptionSelected = { densityIndex = it },
+            )
+            ControlSwitch(
+                label = "Custom title slot (icon + label)",
+                checked = useIconTitle,
+                onCheckedChange = { useIconTitle = it },
+            )
+        },
+    )
 }
 
 @Composable

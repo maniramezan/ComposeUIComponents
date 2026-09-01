@@ -49,21 +49,24 @@ import kotlinx.coroutines.launch
 internal fun CardPage() {
     var multiLine by remember { mutableStateOf(false) }
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        Card {
-            Text("Plan")
-            if (multiLine) {
-                Text("Compose Pro")
-                Text("Active since January 2024")
+    SamplePage(
+        preview = {
+            Card {
+                Text("Plan")
+                if (multiLine) {
+                    Text("Compose Pro")
+                    Text("Active since January 2024")
+                }
             }
-        }
-        ControlsDivider()
-        ControlSwitch(
-            label = "Multi-line content",
-            checked = multiLine,
-            onCheckedChange = { multiLine = it },
-        )
-    }
+        },
+        controls = {
+            ControlSwitch(
+                label = "Multi-line content",
+                checked = multiLine,
+                onCheckedChange = { multiLine = it },
+            )
+        },
+    )
 }
 
 @Composable
@@ -71,48 +74,54 @@ internal fun DisclosureCardPage() {
     var expanded by remember { mutableStateOf(false) }
     var longDetail by remember { mutableStateOf(false) }
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        DisclosureCard(
-            expanded = expanded,
-            onExpandedChange = { expanded = it },
-            expandedStateDescription = "Expanded",
-            collapsedStateDescription = "Collapsed",
-            summary = { Text(text = "Section title") },
-            detail = {
-                Text(
-                    text =
-                        if (longDetail) {
-                            "Additional information can span multiple lines to validate wrapping and dynamic height."
-                        } else {
-                            "Additional information"
-                        },
-                )
-            },
-        )
-        ControlsDivider()
-        ControlSwitch(label = "Expanded", checked = expanded, onCheckedChange = { expanded = it })
-        ControlSwitch(label = "Long detail", checked = longDetail, onCheckedChange = { longDetail = it })
-    }
+    SamplePage(
+        preview = {
+            DisclosureCard(
+                expanded = expanded,
+                onExpandedChange = { expanded = it },
+                expandedStateDescription = "Expanded",
+                collapsedStateDescription = "Collapsed",
+                summary = { Text(text = "Section title") },
+                detail = {
+                    Text(
+                        text =
+                            if (longDetail) {
+                                "Additional information can span multiple lines to validate wrapping and dynamic height."
+                            } else {
+                                "Additional information"
+                            },
+                    )
+                },
+            )
+        },
+        controls = {
+            ControlSwitch(label = "Expanded", checked = expanded, onCheckedChange = { expanded = it })
+            ControlSwitch(label = "Long detail", checked = longDetail, onCheckedChange = { longDetail = it })
+        },
+    )
 }
 
 @Composable
 internal fun OverlayCardPage() {
     var multiLine by remember { mutableStateOf(false) }
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        OverlayCard {
-            Text("Overlay card")
-            if (multiLine) {
-                Text("Supporting description below the title")
+    SamplePage(
+        preview = {
+            OverlayCard {
+                Text("Overlay card")
+                if (multiLine) {
+                    Text("Supporting description below the title")
+                }
             }
-        }
-        ControlsDivider()
-        ControlSwitch(
-            label = "Multi-line content",
-            checked = multiLine,
-            onCheckedChange = { multiLine = it },
-        )
-    }
+        },
+        controls = {
+            ControlSwitch(
+                label = "Multi-line content",
+                checked = multiLine,
+                onCheckedChange = { multiLine = it },
+            )
+        },
+    )
 }
 
 @Composable
@@ -131,60 +140,63 @@ internal fun FlipCardPage() {
             else -> AppTheme.motion.mediumMillis
         }
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        FlipCard(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(180.dp),
-            flipped = flipped,
-            onFlippedChange = { flipped = it },
-            axis = axis,
-            animationSpec = tween(durationMillis = durationMillis, easing = AppTheme.motion.emphasizedEasing),
-            enabled = enabled,
-            onClickLabel = "Flip card",
-            frontStateDescription = "Showing question",
-            backStateDescription = "Showing answer",
-            front = {
-                Box(
-                    modifier = Modifier.fillMaxSize().padding(AppTheme.spacing.lg),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(text = "What is Jetpack Compose?", style = AppTheme.typography.titleSmall)
-                }
-            },
-            back = {
-                Box(
-                    modifier = Modifier.fillMaxSize().padding(AppTheme.spacing.lg),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(
-                        text = "A declarative UI toolkit for Android.",
-                        style = AppTheme.typography.bodyMedium,
-                    )
-                }
-            },
-        )
-        ControlsDivider()
-        SecondaryButton(
-            text = if (flipped) "Show front" else "Show back",
-            onClick = { flipped = !flipped },
-            modifier = Modifier.fillMaxWidth(),
-        )
-        ControlSwitch(label = "Tap to flip (enabled)", checked = enabled, onCheckedChange = { enabled = it })
-        ControlSegmented(
-            label = "Axis",
-            options = axisOptions,
-            selectedIndex = axisIndex,
-            onOptionSelected = { axisIndex = it },
-        )
-        ControlSegmented(
-            label = "Speed",
-            options = speedOptions,
-            selectedIndex = speedIndex,
-            onOptionSelected = { speedIndex = it },
-        )
-    }
+    SamplePage(
+        preview = {
+            FlipCard(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(180.dp),
+                flipped = flipped,
+                onFlippedChange = { flipped = it },
+                axis = axis,
+                animationSpec = tween(durationMillis = durationMillis, easing = AppTheme.motion.emphasizedEasing),
+                enabled = enabled,
+                onClickLabel = "Flip card",
+                frontStateDescription = "Showing question",
+                backStateDescription = "Showing answer",
+                front = {
+                    Box(
+                        modifier = Modifier.fillMaxSize().padding(AppTheme.spacing.lg),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(text = "What is Jetpack Compose?", style = AppTheme.typography.titleSmall)
+                    }
+                },
+                back = {
+                    Box(
+                        modifier = Modifier.fillMaxSize().padding(AppTheme.spacing.lg),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            text = "A declarative UI toolkit for Android.",
+                            style = AppTheme.typography.bodyMedium,
+                        )
+                    }
+                },
+            )
+            SecondaryButton(
+                text = if (flipped) "Show front" else "Show back",
+                onClick = { flipped = !flipped },
+                modifier = Modifier.fillMaxWidth(),
+            )
+        },
+        controls = {
+            ControlSwitch(label = "Tap to flip (enabled)", checked = enabled, onCheckedChange = { enabled = it })
+            ControlSegmented(
+                label = "Axis",
+                options = axisOptions,
+                selectedIndex = axisIndex,
+                onOptionSelected = { axisIndex = it },
+            )
+            ControlSegmented(
+                label = "Speed",
+                options = speedOptions,
+                selectedIndex = speedIndex,
+                onOptionSelected = { speedIndex = it },
+            )
+        },
+    )
 }
 
 @Composable
@@ -198,50 +210,53 @@ internal fun ShowcaseFeedPage() {
     val topApps = listOf("Focus", "Sky Notes", "Trailhead", "Loop", "Pixel Paint")
     val games = listOf("Nova Run", "Blocks!", "Chess+", "Dungeon", "Kart Rally")
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        ShowcaseFeed(modifier = Modifier.fillMaxWidth().height(360.dp)) {
-            section(
-                title = "Top Apps",
-                items = topApps,
-                actionLabel = if (showAction) "See all" else null,
-                onAction = if (showAction) ({}) else null,
-                itemWidth = ShowcaseItemWidth.Peek(peek),
-                rows = rows,
-                rowHeight = if (rows > 1) 64.dp else null,
-                rowContentDescription = "Top apps, horizontally scrollable",
-            ) { app -> ShowcaseDemoCard(label = app, fillHeight = rows > 1) }
+    SamplePage(
+        preview = {
+            ShowcaseFeed(modifier = Modifier.fillMaxWidth().height(360.dp)) {
+                section(
+                    title = "Top Apps",
+                    items = topApps,
+                    actionLabel = if (showAction) "See all" else null,
+                    onAction = if (showAction) ({}) else null,
+                    itemWidth = ShowcaseItemWidth.Peek(peek),
+                    rows = rows,
+                    rowHeight = if (rows > 1) 64.dp else null,
+                    rowContentDescription = "Top apps, horizontally scrollable",
+                ) { app -> ShowcaseDemoCard(label = app, fillHeight = rows > 1) }
 
-            section(
-                title = "New Games",
-                items = games,
-                itemWidth = ShowcaseItemWidth.Peek(peek),
-                rows = rows,
-                rowHeight = if (rows > 1) 64.dp else null,
-            ) { game -> ShowcaseDemoCard(label = game, fillHeight = rows > 1) }
+                section(
+                    title = "New Games",
+                    items = games,
+                    itemWidth = ShowcaseItemWidth.Peek(peek),
+                    rows = rows,
+                    rowHeight = if (rows > 1) 64.dp else null,
+                ) { game -> ShowcaseDemoCard(label = game, fillHeight = rows > 1) }
 
-            customSection {
-                ShowcaseDemoBanner(label = "Editor's Choice")
+                customSection {
+                    ShowcaseDemoBanner(label = "Editor's Choice")
+                }
             }
-        }
-        ControlsDivider()
-        ControlSlider(
-            label = "Peek fraction",
-            value = peek,
-            onValueChange = { peek = it },
-            valueRange = 0.5f..1f,
-        )
-        ControlSegmented(
-            label = "Rows",
-            options = rowOptions,
-            selectedIndex = rowsIndex,
-            onOptionSelected = { rowsIndex = it },
-        )
-        ControlSwitch(
-            label = "Show \"See all\" action",
-            checked = showAction,
-            onCheckedChange = { showAction = it },
-        )
-    }
+        },
+        controls = {
+            ControlSlider(
+                label = "Peek fraction",
+                value = peek,
+                onValueChange = { peek = it },
+                valueRange = 0.5f..1f,
+            )
+            ControlSegmented(
+                label = "Rows",
+                options = rowOptions,
+                selectedIndex = rowsIndex,
+                onOptionSelected = { rowsIndex = it },
+            )
+            ControlSwitch(
+                label = "Show \"See all\" action",
+                checked = showAction,
+                onCheckedChange = { showAction = it },
+            )
+        },
+    )
 }
 
 @Composable
@@ -294,15 +309,18 @@ private fun ShowcaseDemoBanner(label: String) {
 internal fun SnackbarPage() {
     var showAction by remember { mutableStateOf(false) }
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        Snackbar(
-            message = "Item deleted",
-            actionLabel = if (showAction) "Undo" else null,
-            onAction = if (showAction) ({}) else null,
-        )
-        ControlsDivider()
-        ControlSwitch(label = "Action", checked = showAction, onCheckedChange = { showAction = it })
-    }
+    SamplePage(
+        preview = {
+            Snackbar(
+                message = "Item deleted",
+                actionLabel = if (showAction) "Undo" else null,
+                onAction = if (showAction) ({}) else null,
+            )
+        },
+        controls = {
+            ControlSwitch(label = "Action", checked = showAction, onCheckedChange = { showAction = it })
+        },
+    )
 }
 
 @Composable
@@ -311,23 +329,26 @@ internal fun ToastPage() {
     var showIcon by remember { mutableStateOf(false) }
     var longMessage by remember { mutableStateOf(false) }
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        Toast(
-            message =
-                if (longMessage) {
-                    "Your changes are saved and will sync to all of your devices shortly."
-                } else {
-                    "Toast message"
-                },
-            icon = if (showIcon) AppTheme.icons.check else null,
-            actionLabel = if (showAction) "View" else null,
-            onAction = if (showAction) ({}) else null,
-        )
-        ControlsDivider()
-        ControlSwitch(label = "Action", checked = showAction, onCheckedChange = { showAction = it })
-        ControlSwitch(label = "Icon", checked = showIcon, onCheckedChange = { showIcon = it })
-        ControlSwitch(label = "Long message", checked = longMessage, onCheckedChange = { longMessage = it })
-    }
+    SamplePage(
+        preview = {
+            Toast(
+                message =
+                    if (longMessage) {
+                        "Your changes are saved and will sync to all of your devices shortly."
+                    } else {
+                        "Toast message"
+                    },
+                icon = if (showIcon) AppTheme.icons.check else null,
+                actionLabel = if (showAction) "View" else null,
+                onAction = if (showAction) ({}) else null,
+            )
+        },
+        controls = {
+            ControlSwitch(label = "Action", checked = showAction, onCheckedChange = { showAction = it })
+            ControlSwitch(label = "Icon", checked = showIcon, onCheckedChange = { showIcon = it })
+            ControlSwitch(label = "Long message", checked = longMessage, onCheckedChange = { longMessage = it })
+        },
+    )
 }
 
 @Composable

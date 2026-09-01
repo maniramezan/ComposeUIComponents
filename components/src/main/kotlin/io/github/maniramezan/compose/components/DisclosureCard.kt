@@ -2,7 +2,6 @@ package io.github.maniramezan.compose.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,11 +15,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import io.github.maniramezan.compose.theme.AppTheme
-import io.github.maniramezan.compose.utils.minimumTouchTarget
+import io.github.maniramezan.compose.utils.buttonRole
 
 /**
  * A themed card that keeps [summary] visible and reveals [detail] on demand.
@@ -56,10 +54,8 @@ public fun DisclosureCard(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .minimumTouchTarget(minimumTouchTargetSize())
-                    .clickable(role = Role.Button) {
-                        onExpandedChange(!expanded)
-                    }.semantics { stateDescription = stateLabel }
+                    .buttonRole({ onExpandedChange(!expanded) }, minimumTouchTarget = minimumTouchTargetSize())
+                    .semantics { stateDescription = stateLabel }
                     .padding(AppTheme.spacing.x2),
             verticalAlignment = Alignment.CenterVertically,
         ) {

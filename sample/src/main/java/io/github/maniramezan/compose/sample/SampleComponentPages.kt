@@ -18,6 +18,25 @@ import io.github.maniramezan.compose.theme.AppTheme
 // Shared helpers
 // ─────────────────────────────────────────────────────────────────────────────
 
+/**
+ * Standard demo-page skeleton: the live [preview] on top, a divider + "Controls"
+ * heading, then the [controls] panel below.
+ *
+ * Every library page uses this so the preview/controls vertical rhythm and
+ * divider stay consistent across the browser.
+ */
+@Composable
+internal fun SamplePage(
+    preview: @Composable () -> Unit,
+    controls: @Composable () -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
+        preview()
+        ControlsDivider()
+        controls()
+    }
+}
+
 /** Horizontal divider between the live preview and the controls panel. */
 @Composable
 internal fun ControlsDivider() {

@@ -1,7 +1,5 @@
 package io.github.maniramezan.compose.sample
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,11 +26,14 @@ import io.github.maniramezan.compose.theme.AppTheme
 internal fun PrimaryButtonPage() {
     var enabled by remember { mutableStateOf(true) }
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        PrimaryButton(text = "Primary Button", onClick = {}, enabled = enabled)
-        ControlsDivider()
-        ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
-    }
+    SamplePage(
+        preview = {
+            PrimaryButton(text = "Primary Button", onClick = {}, enabled = enabled)
+        },
+        controls = {
+            ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
+        },
+    )
 }
 
 @Composable
@@ -42,48 +43,57 @@ internal fun ActionPillPage() {
     var compact by remember { mutableStateOf(false) }
     var tapCount by remember { mutableIntStateOf(0) }
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        ActionPill(
-            onClick = { tapCount += 1 },
-            containerColor = if (prominent) AppTheme.colors.primary else AppTheme.colors.surfaceVariant,
-            contentColor = if (prominent) AppTheme.colors.onPrimary else AppTheme.colors.onSurfaceVariant,
-            contentPadding =
-                PaddingValues(
-                    horizontal = if (compact) AppTheme.spacing.x1 else AppTheme.spacing.x1_5,
-                    vertical = if (compact) AppTheme.spacing.half else AppTheme.spacing.x1,
-                ),
-        ) {
-            Text(text = "Status")
-            if (showValue) Text(text = "Active")
-        }
-        Text(text = "Tap count: $tapCount")
-        ControlsDivider()
-        ControlSwitch(label = "Show value", checked = showValue, onCheckedChange = { showValue = it })
-        ControlSwitch(label = "Prominent colors", checked = prominent, onCheckedChange = { prominent = it })
-        ControlSwitch(label = "Compact padding", checked = compact, onCheckedChange = { compact = it })
-    }
+    SamplePage(
+        preview = {
+            ActionPill(
+                onClick = { tapCount += 1 },
+                containerColor = if (prominent) AppTheme.colors.primary else AppTheme.colors.surfaceVariant,
+                contentColor = if (prominent) AppTheme.colors.onPrimary else AppTheme.colors.onSurfaceVariant,
+                contentPadding =
+                    PaddingValues(
+                        horizontal = if (compact) AppTheme.spacing.x1 else AppTheme.spacing.x1_5,
+                        vertical = if (compact) AppTheme.spacing.half else AppTheme.spacing.x1,
+                    ),
+            ) {
+                Text(text = "Status")
+                if (showValue) Text(text = "Active")
+            }
+            Text(text = "Tap count: $tapCount")
+        },
+        controls = {
+            ControlSwitch(label = "Show value", checked = showValue, onCheckedChange = { showValue = it })
+            ControlSwitch(label = "Prominent colors", checked = prominent, onCheckedChange = { prominent = it })
+            ControlSwitch(label = "Compact padding", checked = compact, onCheckedChange = { compact = it })
+        },
+    )
 }
 
 @Composable
 internal fun SecondaryButtonPage() {
     var enabled by remember { mutableStateOf(true) }
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        SecondaryButton(text = "Secondary Button", onClick = {}, enabled = enabled)
-        ControlsDivider()
-        ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
-    }
+    SamplePage(
+        preview = {
+            SecondaryButton(text = "Secondary Button", onClick = {}, enabled = enabled)
+        },
+        controls = {
+            ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
+        },
+    )
 }
 
 @Composable
 internal fun TextButtonPage() {
     var enabled by remember { mutableStateOf(true) }
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        TextButton(text = "Text Button", onClick = {}, enabled = enabled)
-        ControlsDivider()
-        ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
-    }
+    SamplePage(
+        preview = {
+            TextButton(text = "Text Button", onClick = {}, enabled = enabled)
+        },
+        controls = {
+            ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
+        },
+    )
 }
 
 @Composable
@@ -93,17 +103,20 @@ internal fun IconButtonPage() {
     var iconIndex by remember { mutableIntStateOf(0) }
     val icon = if (iconIndex == 0) AppTheme.icons.check else AppTheme.icons.close
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        IconButton(icon = icon, contentDescription = iconOptions[iconIndex], onClick = {}, enabled = enabled)
-        ControlsDivider()
-        ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
-        ControlSegmented(
-            label = "Icon",
-            options = iconOptions,
-            selectedIndex = iconIndex,
-            onOptionSelected = { iconIndex = it },
-        )
-    }
+    SamplePage(
+        preview = {
+            IconButton(icon = icon, contentDescription = iconOptions[iconIndex], onClick = {}, enabled = enabled)
+        },
+        controls = {
+            ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
+            ControlSegmented(
+                label = "Icon",
+                options = iconOptions,
+                selectedIndex = iconIndex,
+                onOptionSelected = { iconIndex = it },
+            )
+        },
+    )
 }
 
 @Composable
@@ -112,16 +125,19 @@ internal fun FabPage() {
     var iconIndex by remember { mutableIntStateOf(0) }
     val icon = if (iconIndex == 0) AppTheme.icons.check else AppTheme.icons.close
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        FAB(icon = icon, contentDescription = iconOptions[iconIndex], onClick = {})
-        ControlsDivider()
-        ControlSegmented(
-            label = "Icon",
-            options = iconOptions,
-            selectedIndex = iconIndex,
-            onOptionSelected = { iconIndex = it },
-        )
-    }
+    SamplePage(
+        preview = {
+            FAB(icon = icon, contentDescription = iconOptions[iconIndex], onClick = {})
+        },
+        controls = {
+            ControlSegmented(
+                label = "Icon",
+                options = iconOptions,
+                selectedIndex = iconIndex,
+                onOptionSelected = { iconIndex = it },
+            )
+        },
+    )
 }
 
 @Composable
@@ -133,22 +149,25 @@ internal fun SegmentedControlPage() {
     var densityIndex by remember { mutableIntStateOf(0) }
     val density = if (densityIndex == 0) SegmentDensity.Regular else SegmentDensity.Compact
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        SegmentedControl(
-            options = options,
-            selectedIndex = selected,
-            onOptionSelected = { selected = it },
-            enabled = enabled,
-            density = density,
-        )
-        Text(text = "Selected: ${options[selected]}")
-        ControlsDivider()
-        ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
-        ControlSegmented(
-            label = "Density",
-            options = densityOptions,
-            selectedIndex = densityIndex,
-            onOptionSelected = { densityIndex = it },
-        )
-    }
+    SamplePage(
+        preview = {
+            SegmentedControl(
+                options = options,
+                selectedIndex = selected,
+                onOptionSelected = { selected = it },
+                enabled = enabled,
+                density = density,
+            )
+            Text(text = "Selected: ${options[selected]}")
+        },
+        controls = {
+            ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
+            ControlSegmented(
+                label = "Density",
+                options = densityOptions,
+                selectedIndex = densityIndex,
+                onOptionSelected = { densityIndex = it },
+            )
+        },
+    )
 }
