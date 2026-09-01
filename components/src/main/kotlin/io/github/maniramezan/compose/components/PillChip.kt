@@ -1,20 +1,16 @@
 package io.github.maniramezan.compose.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.theme.LevelTier
-import io.github.maniramezan.compose.utils.minimumTouchTarget
+import io.github.maniramezan.compose.utils.selectableRole
 
 /**
  * A capsule-shaped chip that toggles between a selected and unselected
@@ -47,12 +43,9 @@ public fun PillChip(
 
     var chipModifier = modifier
     if (onClick != null) {
-        chipModifier = chipModifier.minimumTouchTarget(minimumTouchTargetSize())
+        chipModifier = chipModifier.selectableRole(isSelected, onClick, minimumTouchTarget = minimumTouchTargetSize())
     }
-    chipModifier = chipModifier.clip(AppTheme.shapes.pill).background(backgroundColor)
-    if (onClick != null) {
-        chipModifier = chipModifier.selectable(selected = isSelected, role = Role.Button, onClick = onClick)
-    }
+    chipModifier = chipModifier.pillSurface(backgroundColor)
     chipModifier = chipModifier.padding(horizontal = AppTheme.spacing.x2, vertical = AppTheme.spacing.x1)
 
     Box(

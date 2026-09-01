@@ -1,7 +1,5 @@
 package io.github.maniramezan.compose.sample
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
@@ -21,7 +19,6 @@ import io.github.maniramezan.compose.components.SelectionListNode
 import io.github.maniramezan.compose.components.Slider
 import io.github.maniramezan.compose.components.Switch
 import io.github.maniramezan.compose.components.TextButton
-import io.github.maniramezan.compose.theme.AppTheme
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Controls
@@ -32,12 +29,15 @@ internal fun CheckboxPage() {
     var checked by remember { mutableStateOf(true) }
     var enabled by remember { mutableStateOf(true) }
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        Checkbox(checked = checked, onCheckedChange = { checked = it }, label = "Email updates", enabled = enabled)
-        ControlsDivider()
-        ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
-        ControlSwitch(label = "Checked", checked = checked, onCheckedChange = { checked = it })
-    }
+    SamplePage(
+        preview = {
+            Checkbox(checked = checked, onCheckedChange = { checked = it }, label = "Email updates", enabled = enabled)
+        },
+        controls = {
+            ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
+            ControlSwitch(label = "Checked", checked = checked, onCheckedChange = { checked = it })
+        },
+    )
 }
 
 @Composable
@@ -46,17 +46,20 @@ internal fun RadioGroupPage() {
     var selectedIndex by remember { mutableIntStateOf(1) }
     var enabled by remember { mutableStateOf(true) }
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        RadioGroup(
-            options = options,
-            selectedIndex = selectedIndex,
-            onOptionSelected = { selectedIndex = it },
-            enabled = enabled,
-        )
-        Text(text = "Selected: ${options[selectedIndex]}")
-        ControlsDivider()
-        ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
-    }
+    SamplePage(
+        preview = {
+            RadioGroup(
+                options = options,
+                selectedIndex = selectedIndex,
+                onOptionSelected = { selectedIndex = it },
+                enabled = enabled,
+            )
+            Text(text = "Selected: ${options[selectedIndex]}")
+        },
+        controls = {
+            ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
+        },
+    )
 }
 
 @Composable
@@ -64,12 +67,15 @@ internal fun SwitchPage() {
     var checked by remember { mutableStateOf(true) }
     var enabled by remember { mutableStateOf(true) }
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        Switch(checked = checked, onCheckedChange = { checked = it }, label = "Notifications", enabled = enabled)
-        ControlsDivider()
-        ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
-        ControlSwitch(label = "Checked", checked = checked, onCheckedChange = { checked = it })
-    }
+    SamplePage(
+        preview = {
+            Switch(checked = checked, onCheckedChange = { checked = it }, label = "Notifications", enabled = enabled)
+        },
+        controls = {
+            ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
+            ControlSwitch(label = "Checked", checked = checked, onCheckedChange = { checked = it })
+        },
+    )
 }
 
 @Composable
@@ -77,12 +83,15 @@ internal fun SliderPage() {
     var value by remember { mutableFloatStateOf(0.45f) }
     var enabled by remember { mutableStateOf(true) }
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        Text("Volume: ${(value * 100).toInt()}%")
-        Slider(value = value, onValueChange = { value = it }, enabled = enabled)
-        ControlsDivider()
-        ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
-    }
+    SamplePage(
+        preview = {
+            Text("Volume: ${(value * 100).toInt()}%")
+            Slider(value = value, onValueChange = { value = it }, enabled = enabled)
+        },
+        controls = {
+            ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
+        },
+    )
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -152,38 +161,41 @@ internal fun SelectionListPage() {
     var category by remember { mutableStateOf("banana") }
     var tags by remember { mutableStateOf(setOf("apple", "spinach", "rice")) }
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        if (modeIndex == 0) {
-            SelectionListContent(
-                title = "Category",
-                nodes = sampleSelectionListNodes,
-                selectedIds = setOf(category),
-                onSelect = { category = it },
-                isSearchable = searchable,
-                searchPlaceholder = "Search",
-                noResultsText = "No results",
-                modifier = Modifier.height(450.dp),
+    SamplePage(
+        preview = {
+            if (modeIndex == 0) {
+                SelectionListContent(
+                    title = "Category",
+                    nodes = sampleSelectionListNodes,
+                    selectedIds = setOf(category),
+                    onSelect = { category = it },
+                    isSearchable = searchable,
+                    searchPlaceholder = "Search",
+                    noResultsText = "No results",
+                    modifier = Modifier.height(450.dp),
+                )
+            } else {
+                SelectionListContent(
+                    title = "Categories",
+                    nodes = sampleSelectionListNodes,
+                    selectedIds = tags,
+                    onSelect = { id -> tags = if (id in tags) tags - id else tags + id },
+                    isSearchable = searchable,
+                    searchPlaceholder = "Search",
+                    noResultsText = "No results",
+                    confirmButton = { TextButton(text = "${tags.size} selected", onClick = {}) },
+                    modifier = Modifier.height(450.dp),
+                )
+            }
+        },
+        controls = {
+            ControlSegmented(
+                label = "Mode",
+                options = modeOptions,
+                selectedIndex = modeIndex,
+                onOptionSelected = { modeIndex = it },
             )
-        } else {
-            SelectionListContent(
-                title = "Categories",
-                nodes = sampleSelectionListNodes,
-                selectedIds = tags,
-                onSelect = { id -> tags = if (id in tags) tags - id else tags + id },
-                isSearchable = searchable,
-                searchPlaceholder = "Search",
-                noResultsText = "No results",
-                confirmButton = { TextButton(text = "${tags.size} selected", onClick = {}) },
-                modifier = Modifier.height(450.dp),
-            )
-        }
-        ControlsDivider()
-        ControlSegmented(
-            label = "Mode",
-            options = modeOptions,
-            selectedIndex = modeIndex,
-            onOptionSelected = { modeIndex = it },
-        )
-        ControlSwitch(label = "Searchable", checked = searchable, onCheckedChange = { searchable = it })
-    }
+            ControlSwitch(label = "Searchable", checked = searchable, onCheckedChange = { searchable = it })
+        },
+    )
 }
