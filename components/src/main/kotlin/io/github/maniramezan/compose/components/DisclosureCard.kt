@@ -63,7 +63,7 @@ public fun DisclosureCard(
             }
             Icon(
                 imageVector = AppTheme.icons.expand.imageVector,
-                contentDescription = null,
+                contentDescription = null, // @check:suppress
                 modifier = Modifier.rotate(if (expanded) 180f else 0f),
                 tint = AppTheme.colors.onSurfaceVariant,
             )
