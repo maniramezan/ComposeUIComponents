@@ -29,6 +29,13 @@ internal data class SampleComponentDemo(
 internal fun sampleDemos(): List<SampleComponentDemo> =
     listOf(
         SampleComponentDemo(
+            id = "action-pill",
+            title = "ActionPill",
+            category = "Actions",
+            description = "Compact slot-based action with configurable content, colors, and padding.",
+            content = { ActionPillPage() },
+        ),
+        SampleComponentDemo(
             id = "primary-button",
             title = "PrimaryButton",
             category = "Actions",
