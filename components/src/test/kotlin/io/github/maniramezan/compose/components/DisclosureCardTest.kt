@@ -31,6 +31,8 @@ public class DisclosureCardTest {
                 DisclosureCard(
                     expanded = expanded,
                     onExpandedChange = { expanded = it },
+                    expandedStateDescription = "Expanded",
+                    collapsedStateDescription = "Collapsed",
                     summary = { Text("Summary") },
                     detail = { Text("Detail") },
                 )
