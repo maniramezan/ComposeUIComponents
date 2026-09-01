@@ -122,5 +122,8 @@ For release-oriented changes, also account for:
 ## Extraction From Apps
 
 - Treat Novalingo and other apps as sources of patterns, not code to copy wholesale.
-- Strip branding, strings, analytics, feature names, and app-specific dependencies.
+- **Never expose consuming-app logic in this public repository.** Strip branding, strings, analytics, feature names, domain models, business rules, fixtures, and app-specific dependencies.
+- Examples, previews, tests, documentation, symbol names, and sample data must be domain-neutral. Use generic concepts such as labels, status values, sections, items, and actions.
+- Search every changed line for product/domain leakage before opening or updating a PR; any leak blocks the PR.
+- Reusable UI, common logic, networking, utilities, and infrastructure belong in the appropriate shared library rather than an app repository.
 - Validate the extracted API in `:sample` or a consumer app before considering it stable.
