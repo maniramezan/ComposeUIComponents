@@ -70,9 +70,9 @@ capsules that reuse a `LevelPalette` tier.
 and compact actions, so it exposes button semantics rather than selection state.
 
 ```kotlin
-ActionPill(onClick = ::openWord) {
-    Text("past", fontWeight = FontWeight.Bold)
-    Text("walked")
+ActionPill(onClick = ::performAction) {
+    Text("Status", fontWeight = FontWeight.Bold)
+    Text("Active")
 }
 ```
 

@@ -22,11 +22,11 @@ public class ActionPillTest {
         var taps = 0
         composeRule.setContent {
             AppTheme {
-                ActionPill(onClick = { taps += 1 }) { Text("Open word") }
+                ActionPill(onClick = { taps += 1 }) { Text("Run action") }
             }
         }
 
-        composeRule.onNodeWithText("Open word").performClick()
+        composeRule.onNodeWithText("Run action").performClick()
         composeRule.runOnIdle { check(taps == 1) }
     }
 }

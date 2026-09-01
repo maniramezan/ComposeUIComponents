@@ -14,7 +14,7 @@ import io.github.maniramezan.compose.utils.PreviewLightDark
 @Composable
 public fun ActionPillPreview(): Unit =
     AppTheme {
-        ActionPill(onClick = {}) { Text(text = "Open related word") }
+        ActionPill(onClick = {}) { Text(text = "View details") }
     }
 
 @ShowkaseComposable(name = "Action Pill", group = "Actions")
