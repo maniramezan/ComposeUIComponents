@@ -2,11 +2,9 @@ package io.github.maniramezan.compose.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,38 +47,16 @@ public fun ContentRow(
         if (leadingContent != null) {
             leadingContent()
         }
-        Column(
-            // Read the title/secondary/supporting block as one focus stop
-            // instead of three separate ones.
-            modifier = Modifier.weight(1f).semantics(mergeDescendants = true) {},
-            verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.half),
-        ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.x1),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = title,
-                    style = AppTheme.typography.titleSmall,
-                    color = AppTheme.colors.onSurface,
-                )
-                if (secondaryText != null) {
-                    Text(
-                        text = secondaryText,
-                        style = AppTheme.typography.bodySmall,
-                        color = AppTheme.colors.onSurfaceVariant,
-                    )
-                }
-            }
-            if (supportingText != null) {
-                Text(
-                    text = supportingText,
-                    style = AppTheme.typography.bodySmall,
-                    color = AppTheme.colors.onSurfaceVariant,
-                    maxLines = 2,
-                )
-            }
-        }
+        ListPrimaryTextBlock(
+            title = title,
+            titleStyle = AppTheme.typography.titleSmall,
+            titleColor = AppTheme.colors.onSurface,
+            supportingStyle = AppTheme.typography.bodySmall,
+            supportingColor = AppTheme.colors.onSurfaceVariant,
+            secondaryText = secondaryText,
+            supportingText = supportingText,
+            supportingMaxLines = if (supportingText != null) 2 else Int.MAX_VALUE,
+        )
         if (trailingContent != null) {
             trailingContent()
         }

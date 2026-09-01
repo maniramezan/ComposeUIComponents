@@ -26,24 +26,27 @@ internal fun ListItemPage() {
     var showSupporting by remember { mutableStateOf(true) }
     var showTrailing by remember { mutableStateOf(true) }
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        ListItem(
-            headline = "Workspace",
-            supportingText = if (showSupporting) "Personal" else null,
-            trailingContent = if (showTrailing) ({ Text("Open") }) else null,
-        )
-        ControlsDivider()
-        ControlSwitch(
-            label = "Supporting text",
-            checked = showSupporting,
-            onCheckedChange = { showSupporting = it },
-        )
-        ControlSwitch(
-            label = "Trailing content",
-            checked = showTrailing,
-            onCheckedChange = { showTrailing = it },
-        )
-    }
+    SamplePage(
+        preview = {
+            ListItem(
+                headline = "Workspace",
+                supportingText = if (showSupporting) "Personal" else null,
+                trailingContent = if (showTrailing) ({ Text("Open") }) else null,
+            )
+        },
+        controls = {
+            ControlSwitch(
+                label = "Supporting text",
+                checked = showSupporting,
+                onCheckedChange = { showSupporting = it },
+            )
+            ControlSwitch(
+                label = "Trailing content",
+                checked = showTrailing,
+                onCheckedChange = { showTrailing = it },
+            )
+        },
+    )
 }
 
 @Composable
@@ -53,37 +56,40 @@ internal fun ContentRowPage() {
     var showSupporting by remember { mutableStateOf(true) }
     var showTrailing by remember { mutableStateOf(true) }
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        ContentRow(
-            title = "ephemeral",
-            secondaryText = if (showSecondary) "/əˈfemərəl/" else null,
-            supportingText = if (showSupporting) "Lasting for a very short time." else null,
-            onClick = if (tappable) ({}) else null,
-            trailingContent =
-                if (showTrailing) {
-                    { PillChip(label = "C1", tier = AppTheme.colors.levels.tier(2)) }
-                } else {
-                    null
-                },
-        )
-        ControlsDivider()
-        ControlSwitch(label = "Tappable", checked = tappable, onCheckedChange = { tappable = it })
-        ControlSwitch(
-            label = "Secondary text",
-            checked = showSecondary,
-            onCheckedChange = { showSecondary = it },
-        )
-        ControlSwitch(
-            label = "Supporting text",
-            checked = showSupporting,
-            onCheckedChange = { showSupporting = it },
-        )
-        ControlSwitch(
-            label = "Trailing badge",
-            checked = showTrailing,
-            onCheckedChange = { showTrailing = it },
-        )
-    }
+    SamplePage(
+        preview = {
+            ContentRow(
+                title = "ephemeral",
+                secondaryText = if (showSecondary) "/əˈfemərəl/" else null,
+                supportingText = if (showSupporting) "Lasting for a very short time." else null,
+                onClick = if (tappable) ({}) else null,
+                trailingContent =
+                    if (showTrailing) {
+                        { PillChip(label = "C1", tier = AppTheme.colors.levels.tier(2)) }
+                    } else {
+                        null
+                    },
+            )
+        },
+        controls = {
+            ControlSwitch(label = "Tappable", checked = tappable, onCheckedChange = { tappable = it })
+            ControlSwitch(
+                label = "Secondary text",
+                checked = showSecondary,
+                onCheckedChange = { showSecondary = it },
+            )
+            ControlSwitch(
+                label = "Supporting text",
+                checked = showSupporting,
+                onCheckedChange = { showSupporting = it },
+            )
+            ControlSwitch(
+                label = "Trailing badge",
+                checked = showTrailing,
+                onCheckedChange = { showTrailing = it },
+            )
+        },
+    )
 }
 
 @Composable
@@ -91,16 +97,19 @@ internal fun EmptyStatePage() {
     var showMessage by remember { mutableStateOf(true) }
     var showAction by remember { mutableStateOf(false) }
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        EmptyState(
-            title = "No projects",
-            message = if (showMessage) "Create your first project to get started." else null,
-            action = if (showAction) ({ TextButton(text = "Browse all", onClick = {}) }) else null,
-        )
-        ControlsDivider()
-        ControlSwitch(label = "Message", checked = showMessage, onCheckedChange = { showMessage = it })
-        ControlSwitch(label = "Action", checked = showAction, onCheckedChange = { showAction = it })
-    }
+    SamplePage(
+        preview = {
+            EmptyState(
+                title = "No projects",
+                message = if (showMessage) "Create your first project to get started." else null,
+                action = if (showAction) ({ TextButton(text = "Browse all", onClick = {}) }) else null,
+            )
+        },
+        controls = {
+            ControlSwitch(label = "Message", checked = showMessage, onCheckedChange = { showMessage = it })
+            ControlSwitch(label = "Action", checked = showAction, onCheckedChange = { showAction = it })
+        },
+    )
 }
 
 @Composable
@@ -114,13 +123,16 @@ internal fun LoadingStatePage() {
 internal fun ErrorStatePage() {
     var showAction by remember { mutableStateOf(false) }
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        ErrorState(
-            title = "Could not load",
-            message = "Check your connection and retry.",
-            action = if (showAction) ({ TextButton(text = "Retry", onClick = {}) }) else null,
-        )
-        ControlsDivider()
-        ControlSwitch(label = "Action", checked = showAction, onCheckedChange = { showAction = it })
-    }
+    SamplePage(
+        preview = {
+            ErrorState(
+                title = "Could not load",
+                message = "Check your connection and retry.",
+                action = if (showAction) ({ TextButton(text = "Retry", onClick = {}) }) else null,
+            )
+        },
+        controls = {
+            ControlSwitch(label = "Action", checked = showAction, onCheckedChange = { showAction = it })
+        },
+    )
 }

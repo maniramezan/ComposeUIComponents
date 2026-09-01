@@ -28,28 +28,31 @@ internal fun TopAppBarPage() {
     var showNavIcon by remember { mutableStateOf(false) }
     var showAction by remember { mutableStateOf(false) }
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        TopAppBar(
-            title = "Screen Title",
-            navigationIcon = {
-                if (showNavIcon) {
-                    IconButton(icon = AppTheme.icons.close, contentDescription = "Back", onClick = {})
-                }
-            },
-            actions = {
-                if (showAction) {
-                    IconButton(icon = AppTheme.icons.check, contentDescription = "Save", onClick = {})
-                }
-            },
-        )
-        ControlsDivider()
-        ControlSwitch(
-            label = "Navigation icon",
-            checked = showNavIcon,
-            onCheckedChange = { showNavIcon = it },
-        )
-        ControlSwitch(label = "Action icon", checked = showAction, onCheckedChange = { showAction = it })
-    }
+    SamplePage(
+        preview = {
+            TopAppBar(
+                title = "Screen Title",
+                navigationIcon = {
+                    if (showNavIcon) {
+                        IconButton(icon = AppTheme.icons.close, contentDescription = "Back", onClick = {})
+                    }
+                },
+                actions = {
+                    if (showAction) {
+                        IconButton(icon = AppTheme.icons.check, contentDescription = "Save", onClick = {})
+                    }
+                },
+            )
+        },
+        controls = {
+            ControlSwitch(
+                label = "Navigation icon",
+                checked = showNavIcon,
+                onCheckedChange = { showNavIcon = it },
+            )
+            ControlSwitch(label = "Action icon", checked = showAction, onCheckedChange = { showAction = it })
+        },
+    )
 }
 
 @Composable
@@ -88,15 +91,18 @@ internal fun NavRailPage() {
             ),
         )
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-            NavRail(items = items, selection = index, onSelectionChange = { index = it })
-            Column {
-                SectionHeader(title = "NavRail")
-                Text("Selected: ${labels[index]}")
+    SamplePage(
+        preview = {
+            Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
+                NavRail(items = items, selection = index, onSelectionChange = { index = it })
+                Column {
+                    SectionHeader(title = "NavRail")
+                    Text("Selected: ${labels[index]}")
+                }
             }
-        }
-        ControlsDivider()
-        ControlSwitch(label = "Show badge", checked = showBadge, onCheckedChange = { showBadge = it })
-    }
+        },
+        controls = {
+            ControlSwitch(label = "Show badge", checked = showBadge, onCheckedChange = { showBadge = it })
+        },
+    )
 }

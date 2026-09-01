@@ -1,7 +1,5 @@
 package io.github.maniramezan.compose.sample
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -49,46 +47,52 @@ internal fun ProgressIndicatorPage() {
     var determinate by remember { mutableStateOf(true) }
     var progress by remember { mutableFloatStateOf(0.45f) }
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        ProgressIndicator(
-            progress = if (determinate) progress else null,
-            label =
-                if (determinate) {
-                    "Progress: ${(progress * 100).toInt()}%"
-                } else {
-                    "Loading…"
-                },
-        )
-        ControlsDivider()
-        ControlSwitch(
-            label = "Determinate",
-            checked = determinate,
-            onCheckedChange = { determinate = it },
-        )
-        if (determinate) {
-            ControlSlider(
-                label = "Progress: ${(progress * 100).toInt()}%",
-                value = progress,
-                onValueChange = { progress = it },
+    SamplePage(
+        preview = {
+            ProgressIndicator(
+                progress = if (determinate) progress else null,
+                label =
+                    if (determinate) {
+                        "Progress: ${(progress * 100).toInt()}%"
+                    } else {
+                        "Loading…"
+                    },
             )
-        }
-    }
+        },
+        controls = {
+            ControlSwitch(
+                label = "Determinate",
+                checked = determinate,
+                onCheckedChange = { determinate = it },
+            )
+            if (determinate) {
+                ControlSlider(
+                    label = "Progress: ${(progress * 100).toInt()}%",
+                    value = progress,
+                    onValueChange = { progress = it },
+                )
+            }
+        },
+    )
 }
 
 @Composable
 internal fun SkeletonPage() {
     var count by remember { mutableIntStateOf(1) }
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        repeat(count) { Skeleton() }
-        ControlsDivider()
-        ControlSegmented(
-            label = "Count",
-            options = listOf("1", "2", "3"),
-            selectedIndex = count - 1,
-            onOptionSelected = { count = it + 1 },
-        )
-    }
+    SamplePage(
+        preview = {
+            repeat(count) { Skeleton() }
+        },
+        controls = {
+            ControlSegmented(
+                label = "Count",
+                options = listOf("1", "2", "3"),
+                selectedIndex = count - 1,
+                onOptionSelected = { count = it + 1 },
+            )
+        },
+    )
 }
 
 @Composable
@@ -98,20 +102,23 @@ internal fun SkeletonBlockPage() {
     val height: Dp = (40 + (heightFraction * 120)).dp
     val width: Dp = (40 + (widthFraction * 200)).dp
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        SkeletonBlock(height = height, width = width)
-        ControlsDivider()
-        ControlSlider(
-            label = "Height: ${height.value.toInt()} dp",
-            value = heightFraction,
-            onValueChange = { heightFraction = it },
-        )
-        ControlSlider(
-            label = "Width: ${width.value.toInt()} dp",
-            value = widthFraction,
-            onValueChange = { widthFraction = it },
-        )
-    }
+    SamplePage(
+        preview = {
+            SkeletonBlock(height = height, width = width)
+        },
+        controls = {
+            ControlSlider(
+                label = "Height: ${height.value.toInt()} dp",
+                value = heightFraction,
+                onValueChange = { heightFraction = it },
+            )
+            ControlSlider(
+                label = "Width: ${width.value.toInt()} dp",
+                value = widthFraction,
+                onValueChange = { widthFraction = it },
+            )
+        },
+    )
 }
 
 private val TYPEWRITER_DEMO_WORDS =
@@ -136,17 +143,20 @@ internal fun TypewriterRevealPage() {
 
     val revealed by rememberTypewriterReveal(text = streamedText, charsPerSecond = charsPerSecond.toInt())
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        AppText(text = revealed.ifEmpty { " " }, style = AppTextStyle.Body)
-        ControlsDivider()
-        ControlSlider(
-            label = "Speed: ${charsPerSecond.toInt()} chars/sec",
-            value = charsPerSecond,
-            onValueChange = { charsPerSecond = it },
-            valueRange = TYPEWRITER_DEMO_SPEED_RANGE,
-        )
-        PrimaryButton(text = "Restart stream", onClick = { streamRunId++ })
-    }
+    SamplePage(
+        preview = {
+            AppText(text = revealed.ifEmpty { " " }, style = AppTextStyle.Body)
+        },
+        controls = {
+            ControlSlider(
+                label = "Speed: ${charsPerSecond.toInt()} chars/sec",
+                value = charsPerSecond,
+                onValueChange = { charsPerSecond = it },
+                valueRange = TYPEWRITER_DEMO_SPEED_RANGE,
+            )
+            PrimaryButton(text = "Restart stream", onClick = { streamRunId++ })
+        },
+    )
 }
 
 @Composable
@@ -170,105 +180,107 @@ internal fun AssistantChatPage() {
             AssistantSampleMode.Error -> assistantSampleMessages(ChatMessageState.Error)
         }
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        if (showStatusBanner) {
-            AssistantStatusBanner(message = "The assistant provider is temporarily unavailable.")
-        }
+    SamplePage(
+        preview = {
+            if (showStatusBanner) {
+                AssistantStatusBanner(message = "The assistant provider is temporarily unavailable.")
+            }
 
-        AssistantContextCard(
-            title = "Reusable assistant surface",
-            highlight = selectedAction.label,
-            body =
-                AssistantContextBody(
-                    text = "Use this page to validate quick actions, typing, completed responses, errors, and limits.",
-                    isQuoted = true,
-                ),
-            footnote = "Sample app validation surface",
-        )
-
-        ChatLog(
-            messages = messages,
-            idleHint = "Choose a quick action to start a conversation.",
-            typingDescription = "Assistant is responding",
-            errorAction =
-                ChatErrorAction(
-                    message = "The assistant could not respond.",
-                    retryLabel = "Retry",
-                    onRetry = { mode = AssistantSampleMode.Typing },
-                ),
-            modifier = Modifier.fillMaxWidth().height(280.dp),
-            messageContent = { sender, text ->
-                Text(
-                    text = if (sender == ChatMessageSender.Assistant) "Assistant: $text" else text,
-                    style = AppTheme.typography.bodyLarge,
-                    color =
-                        if (sender == ChatMessageSender.Assistant) {
-                            AppTheme.colors.onSurfaceVariant
-                        } else {
-                            AppTheme.colors.onPrimaryContainer
-                        },
-                )
-            },
-        )
-
-        if (showLimitPrompt) {
-            AssistantLimitPromptCard(
-                copy =
-                    AssistantLimitPromptCopy(
-                        message = "Daily assistant limit reached.",
-                        supportingText = "Use this state to validate quota or upgrade prompts.",
-                        primaryActionLabel = "Upgrade",
-                        secondaryActionLabel = "Not now",
+            AssistantContextCard(
+                title = "Reusable assistant surface",
+                highlight = selectedAction.label,
+                body =
+                    AssistantContextBody(
+                        text = "Use this page to validate quick actions, typing, completed responses, errors, and limits.",
+                        isQuoted = true,
                     ),
-                onPrimaryAction = {},
-                onSecondaryAction = { showLimitPrompt = false },
+                footnote = "Sample app validation surface",
             )
-        }
 
-        AssistantQuickActionChips(
-            actions = AssistantSampleAction.entries,
-            actionState = { action ->
-                AssistantQuickActionState(
-                    isSelected = action == selectedAction || action in usedActions,
-                    isEnabled = !showLimitPrompt && mode != AssistantSampleMode.Typing && action !in usedActions,
+            ChatLog(
+                messages = messages,
+                idleHint = "Choose a quick action to start a conversation.",
+                typingDescription = "Assistant is responding",
+                errorAction =
+                    ChatErrorAction(
+                        message = "The assistant could not respond.",
+                        retryLabel = "Retry",
+                        onRetry = { mode = AssistantSampleMode.Typing },
+                    ),
+                modifier = Modifier.fillMaxWidth().height(280.dp),
+                messageContent = { sender, text ->
+                    Text(
+                        text = if (sender == ChatMessageSender.Assistant) "Assistant: $text" else text,
+                        style = AppTheme.typography.bodyLarge,
+                        color =
+                            if (sender == ChatMessageSender.Assistant) {
+                                AppTheme.colors.onSurfaceVariant
+                            } else {
+                                AppTheme.colors.onPrimaryContainer
+                            },
+                    )
+                },
+            )
+
+            if (showLimitPrompt) {
+                AssistantLimitPromptCard(
+                    copy =
+                        AssistantLimitPromptCopy(
+                            message = "Daily assistant limit reached.",
+                            supportingText = "Use this state to validate quota or upgrade prompts.",
+                            primaryActionLabel = "Upgrade",
+                            secondaryActionLabel = "Not now",
+                        ),
+                    onPrimaryAction = {},
+                    onSecondaryAction = { showLimitPrompt = false },
                 )
-            },
-            label = { it.label },
-            onAction = { action ->
-                selectedAction = action
-                usedActions = usedActions + action
-                mode = AssistantSampleMode.Typing
-            },
-        )
+            }
 
-        AssistantDisclaimerFooter(text = "Assistant output is generated. Review important information before using it.")
+            AssistantQuickActionChips(
+                actions = AssistantSampleAction.entries,
+                actionState = { action ->
+                    AssistantQuickActionState(
+                        isSelected = action == selectedAction || action in usedActions,
+                        isEnabled = !showLimitPrompt && mode != AssistantSampleMode.Typing && action !in usedActions,
+                    )
+                },
+                label = { it.label },
+                onAction = { action ->
+                    selectedAction = action
+                    usedActions = usedActions + action
+                    mode = AssistantSampleMode.Typing
+                },
+            )
 
-        ControlsDivider()
-        ControlSegmented(
-            label = "Response state",
-            options = AssistantSampleMode.entries.map { it.label },
-            selectedIndex = AssistantSampleMode.entries.indexOf(mode),
-            onOptionSelected = { mode = AssistantSampleMode.entries[it] },
-        )
-        ControlSwitch(
-            label = "Show status banner",
-            checked = showStatusBanner,
-            onCheckedChange = { showStatusBanner = it },
-        )
-        ControlSwitch(
-            label = "Show limit prompt",
-            checked = showLimitPrompt,
-            onCheckedChange = { showLimitPrompt = it },
-        )
-        PrimaryButton(
-            text = "Reset quick actions",
-            onClick = {
-                selectedAction = AssistantSampleAction.SUMMARIZE
-                usedActions = emptySet()
-                mode = AssistantSampleMode.Idle
-            },
-        )
-    }
+            AssistantDisclaimerFooter(text = "Assistant output is generated. Review important information before using it.")
+        },
+        controls = {
+            ControlSegmented(
+                label = "Response state",
+                options = AssistantSampleMode.entries.map { it.label },
+                selectedIndex = AssistantSampleMode.entries.indexOf(mode),
+                onOptionSelected = { mode = AssistantSampleMode.entries[it] },
+            )
+            ControlSwitch(
+                label = "Show status banner",
+                checked = showStatusBanner,
+                onCheckedChange = { showStatusBanner = it },
+            )
+            ControlSwitch(
+                label = "Show limit prompt",
+                checked = showLimitPrompt,
+                onCheckedChange = { showLimitPrompt = it },
+            )
+            PrimaryButton(
+                text = "Reset quick actions",
+                onClick = {
+                    selectedAction = AssistantSampleAction.SUMMARIZE
+                    usedActions = emptySet()
+                    mode = AssistantSampleMode.Idle
+                },
+            )
+        },
+    )
 }
 
 private const val TYPEWRITER_DEMO_CHUNK_DELAY_MS = 350L
