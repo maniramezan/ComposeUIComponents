@@ -96,8 +96,8 @@ DisclosureCard(
     onExpandedChange = { expanded = it },
     expandedStateDescription = "Expanded",
     collapsedStateDescription = "Collapsed",
-    summary = { Text("Word of the day") },
-    detail = { Text("Definition") },
+    summary = { Text("Section title") },
+    detail = { Text("Additional information") },
 )
 ```
 

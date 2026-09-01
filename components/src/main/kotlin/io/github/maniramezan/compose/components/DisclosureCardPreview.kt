@@ -25,8 +25,8 @@ public fun DisclosureCardPreview(): Unit =
             onExpandedChange = { expanded = it },
             expandedStateDescription = "Expanded",
             collapsedStateDescription = "Collapsed",
-            summary = { Text(text = "Word of the day") },
-            detail = { Text(text = "A word selected for today.") },
+            summary = { Text(text = "Section title") },
+            detail = { Text(text = "Additional information shown when expanded.") },
         )
     }
 
