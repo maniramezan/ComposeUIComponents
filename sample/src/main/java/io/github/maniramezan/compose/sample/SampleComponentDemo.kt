@@ -316,6 +316,13 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             content = { AppTextPage() },
         ),
         SampleComponentDemo(
+            id = "typography-weights",
+            title = "Typography weight variants",
+            category = "Typography",
+            description = "AppTypography weight-variant slots: M3 base slots re-cut at a heavier weight, on-scale.",
+            content = { TypographyWeightsPage() },
+        ),
+        SampleComponentDemo(
             id = "pill-chip",
             title = "PillChip",
             category = "Chips & Badges",
