@@ -60,6 +60,7 @@ class AppTypographyTest {
             listOf(
                 Variant("labelSmallSemibold", typography.labelSmallSemibold, typography.labelSmall, FontWeight.SemiBold),
                 Variant("labelSmallBold", typography.labelSmallBold, typography.labelSmall, FontWeight.Bold),
+                Variant("labelMediumSemibold", typography.labelMediumSemibold, typography.labelMedium, FontWeight.SemiBold),
                 Variant("labelMediumBold", typography.labelMediumBold, typography.labelMedium, FontWeight.Bold),
                 Variant("labelLargeBold", typography.labelLargeBold, typography.labelLarge, FontWeight.Bold),
                 Variant("bodySmallMedium", typography.bodySmallMedium, typography.bodySmall, FontWeight.Medium),
