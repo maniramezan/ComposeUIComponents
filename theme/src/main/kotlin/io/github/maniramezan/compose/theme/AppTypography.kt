@@ -15,6 +15,11 @@ import androidx.compose.ui.unit.sp
  *    the Material 3 slots below.
  *  - **Material 3 standard scale** (`displayLarge` … `labelSmall`) — matches
  *    the Material 3 type system slot-for-slot.
+ *  - **Weight variants** — a few M3 slots re-cut at a heavier weight
+ *    (`labelSmallBold`, `bodyLargeSemibold`, …) for emphasis that keeps the
+ *    slot's size and line height on the scale. Each defaults to its base slot
+ *    with only `fontWeight` changed, so a theme overrides only the ones it
+ *    wants to tune.
  *  - **Custom extensions** — semantic styles common in product UIs but not in
  *    the M3 scale (`subtitle`, monospaced styles, oversized icon glyphs, …).
  */
@@ -41,6 +46,27 @@ public data class AppTypography(
     public val labelLarge: TextStyle,
     public val labelMedium: TextStyle,
     public val labelSmall: TextStyle,
+    /**
+     * Weight variant: [labelSmall] at semibold — ordinary emphasis for the smallest labels.
+     *
+     * Like every weight variant, this defaults to its base slot with only `fontWeight` raised,
+     * so size and line height stay on the scale and a theme overrides only what it wants to tune.
+     */
+    public val labelSmallSemibold: TextStyle = labelSmall.copy(fontWeight = FontWeight.SemiBold),
+    /** Weight variant: [labelSmall] at bold — a small label that must anchor itself against denser content. */
+    public val labelSmallBold: TextStyle = labelSmall.copy(fontWeight = FontWeight.Bold),
+    /** Weight variant: [labelMedium] at bold — a small metadata label that should read as a heading beside body text. */
+    public val labelMediumBold: TextStyle = labelMedium.copy(fontWeight = FontWeight.Bold),
+    /** Weight variant: [labelLarge] at bold — a label that has to hold its own next to body-size text. */
+    public val labelLargeBold: TextStyle = labelLarge.copy(fontWeight = FontWeight.Bold),
+    /** Weight variant: [bodySmall] at medium — light emphasis for a secondary line, e.g. a name above a detail. */
+    public val bodySmallMedium: TextStyle = bodySmall.copy(fontWeight = FontWeight.Medium),
+    /** Weight variant: [bodySmall] at semibold — an emphasised run inside otherwise-regular supporting copy. */
+    public val bodySmallSemibold: TextStyle = bodySmall.copy(fontWeight = FontWeight.SemiBold),
+    /** Weight variant: [bodyMedium] at semibold — a body-size affordance or inline call to action. */
+    public val bodyMediumSemibold: TextStyle = bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+    /** Weight variant: [bodyLarge] at semibold — the selected row in a body-size list, paired with plain [bodyLarge]. */
+    public val bodyLargeSemibold: TextStyle = bodyLarge.copy(fontWeight = FontWeight.SemiBold),
     // ===== Custom extensions =====
     public val subtitle: TextStyle,
     public val bodyMonospaced: TextStyle,

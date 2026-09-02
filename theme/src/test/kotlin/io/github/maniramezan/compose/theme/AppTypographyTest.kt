@@ -1,6 +1,8 @@
 package io.github.maniramezan.compose.theme
 
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
@@ -41,5 +43,36 @@ class AppTypographyTest {
         assertThat(typography.iconSmall.fontSize.value).isLessThan(typography.iconMedium.fontSize.value)
         assertThat(typography.iconMedium.fontSize.value).isLessThan(typography.iconLarge.fontSize.value)
         assertThat(typography.iconLarge.fontSize.value).isLessThan(typography.iconExtraLarge.fontSize.value)
+    }
+
+    @Test
+    fun weightVariantsRaiseWeightButKeepBaseSlotMetrics() {
+        val typography = AppTypography.default()
+
+        data class Variant(
+            val name: String,
+            val style: TextStyle,
+            val base: TextStyle,
+            val weight: FontWeight,
+        )
+
+        val variants =
+            listOf(
+                Variant("labelSmallSemibold", typography.labelSmallSemibold, typography.labelSmall, FontWeight.SemiBold),
+                Variant("labelSmallBold", typography.labelSmallBold, typography.labelSmall, FontWeight.Bold),
+                Variant("labelMediumBold", typography.labelMediumBold, typography.labelMedium, FontWeight.Bold),
+                Variant("labelLargeBold", typography.labelLargeBold, typography.labelLarge, FontWeight.Bold),
+                Variant("bodySmallMedium", typography.bodySmallMedium, typography.bodySmall, FontWeight.Medium),
+                Variant("bodySmallSemibold", typography.bodySmallSemibold, typography.bodySmall, FontWeight.SemiBold),
+                Variant("bodyMediumSemibold", typography.bodyMediumSemibold, typography.bodyMedium, FontWeight.SemiBold),
+                Variant("bodyLargeSemibold", typography.bodyLargeSemibold, typography.bodyLarge, FontWeight.SemiBold),
+            )
+
+        for (variant in variants) {
+            assertThat(variant.style.fontWeight).isEqualTo(variant.weight)
+            assertThat(variant.style.fontSize).isEqualTo(variant.base.fontSize)
+            assertThat(variant.style.lineHeight).isEqualTo(variant.base.lineHeight)
+            assertThat(variant.style.fontWeight).isNotEqualTo(variant.base.fontWeight)
+        }
     }
 }

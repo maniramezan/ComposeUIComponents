@@ -64,11 +64,12 @@ Two parallel naming schemes are exposed for back-compat:
 
 ## Typography slot taxonomy
 
-`AppTypography` exposes three groups:
+`AppTypography` exposes four groups:
 
 1. **Original 4-slot scale** — `display`, `title`, `body`, `label`. Kept for back-compat with the library's first cut.
 2. **Material 3 standard scale** — `displayLarge`/`Medium`/`Small`, `headlineLarge`/`Medium`/`Small`, `titleLarge`/`Medium`/`Small`, `bodyLarge`/`Medium`/`Small`, `labelLarge`/`Medium`/`Small`. These also flow into `MaterialTheme.typography`.
-3. **Custom extensions** — `subtitle`, `bodyMonospaced`, `captionMonospaced`, `displayRounded`, `iconSmall`/`Medium`/`Large`/`ExtraLarge`.
+3. **Weight variants** — `labelSmallSemibold`, `labelSmallBold`, `labelMediumBold`, `labelLargeBold`, `bodySmallMedium`, `bodySmallSemibold`, `bodyMediumSemibold`, `bodyLargeSemibold`. Each is its M3 base slot re-cut at a heavier weight for emphasis, and defaults to that slot with only `fontWeight` changed — size and line height stay on the scale, and a theme overrides only the ones it wants to tune.
+4. **Custom extensions** — `subtitle`, `bodyMonospaced`, `captionMonospaced`, `displayRounded`, `iconSmall`/`Medium`/`Large`/`ExtraLarge`.
 
 ## Brand overrides
 
