@@ -68,7 +68,7 @@ Two parallel naming schemes are exposed for back-compat:
 
 1. **Original 4-slot scale** — `display`, `title`, `body`, `label`. Kept for back-compat with the library's first cut.
 2. **Material 3 standard scale** — `displayLarge`/`Medium`/`Small`, `headlineLarge`/`Medium`/`Small`, `titleLarge`/`Medium`/`Small`, `bodyLarge`/`Medium`/`Small`, `labelLarge`/`Medium`/`Small`. These also flow into `MaterialTheme.typography`.
-3. **Weight variants** — `labelSmallSemibold`, `labelSmallBold`, `labelMediumBold`, `labelLargeBold`, `bodySmallMedium`, `bodySmallSemibold`, `bodyMediumSemibold`, `bodyLargeSemibold`. Each is its M3 base slot re-cut at a heavier weight for emphasis, and defaults to that slot with only `fontWeight` changed — size and line height stay on the scale, and a theme overrides only the ones it wants to tune.
+3. **Weight variants** — `labelSmallSemibold`, `labelSmallBold`, `labelMediumBold`, `labelLargeBold`, `bodySmallMedium`, `bodySmallSemibold`, `bodyMediumSemibold`, `bodyLargeSemibold`. Each is its M3 base slot re-cut at a heavier weight for emphasis, and defaults to that slot with only `fontWeight` changed — size and line height stay on the scale, and a theme overrides only the ones it wants to tune. The `:sample` browser has a **Typography → Typography weight variants** page that renders each variant against its base slot.
 4. **Custom extensions** — `subtitle`, `bodyMonospaced`, `captionMonospaced`, `displayRounded`, `iconSmall`/`Medium`/`Large`/`ExtraLarge`.
 
 ## Brand overrides
