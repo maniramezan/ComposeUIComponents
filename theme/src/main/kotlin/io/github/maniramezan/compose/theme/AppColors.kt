@@ -15,6 +15,7 @@ import io.github.maniramezan.compose.tokens.AppReferenceColors
  *  - **Status** — semantic success / warning / error colors.
  *  - **Overlay** — colors for media-overlay and scrim use cases.
  *  - **Levels** — a [LevelPalette] for tiered-badge components.
+ *  - **Skeleton** — the highlight swept across loading placeholders.
  */
 @Immutable
 public data class AppColors(
@@ -52,6 +53,18 @@ public data class AppColors(
     public val overlayBottomTint: Color,
     // ===== Tiered badge palette (extension) =====
     public val levels: LevelPalette,
+    /**
+     * Skeleton highlight (extension) — the colour swept across skeleton placeholders by
+     * `Modifier.skeletonShimmer`.
+     *
+     * Defaults to [onSurface]. The shimmer paints it at a low alpha and masks it to the
+     * placeholder silhouette, so it needs to be the theme's "ink" color — dark on a light
+     * theme, light on a dark theme — for the sweep to read against the neutral
+     * [surfaceContainer] / [surfaceVariant] fills the placeholders use. [onSurface] is that
+     * color by construction, which is why it is the default; a theme whose skeletons sit on
+     * an unusual surface (e.g. an always-dark media area) should override it.
+     */
+    public val shimmerHighlight: Color = onSurface,
 ) {
     public companion object {
         public fun light(): AppColors =

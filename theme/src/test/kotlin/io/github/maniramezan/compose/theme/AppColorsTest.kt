@@ -54,4 +54,15 @@ class AppColorsTest {
         assertThat(AppColors.light().levels.size).isEqualTo(0)
         assertThat(AppColors.dark().levels.size).isEqualTo(0)
     }
+
+    @Test
+    fun shimmerHighlightDefaultsToOnSurface() {
+        assertThat(AppColors.light().shimmerHighlight).isEqualTo(AppColors.light().onSurface)
+        assertThat(AppColors.dark().shimmerHighlight).isEqualTo(AppColors.dark().onSurface)
+    }
+
+    @Test
+    fun shimmerHighlightDiffersBetweenLightAndDark() {
+        assertThat(AppColors.light().shimmerHighlight).isNotEqualTo(AppColors.dark().shimmerHighlight)
+    }
 }

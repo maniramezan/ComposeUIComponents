@@ -103,6 +103,13 @@ public class ComponentCategoryScreenshotTest {
     }
 
     @Test
+    public fun skeletonShimmerMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/skeleton-shimmer.png") {
+            SkeletonShimmerPreview()
+        }
+    }
+
+    @Test
     public fun typographyComponentsMatchGolden() {
         captureRoboImage("build/outputs/roborazzi/typography-components.png") {
             TypographyComponentsPreview()
