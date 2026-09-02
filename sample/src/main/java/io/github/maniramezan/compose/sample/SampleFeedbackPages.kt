@@ -1,10 +1,14 @@
 package io.github.maniramezan.compose.sample
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -30,10 +34,12 @@ import io.github.maniramezan.compose.components.ChatLog
 import io.github.maniramezan.compose.components.ChatMessage
 import io.github.maniramezan.compose.components.ChatMessageSender
 import io.github.maniramezan.compose.components.ChatMessageState
+import io.github.maniramezan.compose.components.LocalSkeletonShimmerEnabled
 import io.github.maniramezan.compose.components.PrimaryButton
 import io.github.maniramezan.compose.components.ProgressIndicator
 import io.github.maniramezan.compose.components.Skeleton
 import io.github.maniramezan.compose.components.SkeletonBlock
+import io.github.maniramezan.compose.components.skeletonShimmer
 import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.utils.rememberTypewriterReveal
 import kotlinx.coroutines.delay
@@ -116,6 +122,52 @@ internal fun SkeletonBlockPage() {
                 label = "Width: ${width.value.toInt()} dp",
                 value = widthFraction,
                 onValueChange = { widthFraction = it },
+            )
+        },
+    )
+}
+
+@Composable
+internal fun SkeletonShimmerPage() {
+    var rows by remember { mutableIntStateOf(3) }
+    var shimmerEnabled by remember { mutableStateOf(true) }
+
+    SamplePage(
+        preview = {
+            CompositionLocalProvider(LocalSkeletonShimmerEnabled provides shimmerEnabled) {
+                // One skeletonShimmer() at the root of the ghost layout drives every block
+                // below it as a single band. The band is also static under the system
+                // reduce-motion setting and in @Preview inspection.
+                Column(
+                    modifier = Modifier.fillMaxWidth().skeletonShimmer(),
+                    verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md),
+                ) {
+                    repeat(rows) {
+                        Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
+                            SkeletonBlock(height = AppTheme.spacing.x6, width = AppTheme.spacing.x6)
+                            Column(
+                                modifier = Modifier.weight(1f),
+                                verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm),
+                            ) {
+                                SkeletonBlock(height = AppTheme.spacing.md)
+                                SkeletonBlock(height = AppTheme.spacing.md, width = AppTheme.spacing.x8)
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        controls = {
+            ControlSwitch(
+                label = "Shimmer enabled (LocalSkeletonShimmerEnabled)",
+                checked = shimmerEnabled,
+                onCheckedChange = { shimmerEnabled = it },
+            )
+            ControlSegmented(
+                label = "Rows",
+                options = listOf("1", "3", "5"),
+                selectedIndex = listOf(1, 3, 5).indexOf(rows).coerceAtLeast(0),
+                onOptionSelected = { rows = listOf(1, 3, 5)[it] },
             )
         },
     )

@@ -44,12 +44,13 @@ When dynamic color is unavailable, `AppTheme` falls back to the supplied `AppCol
 
 ## Color slot taxonomy
 
-The `AppColors` data class groups slots into four buckets:
+The `AppColors` data class groups slots into five buckets:
 
 1. **Core (Material 3 standard)** — `primary`, `onPrimary`, `primaryContainer`, `onPrimaryContainer`, `secondary`, `onSecondary`, `background`, `onBackground`, `surface`, `onSurface`, `surfaceVariant`, `onSurfaceVariant`, `surfaceContainer`, `outline`, `outlineVariant`, `error`, `onError`, `scrim`. These map straight onto Material 3's `ColorScheme`.
 2. **Status (extensions)** — `success`, `onSuccess`, `warning`, `onWarning`. Apps that need success/warning indicators no longer have to repurpose `tertiary` or invent their own.
 3. **Overlay (extensions)** — `overlayHeavy`, `overlayMedium`, `overlaySubtle`, `overlayShadowStart`, `overlayShadowEnd`, `overlayBottomTint`. Useful for media-overlay UIs (player thumbnails, gradient scrims) without baking magic alphas into call sites.
 4. **Levels (extension)** — `levels: LevelPalette`. A `LevelPalette` is an ordered list of `LevelTier(background, foreground)` pairs that powers tiered-badge usages like `PillChip(label, tier)`. Apps own the ordering and color values.
+5. **Skeleton (extension)** — `shimmerHighlight`. The highlight `Modifier.skeletonShimmer()` sweeps across loading placeholders. Defaults to `onSurface` (the placeholders sit on neutral surface fills, so the sweep needs the theme's ink color); override it for skeletons on an unusual surface.
 
 ## Spacing slot taxonomy
 

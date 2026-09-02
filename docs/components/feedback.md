@@ -7,6 +7,7 @@ Feedback components communicate loading, transient status, and placeholder state
 - `ProgressIndicator`
 - `Skeleton`
 - `SkeletonBlock`
+- `Modifier.skeletonShimmer`
 - `Toast`
 - `ToastHost`
 - `ChatLog`
@@ -137,6 +138,40 @@ AppTheme {
 Both are decorative loading placeholders and are hidden from the accessibility tree
 (`clearAndSetSemantics {}`) since they carry no information a screen reader should stop
 on.
+
+### Shimmer
+
+`Modifier.skeletonShimmer()` sweeps a soft highlight band across the placeholders below
+it so a skeleton reads as in-progress rather than frozen. Apply it **once at the root of
+a ghost layout**, not per block:
+
+```kotlin
+Column(
+    modifier = Modifier.fillMaxWidth().skeletonShimmer(),
+    verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md),
+) {
+    repeat(3) {
+        Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
+            SkeletonBlock(height = 48.dp, width = 48.dp)
+            Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
+                SkeletonBlock(height = 16.dp)
+                SkeletonBlock(height = 16.dp, width = 120.dp)
+            }
+        }
+    }
+}
+```
+
+The band's phase is a pure function of the animation frame clock, not per-node animation
+state, so separate cards and lists that each use the modifier sweep in unison as one band
+— regardless of when each entered composition. The highlight is
+`AppTheme.colors.shimmerHighlight` (defaults to `onSurface`), painted at a low alpha and
+masked with `BlendMode.SrcAtop` to the placeholder silhouette so it never tints the gaps.
+
+The sweep is **static** — the modifier becomes an inert pass-through — when the system
+reduce-motion / animator-duration-scale setting is off, when `LocalSkeletonShimmerEnabled`
+is `false` (the escape hatch for deterministic screenshots), or under `@Preview`
+inspection. It adds no pointer input and no semantics.
 
 ### SkeletonBlock parameters
 
