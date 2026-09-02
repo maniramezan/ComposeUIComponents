@@ -36,6 +36,10 @@ public fun SkeletonBlockShowkase(): Unit =
         }
     }
 
+@ShowkaseComposable(name = "Skeleton Shimmer", group = "Feedback")
+@Composable
+public fun SkeletonShimmerShowkase(): Unit = SkeletonShimmerPreview()
+
 @ShowkaseComposable(name = "Toast", group = "Feedback")
 @Composable
 public fun ToastShowkase(): Unit =

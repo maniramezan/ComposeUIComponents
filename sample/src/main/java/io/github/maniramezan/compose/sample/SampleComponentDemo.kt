@@ -295,6 +295,13 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             content = { SkeletonBlockPage() },
         ),
         SampleComponentDemo(
+            id = "skeleton-shimmer",
+            title = "Modifier.skeletonShimmer",
+            category = "Feedback",
+            description = "Root-applied, phase-locked shimmer sweep for skeleton layouts.",
+            content = { SkeletonShimmerPage() },
+        ),
+        SampleComponentDemo(
             id = "typewriter-reveal",
             title = "rememberTypewriterReveal",
             category = "Feedback",
