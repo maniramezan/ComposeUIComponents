@@ -8,20 +8,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
 /**
- * Typography slots exposed by [AppTheme]. Three groups of slots are provided:
+ * Typography slots exposed by [AppTheme]. Four groups of slots are provided:
  *
  *  - **Original 4-slot scale** (`display`, `title`, `body`, `label`) — kept for
  *    back-compat with the library's first cut. New components should prefer
  *    the Material 3 slots below.
  *  - **Material 3 standard scale** (`displayLarge` … `labelSmall`) — matches
  *    the Material 3 type system slot-for-slot.
+ *  - **Custom extensions** — semantic styles common in product UIs but not in
+ *    the M3 scale (`subtitle`, monospaced styles, oversized icon glyphs, …).
  *  - **Weight variants** — a few M3 slots re-cut at a heavier weight
  *    (`labelSmallBold`, `bodyLargeSemibold`, …) for emphasis that keeps the
  *    slot's size and line height on the scale. Each defaults to its base slot
  *    with only `fontWeight` changed, so a theme overrides only the ones it
- *    wants to tune.
- *  - **Custom extensions** — semantic styles common in product UIs but not in
- *    the M3 scale (`subtitle`, monospaced styles, oversized icon glyphs, …).
+ *    wants to tune. These come last in the constructor so every one of them
+ *    carries a default and the non-defaulted slots keep a stable position.
  */
 @Immutable
 public data class AppTypography(
@@ -46,15 +47,27 @@ public data class AppTypography(
     public val labelLarge: TextStyle,
     public val labelMedium: TextStyle,
     public val labelSmall: TextStyle,
+    // ===== Custom extensions =====
+    public val subtitle: TextStyle,
+    public val bodyMonospaced: TextStyle,
+    public val captionMonospaced: TextStyle,
+    public val displayRounded: TextStyle,
+    public val iconSmall: TextStyle,
+    public val iconMedium: TextStyle,
+    public val iconLarge: TextStyle,
+    public val iconExtraLarge: TextStyle,
     /**
      * Weight variant: [labelSmall] at semibold — ordinary emphasis for the smallest labels.
      *
-     * Like every weight variant, this defaults to its base slot with only `fontWeight` raised,
-     * so size and line height stay on the scale and a theme overrides only what it wants to tune.
+     * Weight variants come last so every one carries a default. Each defaults to its M3 base slot
+     * with only `fontWeight` raised, so size and line height stay on the scale and a theme
+     * overrides only what it wants to tune.
      */
     public val labelSmallSemibold: TextStyle = labelSmall.copy(fontWeight = FontWeight.SemiBold),
     /** Weight variant: [labelSmall] at bold — a small label that must anchor itself against denser content. */
     public val labelSmallBold: TextStyle = labelSmall.copy(fontWeight = FontWeight.Bold),
+    /** Weight variant: [labelMedium] at semibold — ordinary emphasis for a small label, e.g. a selected filter chip. */
+    public val labelMediumSemibold: TextStyle = labelMedium.copy(fontWeight = FontWeight.SemiBold),
     /** Weight variant: [labelMedium] at bold — a small metadata label that should read as a heading beside body text. */
     public val labelMediumBold: TextStyle = labelMedium.copy(fontWeight = FontWeight.Bold),
     /** Weight variant: [labelLarge] at bold — a label that has to hold its own next to body-size text. */
@@ -67,15 +80,6 @@ public data class AppTypography(
     public val bodyMediumSemibold: TextStyle = bodyMedium.copy(fontWeight = FontWeight.SemiBold),
     /** Weight variant: [bodyLarge] at semibold — the selected row in a body-size list, paired with plain [bodyLarge]. */
     public val bodyLargeSemibold: TextStyle = bodyLarge.copy(fontWeight = FontWeight.SemiBold),
-    // ===== Custom extensions =====
-    public val subtitle: TextStyle,
-    public val bodyMonospaced: TextStyle,
-    public val captionMonospaced: TextStyle,
-    public val displayRounded: TextStyle,
-    public val iconSmall: TextStyle,
-    public val iconMedium: TextStyle,
-    public val iconLarge: TextStyle,
-    public val iconExtraLarge: TextStyle,
 ) {
     public companion object {
         public fun default(): AppTypography {
