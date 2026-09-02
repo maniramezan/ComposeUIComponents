@@ -20,7 +20,6 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.utils.minimumTouchTargetHeight
@@ -94,8 +93,7 @@ internal fun SelectionListRow(
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
-                style = AppTheme.typography.bodyLarge,
-                fontWeight = if (isSelected) FontWeight.SemiBold else null,
+                style = if (isSelected) AppTheme.typography.bodyLargeSemibold else AppTheme.typography.bodyLarge,
                 color = if (isSelected) AppTheme.colors.primary else AppTheme.colors.onSurface,
             )
             if (subtitle != null) {

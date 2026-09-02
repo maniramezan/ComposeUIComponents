@@ -55,9 +55,12 @@ public fun PillChip(
         Text(
             text = label,
             style =
-                AppTheme.typography.labelMedium.copy(
-                    fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-                ),
+                if (isSelected) {
+                    AppTheme.typography.labelMediumSemibold
+                } else {
+                    // Unselected chips read one step lighter than the base slot's Medium weight.
+                    AppTheme.typography.labelMedium.copy(fontWeight = FontWeight.Normal)
+                },
             color = textColor,
         )
     }

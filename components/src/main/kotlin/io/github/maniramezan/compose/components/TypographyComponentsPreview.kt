@@ -19,5 +19,7 @@ public fun TypographyComponentsPreview(): Unit =
             AppText(text = "Title", style = AppTextStyle.Title)
             AppText(text = "Body text for reading content.", style = AppTextStyle.Body)
             AppText(text = "Label", style = AppTextStyle.Label)
+            AppText(text = "Body large semibold", style = AppTextStyle.BodyLargeSemibold)
+            AppText(text = "Label medium semibold", style = AppTextStyle.LabelMediumSemibold)
         }
     }
