@@ -14,9 +14,9 @@ import androidx.compose.runtime.setValue
 import io.github.maniramezan.compose.components.IconButton
 import io.github.maniramezan.compose.components.NavRail
 import io.github.maniramezan.compose.components.SectionHeader
-import io.github.maniramezan.compose.components.TabBarItemData
 import io.github.maniramezan.compose.components.TabBar
 import io.github.maniramezan.compose.components.TabBarItem
+import io.github.maniramezan.compose.components.TabBarItemData
 import io.github.maniramezan.compose.components.TabRow
 import io.github.maniramezan.compose.components.TopAppBar
 import io.github.maniramezan.compose.theme.AppTheme
@@ -125,9 +125,9 @@ internal fun TabBarItemPage() {
                     onSelectionChange = { selected = it },
                     icon = { Icon(imageVector = AppTheme.icons.check.imageVector, contentDescription = null) },
                     enabled = enabled,
-                    label = if (showLabel) ({ Text("Selected") }) else null,
+                    label = if (showLabel) ({ Text("Home") }) else null,
                     badge = if (showBadge) ({ Text("3") }) else null,
-                    contentDescription = if (showLabel) "" else "Selected",
+                    contentDescription = if (showLabel) "" else "Home",
                 )
             }
         },

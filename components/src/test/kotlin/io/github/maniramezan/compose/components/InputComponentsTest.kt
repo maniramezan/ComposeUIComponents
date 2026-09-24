@@ -1,51 +1,47 @@
 package io.github.maniramezan.compose.components
 
-import com.google.common.truth.Truth.assertThat
-import org.junit.jupiter.api.Test
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onNode
+import androidx.compose.ui.text.input.ImeAction
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.github.maniramezan.compose.theme.AppTheme
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 
-class InputComponentsTest {
-    @Test
-    fun inputComponentNamesAreStable() {
-        assertThat(
-            listOf(
-                "TextField",
-                "PasswordField",
-                "SearchField",
-                "Checkbox",
-                "RadioGroup",
-                "Switch",
-                "Slider",
-            ),
-        ).containsExactly(
-            "TextField",
-            "PasswordField",
-            "SearchField",
-            "Checkbox",
-            "RadioGroup",
-            "Switch",
-            "Slider",
-        ).inOrder()
-    }
+@RunWith(AndroidJUnit4::class)
+@Config(sdk = [35])
+public class InputComponentsTest {
+    @get:Rule
+    public val composeRule = createComposeRule()
 
     @Test
-    fun textFieldSupportsIconSlots() {
-        assertThat("leadingIcon").isNotEmpty()
-        assertThat("trailingIcon").isNotEmpty()
-    }
+    public fun textAndPasswordFieldsForwardKeyboardOptions() {
+        composeRule.setContent {
+            AppTheme {
+                Column {
+                    TextField(
+                        value = "",
+                        onValueChange = {},
+                        label = "Search",
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                    )
+                    PasswordField(
+                        value = "",
+                        onValueChange = {},
+                        label = "Password",
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    )
+                }
+            }
+        }
 
-    @Test
-    fun passwordFieldSupportsTrailingIconSlot() {
-        assertThat("trailingIcon").isNotEmpty()
-    }
-
-    @Test
-    fun switchSupportsThumbContentSlot() {
-        assertThat("thumbContent").isNotEmpty()
-    }
-
-    @Test
-    fun searchFieldSupportsKeyboardAndLeadingIconSlots() {
-        assertThat("keyboardOptions").isNotEmpty()
-        assertThat("leadingIcon").isNotEmpty()
+        composeRule.onNode(SemanticsMatcher.expectValue(SemanticsProperties.ImeAction, ImeAction.Search)).assertExists()
+        composeRule.onNode(SemanticsMatcher.expectValue(SemanticsProperties.ImeAction, ImeAction.Done)).assertExists()
     }
 }

@@ -81,7 +81,7 @@ public fun TabBarItemPreview(): Unit =
                 selection = 0,
                 onSelectionChange = {},
                 icon = { Icon(imageVector = AppTheme.icons.check.imageVector, contentDescription = null) },
-                label = { Text("Selected") },
+                label = { Text("Home") },
                 badge = { Text("3") },
             )
         }

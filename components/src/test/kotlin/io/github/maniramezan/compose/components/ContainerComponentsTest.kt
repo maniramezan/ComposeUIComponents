@@ -1,27 +1,32 @@
 package io.github.maniramezan.compose.components
 
+import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
-import org.junit.jupiter.api.Test
+import io.github.maniramezan.compose.theme.AppTheme
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 
-class ContainerComponentsTest {
+@RunWith(AndroidJUnit4::class)
+@Config(sdk = [35])
+public class ContainerComponentsTest {
+    @get:Rule
+    public val composeRule = createComposeRule()
+
     @Test
-    fun containerComponentNamesAreStable() {
-        assertThat(
-            listOf(
-                "Card",
-                "Surface",
-                "Section",
-                "BottomSheet",
-                "Dialog",
-                "Snackbar",
-            ),
-        ).containsExactly(
-            "Card",
-            "Surface",
-            "Section",
-            "BottomSheet",
-            "Dialog",
-            "Snackbar",
-        ).inOrder()
+    public fun sectionHeaderActionInvokesCallback() {
+        var invoked = false
+        composeRule.setContent {
+            AppTheme {
+                SectionHeader(title = "Recent", actionLabel = "See all", onAction = { invoked = true })
+            }
+        }
+
+        composeRule.onNodeWithText("See all").performClick()
+        composeRule.runOnIdle { assertThat(invoked).isTrue() }
     }
 }
