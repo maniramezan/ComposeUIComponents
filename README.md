@@ -14,13 +14,14 @@ Reusable Kotlin-first Jetpack Compose design system for Android apps.
 - `:theme` — semantic theme and `AppTheme` contracts.
 - `:icons` — curated default icon implementations.
 - `:compose-utils` — preview, modifier, and semantics helpers.
+- `:secure-storage` — encrypted key-value storage (see `docs/secure-storage.md`).
 - `:components` — public UI components.
 - `:testing` — Compose test utilities.
 - `:catalog` — exhaustive component browser app.
 - `:sample` — consumer-like sample app.
 - `:baselineprofile` — sample startup macrobenchmark and baseline profile generator.
 
-See `spec.md` for the implementation plan.
+Architecture decisions live in `docs/adr/`; contributor workflow lives in `docs/contributing.md`.
 
 ## Documentation
 
@@ -37,16 +38,17 @@ See `spec.md` for the implementation plan.
 
 ## Build Artifacts
 
-CI uploads these artifacts on every successful run:
+CI uploads these artifacts on pull-request and `main` runs:
 
 - `catalog-debug-apk` — browsable Showkase catalog APK.
 - `sample-debug-apk` — consumer-like sample APK.
-- `baselineprofile-debug-apk` — benchmark APK for sample startup/profile generation.
-- `component-screenshots` — Roborazzi screenshots and reports.
+- `baselineprofile-benchmark-release-apk` — benchmark APK for sample startup/profile generation.
+- `component-screenshots` — Roborazzi screenshots and reports (`main` pushes only).
+- `compose-compiler-reports` — Compose compiler metrics and stability reports.
 - `docs-site` — generated MkDocs site.
 
 ## Verification
 
 ```bash
-./gradlew check dokkaGenerate :components:recordRoborazziDebug :catalog:assembleDebug :sample:assembleDebug :baselineprofile:assembleDebug
+./gradlew check dokkaGenerate :components:recordRoborazziDebug :catalog:assembleDebug :sample:assembleDebug :baselineprofile:assemble
 ```

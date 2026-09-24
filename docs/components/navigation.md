@@ -13,6 +13,7 @@ Navigation components provide themed Material 3 wrappers for common app structur
 - `AdaptiveNavScaffold`
 - `PaginatedContent`
 - `SegmentedContent`
+- `PageIndicator`
 
 ![Navigation components](https://maniramezan.github.io/ComposeUIComponents/images/screenshots/navigation-components.png)
 
@@ -76,6 +77,21 @@ TabBar(
     selection = selection,
     onSelectionChange = { selection = it },
     scrollBehavior = scrollBehavior,
+)
+```
+
+When a scroll or fling ends with the bar partly hidden, it settles to whichever of fully shown
+or fully hidden is closer, so it never rests half-visible. The bar reads the scroll offset in
+its layout phase, so hiding it re-lays out the bar without recomposing its items.
+
+Use `Badge` in an item's `badge` slot for unread counts or a "new" dot:
+
+```kotlin
+TabBarItemData(
+    value = Destination.Inbox,
+    icon = { Icon(inboxIcon, contentDescription = null) },
+    label = { Text("Inbox") },
+    badge = { Badge(count = unreadCount) },
 )
 ```
 
@@ -177,3 +193,25 @@ SegmentedContent(
 ```
 
 Use `SegmentSelectionIndicator` to choose between `Pill` (filled background, iOS-segmented feel), `Underline` (Material-tab feel), or `None` (style entirely through the title slot). Use `SegmentFitMode.EvenWhenFits` for distribute-evenly-or-scroll behavior, or `SegmentFitMode.Intrinsic` to always size segments to their content.
+
+## PageIndicator
+
+`PageIndicator` is the dot row used by `PaginatedContent`'s `Dots` footer, available on its
+own for carousels, onboarding flows, or any `HorizontalPager`. Pass explicit
+`pageCount`/`currentPage`, or bind it to a `PagerState` so page reads stay scoped to the
+indicator:
+
+```kotlin
+val pagerState = rememberPagerState(pageCount = { pages.size })
+
+HorizontalPager(state = pagerState) { page -> PageContent(pages[page]) }
+PageIndicator(
+    pagerState = pagerState,
+    pagePositionDescription = { index, count -> "Page ${index + 1} of $count" },
+)
+```
+
+The dots are color-only, so they stay out of the accessibility tree unless you supply
+`pagePositionDescription`; the indicator then reads as a single node and announces page
+changes politely. `currentPage` is clamped into range.
+

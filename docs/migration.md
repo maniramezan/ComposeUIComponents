@@ -9,6 +9,19 @@ The library is pre-`1.0.0`, so APIs can still change while the design system sta
 - Re-run screenshot and accessibility checks for any component API changes.
 - Treat `@Experimental` APIs as unstable until promoted.
 
+## Upcoming behavior changes
+
+These changes need no code updates but may alter screenshots or accessibility output:
+
+- `Section` titles now use `AppTheme.typography.titleSmall` / `onSurface` (previously Material's default text style), vertically center with their actions, and wrap instead of pushing actions off-screen. `SectionHeader` titles wrap the same way.
+- `EmptyState`, `LoadingState`, and `ErrorState` center-align multi-line text.
+- `RadioGroup` rows announce as radio buttons within a group; `Checkbox`, `RadioGroup`, and `Switch` labels dim when `enabled = false`.
+- `SearchField` renders no placeholder node when `placeholder` is blank.
+- `ContentRow` supporting text ellipsizes after two lines instead of clipping.
+- A `TabBar` with a `scrollBehavior` settles fully shown or fully hidden when a scroll ends.
+- `ToastHost` extends auto-dismiss timeouts when accessibility services request longer ones.
+- `PaginatedContent` no longer re-delivers the current page to `onPageChanged` when the caller passes a new lambda instance.
+
 ## After 1.0.0
 
 - SemVer applies to public APIs.

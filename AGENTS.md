@@ -6,9 +6,17 @@ This repo owns a reusable Kotlin-first Jetpack Compose design system for Android
 
 `AGENTS.md` is the source of truth for agent guidance. Keep `CLAUDE.md` thin and point back to this file.
 
+## Repo Workflows (Skills)
+
+Repo-local workflows live in `.claude/skills/*/SKILL.md`. Claude Code loads them as skills; other agents should read the matching file directly before starting:
+
+- `new-component` — file-by-file checklist for adding or extracting a public component (implementation, preview/Showkase, tests, `:sample` page, docs).
+- `review-component` — review checklist for correctness, accessibility, performance, binary compatibility, and product leakage.
+- `verify-changes` — which Gradle/MkDocs checks to run per change type, the `:sample` coverage script, and environment blockers (Android SDK, `dl.google.com` access, JDK 17 toolchain).
+
 ## Required Skill Loading
 
-Load the best matching installed skill before non-trivial planning, implementation, or review work:
+Load the best matching installed skill (when available in your environment) before non-trivial planning, implementation, or review work:
 
 - `compose-multiplatform-patterns` for Compose components, state, theming, slots, previews, and recomposition-sensitive UI.
 - `android-gradle-logic` for Gradle convention plugins, version catalogs, module wiring, and build logic.
@@ -26,6 +34,7 @@ When adding or updating dependencies, check the latest stable version online fir
 - `:theme` — semantic `AppTheme`, token data classes, CompositionLocals, icon contracts.
 - `:icons` — curated default icon implementations.
 - `:compose-utils` — preview annotations, modifiers, semantics helpers.
+- `:secure-storage` — encrypted key-value storage (ADR 0007); independent of the UI modules.
 - `:components` — public UI components; depends on theme/icons/utils.
 - `:testing` — Compose testing helpers; must not depend on `:components`.
 - `:catalog` — exhaustive component browser via Showkase.
@@ -65,15 +74,19 @@ When adding or updating dependencies, check the latest stable version online fir
 - Keep actual interactive components at a 48dp minimum touch target in UI behavior and tests. The theme token `AppTheme.spacing.minTapTarget` currently defaults to 44dp for token/back-compat reasons, so do not assume the token alone fully expresses the accessibility bar.
 - **Reuse shared helpers before reinventing them.** Assemble new components from the canonical building blocks and promote any new pattern back into them (per `docs/contributing.md` → "Reuse shared helpers and utilities"):
   - `:compose-utils` interaction modifiers: `Modifier.buttonRole(onClick, minimumTouchTarget)`, `Modifier.selectableRole(selected, onClick, minimumTouchTarget)`, and the `minimumTouchTarget*` primitives for `Role.Button` tappable surfaces.
-  - `:components` (package-internal) building blocks: `Modifier.pillSurface(containerColor, border)` for capsule/pill fills (instead of re-inlining `.clip(AppTheme.shapes.pill).background(...)`) and `RowScope.ListPrimaryTextBlock(...)` for merged-semantics list-row text blocks. Use the `minimumTouchTargetSize()`/`standardIconSize()`/`containerCornerRadius()` metrics from `ComponentMetrics.kt`.
+  - `:components` (package-internal) building blocks: `Modifier.pillSurface(containerColor, border)` for capsule/pill fills (instead of re-inlining `.clip(AppTheme.shapes.pill).background(...)`) and `RowScope.ListPrimaryTextBlock(...)` for merged-semantics list-row text blocks. Use the `minimumTouchTargetSize()`/`standardIconSize()`/`containerCornerRadius()` metrics and `DISABLED_CONTENT_ALPHA` from `ComponentMetrics.kt`.
   - `:sample` scaffolding: every demo page must be a `SamplePage(preview = { … }, controls = { … })` using the `ControlSwitch`/`ControlSegmented`/`ControlSlider` controls.
   - Follow ADR 0002 module boundaries: theme-agnostic Modifier/utility helpers go in `:compose-utils`; anything that reads `AppTheme` goes in `:components`. Keep cross-module helpers public with KDoc; keep helpers shared only within `:components` package-internal and document non-obvious behavior so later components reuse them rather than drifting.
 - For media/network-backed components, keep the public API independent of implementation-library types unless exposing that type is the explicit design goal.
+- **Break components down.** When a component contains a private sub-piece that is useful on its own (e.g. `PageIndicator` extracted from `PaginatedContent`, `Badge` for `TabBarItemData.badge`), promote it to a public component and have the original delegate to it.
+- **Performance**: read per-frame state (scroll offsets, animation values) inside `layout {}`, `graphicsLayer {}`, or draw lambdas instead of composition; use `derivedStateOf` for coarse booleans derived from per-frame values; read callbacks in long-lived effects via `rememberUpdatedState` rather than keying the effect on a lambda. See `docs/performance.md` → "Deferring State Reads".
+- **Tests** must exercise behavior (semantics, interaction, pure logic). Do not add "names are stable" tests that compare a literal list to itself — `binaryCompatibilityCheck` already guards the API.
 - Preserve the current extraction posture: extract patterns from product apps, but strip branding, product strings, analytics, and app-specific dependencies before they enter this repo.
 
 ## API And Naming Guardrails
 
 - Public component/file names may be referenced by docs, previews, tests, and Showkase entries. Renames need explicit migration consideration instead of casual cleanup.
+- `check` runs `binaryCompatibilityCheck` (japicmp) against the published `API_BASELINE_VERSION`. Adding a parameter to an existing public function (even with a default) is binary-incompatible: add a new overload and keep the old signature as a `@Deprecated(level = DeprecationLevel.HIDDEN)` forwarder (see `ExtendedFloatingActionButton`). Details in `docs/contributing.md` → "Binary Compatibility".
 - Avoid introducing app-specific terminology, feature flows, or business-state models into reusable component APIs.
 - Prefer extending existing token bundles, component APIs, or docs categories over adding near-duplicate concepts.
 
@@ -91,13 +104,16 @@ Use focused checks first, then broader checks when the change is significant.
 
 ```bash
 ./gradlew :components:testDebugUnitTest
-./gradlew :components:ktlintCheck :components:detekt :components:lintDebug
+./gradlew :components:ktlintCheck :components:detekt :components:lintDebug checkComponentTokenUsage
 ./gradlew composeCompilerReports -PenableComposeCompilerReports=true
 ./gradlew check
 ./gradlew ktlintCheck detekt check :components:recordRoborazziDebug :catalog:assembleDebug :sample:assembleDebug :baselineprofile:assemble
+.claude/skills/verify-changes/check-sample-coverage.sh
 ./gradlew check dokkaGenerate :components:recordRoborazziDebug :catalog:assembleDebug :sample:assembleDebug :baselineprofile:assemble
 mkdocs build --strict
 ```
+
+CI runs only for pull requests and pushes to `main`; a pushed feature branch without a PR is not verified. If the environment cannot build Android modules (no SDK, or `dl.google.com` unreachable), say which checks could not run and why instead of implying they passed — see the `verify-changes` skill.
 
 For dependency/build-logic changes, also run the affected module assemble/test tasks and inspect generated dependency or build failures before broadening scope.
 
@@ -129,6 +145,8 @@ For release-oriented changes, also account for:
 - Every new public component must be registered in the `:sample` browser in the same PR that introduces it.
 - Its sample page must provide live controls for every meaningful configurable parameter and state so reviewers can exercise behavior without editing source code. A static preview, Showkase entry, screenshot test, or documentation snippet does not satisfy this requirement.
 - New-component PRs are incomplete until `:sample:assembleDebug` passes with the configurable demo included.
+- Run `.claude/skills/verify-changes/check-sample-coverage.sh` to list public composables with no `:sample` usage.
+- Lazy lists and `Scaffold`s inside a sample page need a bounded height, because the sample detail pane scrolls vertically.
 
 ## Extraction From Apps
 

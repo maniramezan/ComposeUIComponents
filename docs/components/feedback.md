@@ -5,6 +5,7 @@ Feedback components communicate loading, transient status, and placeholder state
 ## Components
 
 - `ProgressIndicator`
+- `Badge`
 - `Skeleton`
 - `SkeletonBlock`
 - `Modifier.skeletonShimmer`
@@ -31,6 +32,21 @@ AppTheme {
 ```
 
 Use `progress = null` for indeterminate loading. `Toast` is an in-composition visual component, not a platform `android.widget.Toast` wrapper.
+
+## Badge
+
+`Badge` flags unread or pending items. Omit `count` for a small dot, or pass a count to show
+a capsule that collapses values above `maxCount` (default `BadgeDefaults.MaxCount`, 99) to
+`"99+"`. It is usually pinned to an icon — for example through `TabBarItemData`'s `badge`
+slot.
+
+```kotlin
+Badge(count = unreadCount, contentDescription = "$unreadCount unread messages")
+```
+
+Prefer describing the count on the control the badge annotates. When the badge must speak
+for itself, pass a localized `contentDescription`; it replaces the bare number. Without one,
+a dot is decorative and a count is read as its digits.
 
 ## Chat logs
 
@@ -193,7 +209,9 @@ until the toast is dismissed — returning how it ended (`ToastResult`).
 Choose the lifetime per call with `ToastDuration`: `Short`/`Long` auto-dismiss
 after a timeout, while `Indefinite` keeps the toast until the user or caller
 dismisses it. An `Indefinite` toast with no action becomes tap-to-dismiss, so
-pass `dismissContentDescription` for TalkBack.
+pass `dismissContentDescription` for TalkBack. When an accessibility service is active,
+`ToastHost` extends `Short`/`Long` timeouts to the platform's recommended duration, matching
+Material's `SnackbarHost`.
 
 Anchor the toast with `position = ToastPosition.Top` or `ToastPosition.Bottom`
 (default). Pass an `icon` for a leading glyph; the icon is tinted to the surface

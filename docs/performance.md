@@ -11,6 +11,24 @@ Run this checklist before a release and when adding complex components.
 - Avoid adding heavyweight icon packs or app-specific dependencies to core modules.
 - Use the `:sample` app for startup and navigation macrobenchmark scenarios before `1.0.0`.
 
+## Deferring State Reads
+
+Components that animate or track scroll should read fast-changing state in the latest phase
+that needs it, so each frame re-lays out or re-draws instead of recomposing:
+
+- Read scroll offsets inside `Modifier.layout { }` (see `TabBar`'s scroll-to-hide) and
+  animation values inside `graphicsLayer { }` / `drawWithContent { }` lambdas (see `FlipCard`,
+  `DisclosureCard`'s chevron, `Modifier.skeletonShimmer`). Keep the `State` object and pass a
+  `() -> Float` lambda to child composables rather than the unwrapped value.
+- Derive coarse-grained booleans from per-frame values with `derivedStateOf` so composition
+  only reacts when the boolean flips (e.g. which `FlipCard` face is visible).
+- In long-lived effects, read caller callbacks through `rememberUpdatedState` instead of
+  keying the effect on the lambda; an effect keyed on a fresh lambda restarts on every
+  recomposition (see `PaginatedContent`'s `onPageChanged`).
+- `AppTheme` memoizes the Material color scheme, typography, and shapes it derives from the
+  token bundles, so pass stable (remembered or top-level) token instances to keep that cache
+  warm.
+
 ## Compose Compiler Reports
 
 CI uploads `compose-compiler-reports` whenever the reports task runs. Local outputs are written under each Compose module's `build/compose-metrics` and `build/compose-reports` directories.
