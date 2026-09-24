@@ -199,4 +199,18 @@ public class ComponentCategoryScreenshotTest {
             ShowcaseFeedPreview()
         }
     }
+
+    @Test
+    public fun badgeMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/badge.png") {
+            BadgePreview()
+        }
+    }
+
+    @Test
+    public fun pageIndicatorMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/page-indicator.png") {
+            PageIndicatorPreview()
+        }
+    }
 }

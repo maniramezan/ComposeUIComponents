@@ -3,14 +3,10 @@ package io.github.maniramezan.compose.components
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerScope
 import androidx.compose.foundation.pager.PagerState
@@ -25,6 +21,7 @@ import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -191,13 +188,14 @@ public fun PaginatedContent(
 ) {
     if (pages.isEmpty()) return
 
-    // Notify caller when the settled page changes
-    if (onPageChanged != null) {
-        LaunchedEffect(pagerState, onPageChanged) {
-            snapshotFlow { pagerState.settledPage }
-                .distinctUntilChanged()
-                .collect { page -> onPageChanged(page) }
-        }
+    // Notify caller when the settled page changes. The latest callback is read through
+    // rememberUpdatedState so a caller passing a fresh lambda on each recomposition doesn't
+    // restart the collector (which would re-deliver the current page every time).
+    val currentOnPageChanged by rememberUpdatedState(onPageChanged)
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.settledPage }
+            .distinctUntilChanged()
+            .collect { page -> currentOnPageChanged?.invoke(page) }
     }
 
     // Peek-and-return animation hinting the content is scrollable
@@ -470,44 +468,14 @@ private fun PageDotIndicator(
     modifier: Modifier = Modifier,
     pagePositionDescription: ((Int, Int) -> String)? = null,
 ) {
-    // Read currentPage here so recomposition is scoped to PageDotIndicator,
-    // not to PaginatedContent. currentPage changes only when the page settles.
-    val currentPage = pagerState.currentPage
-    // The dots themselves are color-only; expose the position as a single
-    // spoken node (and announce changes) when the caller supplies a formatter.
-    val positionDescription = pagePositionDescription?.invoke(currentPage, pageCount)
-    Row(
-        modifier =
-            if (positionDescription != null) {
-                modifier.semantics {
-                    contentDescription = positionDescription
-                    liveRegion = LiveRegionMode.Polite
-                }
-            } else {
-                modifier
-            },
-        horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.x1),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        repeat(pageCount) { index ->
-            val color by animateColorAsState(
-                targetValue =
-                    if (index == currentPage) {
-                        AppTheme.colors.primary
-                    } else {
-                        AppTheme.colors.onSurfaceVariant.copy(alpha = 0.38f)
-                    },
-                label = "indicatorColor",
-            )
-            Box(
-                modifier =
-                    Modifier
-                        .size(AppTheme.spacing.x1)
-                        .clip(CircleShape)
-                        .background(color),
-            )
-        }
-    }
+    // Read currentPage here so recomposition is scoped to this wrapper, not to
+    // PaginatedContent. currentPage changes only when the page settles.
+    PageIndicator(
+        pageCount = pageCount,
+        currentPage = pagerState.currentPage,
+        modifier = modifier,
+        pagePositionDescription = pagePositionDescription,
+    )
 }
 
 @Composable
