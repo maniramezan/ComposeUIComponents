@@ -41,18 +41,20 @@ import io.github.maniramezan.compose.theme.AppTheme
  *   while `true`.
  * @param onLoadMore Invoked once when this footer enters composition. Callers
  *   are responsible for guarding against duplicate in-flight requests.
+ * @param modifier Modifier applied to the footer container.
  */
 @Composable
 public fun LoadMoreFooter(
     isLoadingMore: Boolean,
     onLoadMore: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     LaunchedEffect(Unit) { onLoadMore() }
 
     if (isLoadingMore) {
         Column(
             modifier =
-                Modifier
+                modifier
                     .fillMaxWidth()
                     .padding(AppTheme.spacing.x2)
                     // Announce the transition into the loading state.
@@ -63,4 +65,17 @@ public fun LoadMoreFooter(
             CircularProgressIndicator()
         }
     }
+}
+
+@Deprecated("Use the overload with modifier.", level = DeprecationLevel.HIDDEN)
+@Composable
+public fun LoadMoreFooter(
+    isLoadingMore: Boolean,
+    onLoadMore: () -> Unit,
+) {
+    LoadMoreFooter(
+        isLoadingMore = isLoadingMore,
+        onLoadMore = onLoadMore,
+        modifier = Modifier,
+    )
 }

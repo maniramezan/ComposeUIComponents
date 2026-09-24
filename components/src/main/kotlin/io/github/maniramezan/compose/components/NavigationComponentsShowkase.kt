@@ -27,6 +27,10 @@ public fun TabBarCenteredShowkase(): Unit = TabBarCenteredPreview()
 @Composable
 public fun TabBarDisabledItemShowkase(): Unit = TabBarDisabledItemPreview()
 
+@ShowkaseComposable(name = "Tab Bar Item", group = "Navigation")
+@Composable
+public fun TabBarItemShowkase(): Unit = TabBarItemPreview()
+
 @ShowkaseComposable(name = "Tab Row", group = "Navigation")
 @Composable
 public fun TabRowShowkase(): Unit =

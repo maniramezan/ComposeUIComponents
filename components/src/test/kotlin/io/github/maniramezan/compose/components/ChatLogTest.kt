@@ -1,12 +1,19 @@
 package io.github.maniramezan.compose.components
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.maniramezan.compose.theme.AppTheme
 import org.junit.Rule
@@ -103,5 +110,29 @@ public class ChatLogTest {
         }
 
         composeRule.onNodeWithContentDescription("Assistant is responding").assertIsDisplayed()
+    }
+
+    @Test
+    public fun streamingMessageKeepsItsLastLineVisible() {
+        var streamedText by mutableStateOf("First line")
+        composeRule.setContent {
+            AppTheme {
+                ChatLog(
+                    messages = listOf(ChatMessage("1", ChatMessageSender.Assistant, ChatMessageState.Content(streamedText))),
+                    idleHint = "Start",
+                    errorAction = ChatErrorAction("Failed", "Retry", {}),
+                    modifier = Modifier.height(160.dp),
+                    messageContent = { _, text ->
+                        Column { text.lines().forEach { line -> Text(line) } }
+                    },
+                )
+            }
+        }
+
+        composeRule.runOnIdle {
+            streamedText = (1..40).joinToString("\n") { "Line $it" }
+        }
+        composeRule.waitForIdle()
+        composeRule.onNodeWithText("Line 40").assertIsDisplayed()
     }
 }

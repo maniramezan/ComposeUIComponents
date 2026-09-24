@@ -5,25 +5,6 @@ import org.junit.jupiter.api.Test
 
 class PaginatedContentTest {
     @Test
-    fun paginatedContentComponentNamesAreStable() {
-        assertThat(
-            listOf(
-                "PaginatedContent",
-                "PaginationPage",
-                "PageTitleAlignment",
-                "PageDirection",
-                "PageFooterStyle",
-            ),
-        ).containsExactly(
-            "PaginatedContent",
-            "PaginationPage",
-            "PageTitleAlignment",
-            "PageDirection",
-            "PageFooterStyle",
-        ).inOrder()
-    }
-
-    @Test
     fun paginationPageHoldsTitle() {
         val page = PaginationPage(title = "Popular")
         assertThat(page.title).isEqualTo("Popular")

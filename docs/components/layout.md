@@ -72,6 +72,9 @@ ShowcaseRow(
 ) { app -> AppCard(app) }
 ```
 
+The sample browser includes a standalone `ShowcaseRow` page with live controls for sizing, row
+count, and peek fraction.
+
 ### Multi-row (grid) sections
 
 Set `rows` greater than `1` (with a `rowHeight`) to lay items into stacked rows that
