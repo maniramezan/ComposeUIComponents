@@ -32,6 +32,7 @@ import io.github.maniramezan.compose.components.PrimaryButton
 import io.github.maniramezan.compose.components.SecondaryButton
 import io.github.maniramezan.compose.components.ShowcaseFeed
 import io.github.maniramezan.compose.components.ShowcaseItemWidth
+import io.github.maniramezan.compose.components.ShowcaseRow
 import io.github.maniramezan.compose.components.Snackbar
 import io.github.maniramezan.compose.components.Toast
 import io.github.maniramezan.compose.components.ToastDuration
@@ -255,6 +256,67 @@ internal fun ShowcaseFeedPage() {
                 checked = showAction,
                 onCheckedChange = { showAction = it },
             )
+        },
+    )
+}
+
+@Composable
+internal fun ShowcaseRowPage() {
+    var widthIndex by remember { mutableIntStateOf(0) }
+    var rowsIndex by remember { mutableIntStateOf(0) }
+    var peek by remember { mutableFloatStateOf(0.85f) }
+    val widthOptions = listOf("Peek", "Fixed", "Wrap")
+    val rows = rowsIndex + 1
+    val items = listOf("Focus", "Sky Notes", "Trailhead", "Loop", "Pixel Paint")
+    val itemWidth =
+        when (widthIndex) {
+            1 -> ShowcaseItemWidth.Fixed(140.dp)
+            2 -> ShowcaseItemWidth.Wrap
+            else -> ShowcaseItemWidth.Peek(peek)
+        }
+
+    SamplePage(
+        preview = {
+            ShowcaseRow(
+                items = items,
+                itemWidth = itemWidth,
+                rows = rows,
+                rowHeight = if (rows > 1) 64.dp else null,
+            ) { label ->
+                Box(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(64.dp)
+                            .clip(AppTheme.shapes.large)
+                            .background(AppTheme.colors.surfaceVariant),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(text = label)
+                }
+            }
+        },
+        controls = {
+            ControlSegmented(
+                label = "Item width",
+                options = widthOptions,
+                selectedIndex = widthIndex,
+                onOptionSelected = { widthIndex = it },
+            )
+            ControlSegmented(
+                label = "Rows",
+                options = listOf("1", "2"),
+                selectedIndex = rowsIndex,
+                onOptionSelected = { rowsIndex = it },
+            )
+            if (widthIndex == 0) {
+                ControlSlider(
+                    label = "Peek fraction",
+                    value = peek,
+                    onValueChange = { peek = it },
+                    valueRange = 0.5f..1f,
+                )
+            }
         },
     )
 }

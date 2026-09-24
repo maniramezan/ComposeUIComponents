@@ -176,11 +176,25 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             content = { TabBarPage() },
         ),
         SampleComponentDemo(
+            id = "tab-bar-item",
+            title = "TabBarItem",
+            category = "Pagination",
+            description = "Slot-based destination item for custom TabBar composition.",
+            content = { TabBarItemPage() },
+        ),
+        SampleComponentDemo(
             id = "showcase-feed",
             title = "ShowcaseFeed",
             category = "Layout",
             description = "App Store–style feed: vertical sections that each scroll horizontally with a peeking next item.",
             content = { ShowcaseFeedPage() },
+        ),
+        SampleComponentDemo(
+            id = "showcase-row",
+            title = "ShowcaseRow",
+            category = "Layout",
+            description = "Standalone horizontally scrolling row with configurable sizing and row count.",
+            content = { ShowcaseRowPage() },
         ),
         SampleComponentDemo(
             id = "flow-layout",

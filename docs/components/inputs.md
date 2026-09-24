@@ -22,8 +22,11 @@ AppTheme {
         value = state.name,
         onValueChange = onNameChanged,
         label = "Name",
+        keyboardOptions = KeyboardOptions.Default,
     )
 }
 ```
 
 Callers own input state and validation. Use `supportingText` and `isError` for field-level feedback.
+`TextField` and `PasswordField` accept caller-supplied `keyboardOptions`; password fields default
+to `KeyboardType.Password`.

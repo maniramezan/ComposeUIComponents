@@ -60,6 +60,9 @@ TabBar {
 }
 ```
 
+The sample browser includes a standalone `TabBarItem` page so the primitive slot API can be
+exercised independently from the data-driven `TabBar` wrapper.
+
 ### Scroll-to-hide
 
 Pass a `scrollBehavior` (from `rememberTabBarScrollBehavior()`) to have the bar hide itself as

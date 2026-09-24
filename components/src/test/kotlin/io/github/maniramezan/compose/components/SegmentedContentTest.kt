@@ -5,27 +5,6 @@ import org.junit.jupiter.api.Test
 
 class SegmentedContentTest {
     @Test
-    fun segmentedContentComponentNamesAreStable() {
-        assertThat(
-            listOf(
-                "SegmentedContent",
-                "SegmentedItem",
-                "SegmentSelectionIndicator",
-                "SegmentFitMode",
-                "SegmentWidthMode",
-                "SegmentDensity",
-            ),
-        ).containsExactly(
-            "SegmentedContent",
-            "SegmentedItem",
-            "SegmentSelectionIndicator",
-            "SegmentFitMode",
-            "SegmentWidthMode",
-            "SegmentDensity",
-        ).inOrder()
-    }
-
-    @Test
     fun segmentedItemHoldsTitle() {
         val item = SegmentedItem(title = "Overview")
         assertThat(item.title).isEqualTo("Overview")
