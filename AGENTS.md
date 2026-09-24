@@ -10,6 +10,9 @@ This repo owns a reusable Kotlin-first Jetpack Compose design system for Android
 
 Load the best matching installed skill before non-trivial planning, implementation, or review work:
 
+- [new-component](.claude/skills/new-component/SKILL.md) for adding, extracting, or splitting a public Compose component. Follow its implementation, sample, and documentation checklist.
+- [review-component](.claude/skills/review-component/SKILL.md) for reviewing a component change or PR.
+- [verify-changes](.claude/skills/verify-changes/SKILL.md) for choosing and diagnosing checks before a commit or PR.
 - `compose-multiplatform-patterns` for Compose components, state, theming, slots, previews, and recomposition-sensitive UI.
 - `android-gradle-logic` for Gradle convention plugins, version catalogs, module wiring, and build logic.
 - `gradle-build-performance` for slow Gradle builds, CI time, dependency graph cost, and build scan analysis.
