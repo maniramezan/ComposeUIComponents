@@ -12,6 +12,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalContext
 
@@ -22,6 +23,22 @@ private val LocalAppIcons = staticCompositionLocalOf { AppIcons.default() }
 private val LocalAppTypography = staticCompositionLocalOf { AppTypography.default() }
 private val LocalAppShapes = staticCompositionLocalOf { AppShapes.default() }
 
+/**
+ * Provides the design system's semantic tokens to [content] and bridges them into
+ * [MaterialTheme], so both `AppTheme.*` and stock Material 3 components pick up the
+ * same colors, typography, and shapes.
+ *
+ * @param lightColors Colors used when [darkTheme] is `false`.
+ * @param darkColors Colors used when [darkTheme] is `true`.
+ * @param spacing Spacing, stroke, and layout-dimension tokens.
+ * @param motion Duration and easing tokens.
+ * @param icons Icon contracts; pass `defaultAppIcons()` from `:icons` for the curated set.
+ * @param typography Typography scale, including weight-variant slots.
+ * @param shapes Corner-shape tokens.
+ * @param darkTheme Whether to resolve [darkColors]; follows the system setting by default.
+ * @param dynamicColor Whether to use the platform's wallpaper-derived color scheme on
+ *   Android 12+; the non-Material [AppColors] roles still come from the token bundle.
+ */
 @Composable
 public fun AppTheme(
     lightColors: AppColors = AppColors.light(),
@@ -42,7 +59,11 @@ public fun AppTheme(
             darkTheme = darkTheme,
             dynamicColor = dynamicColor,
         )
-    val appColors = colorScheme.toAppColors(base = resolvedColors)
+    // Token bundles are immutable data classes, so these projections only need
+    // rebuilding when their inputs change — not on every recomposition of the root.
+    val appColors = remember(colorScheme, resolvedColors) { colorScheme.toAppColors(base = resolvedColors) }
+    val materialTypography = remember(typography) { typography.toMaterialTypography() }
+    val materialShapes = remember(shapes) { shapes.toMaterialShapes() }
 
     CompositionLocalProvider(
         LocalAppColors provides appColors,
@@ -54,13 +75,14 @@ public fun AppTheme(
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
-            typography = typography.toMaterialTypography(),
-            shapes = shapes.toMaterialShapes(),
+            typography = materialTypography,
+            shapes = materialShapes,
             content = content,
         )
     }
 }
 
+/** Read access to the tokens provided by the nearest enclosing [AppTheme] composable. */
 public object AppTheme {
     public val colors: AppColors
         @Composable
@@ -109,12 +131,12 @@ private fun appColorScheme(
     dynamicColor: Boolean,
 ): ColorScheme {
     val context = LocalContext.current
-    return when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-        darkTheme -> colors.toDarkMaterialColorScheme()
-        else -> colors.toLightMaterialColorScheme()
+    if (dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        // Not remembered: the wallpaper-derived scheme is read fresh from the context.
+        return if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+    }
+    return remember(colors, darkTheme) {
+        if (darkTheme) colors.toDarkMaterialColorScheme() else colors.toLightMaterialColorScheme()
     }
 }
 

@@ -13,10 +13,13 @@ import androidx.compose.ui.semantics.semantics
 import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.utils.minimumTouchTargetHeight
 
+private const val CONTENT_ROW_SUPPORTING_MAX_LINES = 2
+
 /**
  * A two-line list row with title, optional supporting/secondary text, and
- * leading + trailing content slots. Suitable for vocabulary rows, document
- * lists, settings rows, and similar single-tap entry points.
+ * leading + trailing content slots. Suitable for item lists, document lists,
+ * settings rows, and similar single-tap entry points. [supportingText] is
+ * limited to two lines and ellipsized.
  *
  * The whole row is clickable when [onClick] is non-null; pass `null` for a
  * read-only display.
@@ -55,7 +58,7 @@ public fun ContentRow(
             supportingColor = AppTheme.colors.onSurfaceVariant,
             secondaryText = secondaryText,
             supportingText = supportingText,
-            supportingMaxLines = if (supportingText != null) 2 else Int.MAX_VALUE,
+            supportingMaxLines = CONTENT_ROW_SUPPORTING_MAX_LINES,
         )
         if (trailingContent != null) {
             trailingContent()

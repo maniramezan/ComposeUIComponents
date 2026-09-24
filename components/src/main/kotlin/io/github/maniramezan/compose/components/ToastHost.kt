@@ -23,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalAccessibilityManager
 import androidx.compose.ui.unit.IntOffset
 import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.theme.IconToken
@@ -176,7 +177,9 @@ public fun rememberToastHostState(): ToastHostState = remember { ToastHostState(
 
 /**
  * Overlay that displays the toast currently held by [hostState], handling
- * enter/exit animation, auto-dismiss timing, and edge-safe placement. Place it
+ * enter/exit animation, auto-dismiss timing, and edge-safe placement. Auto-dismiss
+ * timeouts are extended to the platform's accessibility-recommended duration when
+ * assistive technologies such as TalkBack are active. Place it
  * as the last child of your screen so it floats above the content.
  *
  * @param position screen edge the toast anchors to; defaults to
@@ -198,12 +201,22 @@ public fun ToastHost(
     },
 ) {
     val current = hostState.currentToastData
+    val accessibilityManager = LocalAccessibilityManager.current
 
     // Run the auto-dismiss timer per shown toast; Indefinite toasts have none.
     LaunchedEffect(current) {
         val timeout = current?.duration?.timeoutMillis
         if (current != null && timeout != null) {
-            delay(timeout)
+            // Give assistive-technology users the longer timeout the platform recommends
+            // (e.g. TalkBack's "time to take action"), mirroring Material's SnackbarHost.
+            val recommendedTimeout =
+                accessibilityManager?.calculateRecommendedTimeoutMillis(
+                    originalTimeoutMillis = timeout,
+                    containsIcons = current.icon != null,
+                    containsText = true,
+                    containsControls = current.actionLabel != null,
+                ) ?: timeout
+            delay(recommendedTimeout)
             current.dismiss()
         }
     }

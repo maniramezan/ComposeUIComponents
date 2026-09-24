@@ -7,10 +7,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
 
+/**
+ * Ensures the node is at least [size] × [size] without constraining it further. Use for
+ * interactive elements whose visual size may be smaller than the accessibility minimum
+ * (48dp); the layout grows, it is never clipped.
+ */
 public fun Modifier.minimumTouchTarget(size: Dp): Modifier = defaultMinSize(minWidth = size, minHeight = size)
 
+/** Height-only variant of [minimumTouchTarget], for full-width rows and text buttons. */
 public fun Modifier.minimumTouchTargetHeight(height: Dp): Modifier = defaultMinSize(minHeight = height)
 
+/** Width-only variant of [minimumTouchTarget], for controls whose height is set elsewhere. */
 public fun Modifier.minimumTouchTargetWidth(width: Dp): Modifier = defaultMinSize(minWidth = width)
 
 /**

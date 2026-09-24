@@ -261,6 +261,8 @@ private fun ChatErrorBubble(
             modifier
                 .clip(AppTheme.shapes.large)
                 .background(AppTheme.colors.surfaceVariant)
+                // Announce a failed response when it appears, like the other status states.
+                .semantics { liveRegion = LiveRegionMode.Polite }
                 .padding(AppTheme.spacing.x2),
         verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.x1),
     ) {

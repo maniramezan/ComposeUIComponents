@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -51,6 +53,9 @@ public enum class FlipAxis {
  * one face blinking out and the other blinking in. The face turned away from the
  * viewer is culled (alpha `0`) and removed from the accessibility tree, and the
  * back face is counter-rotated so its content is never mirrored.
+ *
+ * Both faces fill the card's bounds, so the card takes its size from [modifier]
+ * (e.g. `Modifier.fillMaxWidth().height(…)` or `Modifier.size(…)`), not from its faces.
  *
  * @param front Content for the front face.
  * @param back Content for the back face.
@@ -98,17 +103,21 @@ public fun FlipCard(
     var internalFlipped by rememberSaveable { mutableStateOf(false) }
     val isFlipped = flipped ?: internalFlipped
 
-    val rotation by animateFloatAsState(
-        targetValue = if (isFlipped) 180f else 0f,
-        animationSpec = animationSpec,
-        label = "flipCardRotation",
-    )
+    // Keep the animated State (not its value) so each frame is read only inside the
+    // faces' graphicsLayer blocks: the flip re-draws per frame without recomposing.
+    val rotation =
+        animateFloatAsState(
+            targetValue = if (isFlipped) FLIPPED_DEGREES else 0f,
+            animationSpec = animationSpec,
+            label = "flipCardRotation",
+        )
 
     val density = LocalDensity.current.density
     // The front faces the viewer for the first half of the rotation, the back for
     // the second half. At the 90° crossover both faces are edge-on (and invisible),
-    // so toggling the alpha there is imperceptible.
-    val frontVisible = rotation <= 90f
+    // so toggling the alpha there is imperceptible. derivedStateOf limits
+    // recomposition to that single crossover instead of every frame.
+    val frontVisible by remember { derivedStateOf { rotation.value <= FLIP_CROSSOVER_DEGREES } }
     val stateDesc = if (isFlipped) backStateDescription else frontStateDescription
 
     val toggleModifier =
@@ -138,7 +147,7 @@ public fun FlipCard(
     ) {
         // Front face: rotates 0°→180° with the flip; culled once it turns away.
         FlipFace(
-            rotation = rotation,
+            rotation = { rotation.value },
             axis = axis,
             density = density,
             visible = frontVisible,
@@ -149,7 +158,7 @@ public fun FlipCard(
         // Back face: counter-rotated by 180° so it faces the viewer (un-mirrored)
         // exactly when the front has turned away.
         FlipFace(
-            rotation = rotation - 180f,
+            rotation = { rotation.value - FLIPPED_DEGREES },
             axis = axis,
             density = density,
             visible = !frontVisible,
@@ -167,7 +176,7 @@ public fun FlipCard(
  */
 @Composable
 private fun BoxScope.FlipFace(
-    rotation: Float,
+    rotation: () -> Float,
     axis: FlipAxis,
     density: Float,
     visible: Boolean,
@@ -181,8 +190,8 @@ private fun BoxScope.FlipFace(
                 .matchParentSize()
                 .graphicsLayer {
                     when (axis) {
-                        FlipAxis.Horizontal -> rotationY = rotation
-                        FlipAxis.Vertical -> rotationX = rotation
+                        FlipAxis.Horizontal -> rotationY = rotation()
+                        FlipAxis.Vertical -> rotationX = rotation()
                     }
                     cameraDistance = CAMERA_DISTANCE_MULTIPLIER * density
                     alpha = if (visible) 1f else 0f
@@ -199,3 +208,9 @@ private fun BoxScope.FlipFace(
  * (and the [FlipAxis] is clearly distinguishable) rather than a flat squish.
  */
 private const val CAMERA_DISTANCE_MULTIPLIER = 8f
+
+/** Rotation at which the back face fully faces the viewer. */
+private const val FLIPPED_DEGREES = 180f
+
+/** Rotation at which both faces are edge-on and visibility swaps between them. */
+private const val FLIP_CROSSOVER_DEGREES = 90f

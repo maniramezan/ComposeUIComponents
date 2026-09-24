@@ -14,6 +14,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
@@ -87,9 +88,17 @@ public fun Section(
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(text = title, modifier = Modifier.semantics { heading() })
+            Text(
+                text = title,
+                // Take the remaining width so a long title wraps instead of pushing
+                // the trailing actions off-screen.
+                modifier = Modifier.weight(1f).semantics { heading() },
+                style = AppTheme.typography.titleSmall,
+                color = AppTheme.colors.onSurface,
+            )
             actions()
         }
         content()

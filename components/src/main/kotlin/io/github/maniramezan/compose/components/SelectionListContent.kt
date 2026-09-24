@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,7 +49,8 @@ public fun <ID : Any> SelectionListContent(
     collapsedDescription: String = "",
     confirmButton: (@Composable () -> Unit)? = null,
 ) {
-    var query by remember { mutableStateOf("") }
+    // Saveable so the search survives configuration changes (rotation, dark-mode toggle).
+    var query by rememberSaveable { mutableStateOf("") }
     var expandedIds by remember {
         mutableStateOf(
             nodes
