@@ -6,14 +6,12 @@ import org.junit.jupiter.api.Test
 class DividerComponentsTest {
     @Test
     fun dividerComponentNamesAreStable() {
+        val expected = listOf("HorizontalDivider", "VerticalDivider")
         assertThat(
             listOf(
                 "HorizontalDivider",
                 "VerticalDivider",
             ),
-        ).containsExactly(
-            "HorizontalDivider",
-            "VerticalDivider",
-        ).inOrder()
+        ).containsExactlyElementsIn(expected).inOrder()
     }
 }

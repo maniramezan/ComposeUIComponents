@@ -71,6 +71,24 @@ public fun TabBarDisabledItemPreview(): Unit =
 
 @PreviewLightDark
 @PreviewFontScale
+@Preview(name = "Tab Bar Item", group = "Navigation")
+@Composable
+public fun TabBarItemPreview(): Unit =
+    AppTheme {
+        TabBar {
+            TabBarItem(
+                value = 0,
+                selection = 0,
+                onSelectionChange = {},
+                icon = { Icon(imageVector = AppTheme.icons.check.imageVector, contentDescription = null) },
+                label = { Text("Selected") },
+                badge = { Text("3") },
+            )
+        }
+    }
+
+@PreviewLightDark
+@PreviewFontScale
 @Preview(name = "Nav Rail", group = "Navigation")
 @Composable
 public fun NavRailPreview(): Unit =

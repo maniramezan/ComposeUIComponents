@@ -116,7 +116,9 @@ public fun ChatLog(
         // Preserve a reader's position in history; only follow updates when they
         // were already reading the newest message.
         if (isAtLatestMessage) {
-            listState.animateScrollToItem(messages.lastIndex)
+            // A streaming message can be taller than the viewport. A large offset
+            // asks LazyColumn to clamp the item to its bottom rather than its top.
+            listState.animateScrollToItem(messages.lastIndex, scrollOffset = Int.MAX_VALUE)
         }
     }
 

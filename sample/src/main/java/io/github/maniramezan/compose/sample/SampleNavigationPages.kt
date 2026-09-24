@@ -15,6 +15,8 @@ import io.github.maniramezan.compose.components.IconButton
 import io.github.maniramezan.compose.components.NavRail
 import io.github.maniramezan.compose.components.SectionHeader
 import io.github.maniramezan.compose.components.TabBarItemData
+import io.github.maniramezan.compose.components.TabBar
+import io.github.maniramezan.compose.components.TabBarItem
 import io.github.maniramezan.compose.components.TabRow
 import io.github.maniramezan.compose.components.TopAppBar
 import io.github.maniramezan.compose.theme.AppTheme
@@ -103,6 +105,37 @@ internal fun NavRailPage() {
         },
         controls = {
             ControlSwitch(label = "Show badge", checked = showBadge, onCheckedChange = { showBadge = it })
+        },
+    )
+}
+
+@Composable
+internal fun TabBarItemPage() {
+    var selected by remember { mutableStateOf(true) }
+    var enabled by remember { mutableStateOf(true) }
+    var showLabel by remember { mutableStateOf(true) }
+    var showBadge by remember { mutableStateOf(true) }
+
+    SamplePage(
+        preview = {
+            TabBar {
+                TabBarItem(
+                    value = true,
+                    selection = selected,
+                    onSelectionChange = { selected = it },
+                    icon = { Icon(imageVector = AppTheme.icons.check.imageVector, contentDescription = null) },
+                    enabled = enabled,
+                    label = if (showLabel) ({ Text("Selected") }) else null,
+                    badge = if (showBadge) ({ Text("3") }) else null,
+                    contentDescription = if (showLabel) "" else "Selected",
+                )
+            }
+        },
+        controls = {
+            ControlSwitch(label = "Selected", checked = selected, onCheckedChange = { selected = it })
+            ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
+            ControlSwitch(label = "Label", checked = showLabel, onCheckedChange = { showLabel = it })
+            ControlSwitch(label = "Badge", checked = showBadge, onCheckedChange = { showBadge = it })
         },
     )
 }

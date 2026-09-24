@@ -6,14 +6,12 @@ import org.junit.jupiter.api.Test
 class TypographyComponentsTest {
     @Test
     fun typographyComponentNamesAreStable() {
+        val expected = listOf("AppText", "AppTextStyle")
         assertThat(
             listOf(
                 "AppText",
                 "AppTextStyle",
             ),
-        ).containsExactly(
-            "AppText",
-            "AppTextStyle",
-        ).inOrder()
+        ).containsExactlyElementsIn(expected).inOrder()
     }
 }

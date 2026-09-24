@@ -8,6 +8,15 @@ class ExtractedComponentsTest {
     fun extractedComponentNamesAreStable() {
         // Stability check: these names are part of the library's public API and
         // are referenced by docs + Showkase entries. Renames need explicit migration.
+        val expected =
+            listOf(
+                "PillChip",
+                "OverlayCard",
+                "AdaptiveContentContainer",
+                "SectionHeader",
+                "ContentRow",
+                "SkeletonBlock",
+            )
         assertThat(
             listOf(
                 "PillChip",
@@ -17,13 +26,6 @@ class ExtractedComponentsTest {
                 "ContentRow",
                 "SkeletonBlock",
             ),
-        ).containsExactly(
-            "PillChip",
-            "OverlayCard",
-            "AdaptiveContentContainer",
-            "SectionHeader",
-            "ContentRow",
-            "SkeletonBlock",
-        ).inOrder()
+        ).containsExactlyElementsIn(expected).inOrder()
     }
 }

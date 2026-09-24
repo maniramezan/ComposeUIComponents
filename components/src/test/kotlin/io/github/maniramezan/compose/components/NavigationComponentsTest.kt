@@ -6,6 +6,16 @@ import org.junit.jupiter.api.Test
 class NavigationComponentsTest {
     @Test
     fun navigationComponentNamesAreStable() {
+        val expected =
+            listOf(
+                "TopAppBar",
+                "MediumTopAppBar",
+                "LargeTopAppBar",
+                "TabBar",
+                "TabRow",
+                "NavRail",
+                "AdaptiveNavScaffold",
+            )
         assertThat(
             listOf(
                 "TopAppBar",
@@ -16,14 +26,6 @@ class NavigationComponentsTest {
                 "NavRail",
                 "AdaptiveNavScaffold",
             ),
-        ).containsExactly(
-            "TopAppBar",
-            "MediumTopAppBar",
-            "LargeTopAppBar",
-            "TabBar",
-            "TabRow",
-            "NavRail",
-            "AdaptiveNavScaffold",
-        ).inOrder()
+        ).containsExactlyElementsIn(expected).inOrder()
     }
 }

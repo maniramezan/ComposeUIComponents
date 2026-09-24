@@ -596,25 +596,11 @@ public fun <T> AdaptiveNavScaffold(
     val containerWidthPx = LocalWindowInfo.current.containerSize.width
     val screenWidthDp = with(LocalDensity.current) { containerWidthPx.toDp() }
     val isExpandedWidth = screenWidthDp >= AppTheme.spacing.expandedNavigationBreakpoint
-    if (isExpandedWidth) {
-        Scaffold(topBar = topBar, modifier = modifier) { innerPadding ->
-            Row(modifier = Modifier.padding(innerPadding)) {
-                NavRail(
-                    items = items,
-                    selection = selection,
-                    onSelectionChange = onSelectionChange,
-                    colors = colors,
-                )
-                Box(modifier = Modifier.weight(1f)) {
-                    content(PaddingValues())
-                }
-            }
-        }
-    } else {
-        Scaffold(
-            modifier = modifier,
-            topBar = topBar,
-            bottomBar = {
+    Scaffold(
+        topBar = topBar,
+        modifier = modifier,
+        bottomBar = {
+            if (!isExpandedWidth) {
                 TabBar(
                     items = items,
                     selection = selection,
@@ -622,9 +608,35 @@ public fun <T> AdaptiveNavScaffold(
                     colors = colors,
                     scrollBehavior = scrollBehavior,
                 )
-            },
-        ) { innerPadding ->
-            content(innerPadding)
+            }
+        },
+    ) { innerPadding ->
+        Row(
+            modifier =
+                if (isExpandedWidth) {
+                    Modifier.padding(innerPadding)
+                } else {
+                    Modifier
+                },
+        ) {
+            if (isExpandedWidth) {
+                NavRail(
+                    items = items,
+                    selection = selection,
+                    onSelectionChange = onSelectionChange,
+                    colors = colors,
+                )
+            }
+            Box(
+                modifier =
+                    if (isExpandedWidth) {
+                        Modifier.weight(1f)
+                    } else {
+                        Modifier
+                    },
+            ) {
+                content(if (isExpandedWidth) PaddingValues() else innerPadding)
+            }
         }
     }
 }

@@ -6,6 +6,17 @@ import org.junit.jupiter.api.Test
 class ActionComponentsTest {
     @Test
     fun actionComponentNamesAreStable() {
+        val expected =
+            listOf(
+                "PrimaryButton",
+                "SecondaryButton",
+                "TextButton",
+                "IconButton",
+                "FAB",
+                "ExtendedFloatingActionButton",
+                "SegmentedControl",
+                "SingleChoiceSegmentedButtonRow",
+            )
         assertThat(
             listOf(
                 "PrimaryButton",
@@ -17,15 +28,6 @@ class ActionComponentsTest {
                 "SegmentedControl",
                 "SingleChoiceSegmentedButtonRow",
             ),
-        ).containsExactly(
-            "PrimaryButton",
-            "SecondaryButton",
-            "TextButton",
-            "IconButton",
-            "FAB",
-            "ExtendedFloatingActionButton",
-            "SegmentedControl",
-            "SingleChoiceSegmentedButtonRow",
-        ).inOrder()
+        ).containsExactlyElementsIn(expected).inOrder()
     }
 }
