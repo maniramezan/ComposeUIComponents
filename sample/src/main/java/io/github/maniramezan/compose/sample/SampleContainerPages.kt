@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,16 +24,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import io.github.maniramezan.compose.components.BottomSheet
 import io.github.maniramezan.compose.components.Card
+import io.github.maniramezan.compose.components.Dialog
 import io.github.maniramezan.compose.components.DisclosureCard
 import io.github.maniramezan.compose.components.FlipAxis
 import io.github.maniramezan.compose.components.FlipCard
 import io.github.maniramezan.compose.components.OverlayCard
 import io.github.maniramezan.compose.components.PrimaryButton
 import io.github.maniramezan.compose.components.SecondaryButton
+import io.github.maniramezan.compose.components.Section
 import io.github.maniramezan.compose.components.ShowcaseFeed
 import io.github.maniramezan.compose.components.ShowcaseItemWidth
 import io.github.maniramezan.compose.components.Snackbar
+import io.github.maniramezan.compose.components.Surface
+import io.github.maniramezan.compose.components.TextButton
 import io.github.maniramezan.compose.components.Toast
 import io.github.maniramezan.compose.components.ToastDuration
 import io.github.maniramezan.compose.components.ToastHost
@@ -410,4 +416,107 @@ internal fun ToastHostPage() {
             dismissContentDescription = "Dismiss",
         )
     }
+}
+
+@Composable
+internal fun DialogPage() {
+    var showDialog by remember { mutableStateOf(false) }
+    var withDismiss by remember { mutableStateOf(true) }
+    var lastResult by remember { mutableStateOf("None") }
+
+    SamplePage(
+        preview = {
+            PrimaryButton(text = "Open dialog", onClick = { showDialog = true })
+            Text(text = "Last result: $lastResult")
+            if (showDialog) {
+                Dialog(
+                    title = "Discard changes?",
+                    text = "Unsaved changes to this item will be lost.",
+                    confirmText = "Discard",
+                    onConfirm = {
+                        lastResult = "Confirmed"
+                        showDialog = false
+                    },
+                    onDismissRequest = {
+                        lastResult = "Dismissed"
+                        showDialog = false
+                    },
+                    dismissText = if (withDismiss) "Keep editing" else null,
+                )
+            }
+        },
+        controls = {
+            ControlSwitch(label = "Dismiss button", checked = withDismiss, onCheckedChange = { withDismiss = it })
+        },
+    )
+}
+
+@Composable
+internal fun BottomSheetPage() {
+    var showSheet by remember { mutableStateOf(false) }
+    var rowCount by remember { mutableIntStateOf(3) }
+
+    SamplePage(
+        preview = {
+            PrimaryButton(text = "Open bottom sheet", onClick = { showSheet = true })
+            if (showSheet) {
+                BottomSheet(onDismissRequest = { showSheet = false }) {
+                    Text(text = "Sheet title", style = AppTheme.typography.titleMedium)
+                    repeat(rowCount) { index -> Text(text = "Option ${index + 1}") }
+                    TextButton(text = "Close", onClick = { showSheet = false })
+                }
+            }
+        },
+        controls = {
+            ControlSegmented(
+                label = "Rows",
+                options = listOf("1", "3", "8"),
+                selectedIndex = listOf(1, 3, 8).indexOf(rowCount),
+                onOptionSelected = { rowCount = listOf(1, 3, 8)[it] },
+            )
+        },
+    )
+}
+
+@Composable
+internal fun SurfacePage() {
+    var roomy by remember { mutableStateOf(false) }
+
+    SamplePage(
+        preview = {
+            Surface(
+                contentPadding = PaddingValues(if (roomy) AppTheme.spacing.x3 else AppTheme.spacing.lg),
+            ) {
+                Text(text = "Flat surface")
+                Text(text = "Groups related content without elevation.")
+            }
+        },
+        controls = {
+            ControlSwitch(label = "Roomy padding", checked = roomy, onCheckedChange = { roomy = it })
+        },
+    )
+}
+
+@Composable
+internal fun SectionPage() {
+    var longTitle by remember { mutableStateOf(false) }
+    var showAction by remember { mutableStateOf(true) }
+
+    SamplePage(
+        preview = {
+            Section(
+                title = if (longTitle) "A section title long enough to wrap onto a second line" else "Details",
+                actions = {
+                    if (showAction) TextButton(text = "Edit", onClick = {})
+                },
+            ) {
+                Text(text = "First row of section content")
+                Text(text = "Second row of section content")
+            }
+        },
+        controls = {
+            ControlSwitch(label = "Long title", checked = longTitle, onCheckedChange = { longTitle = it })
+            ControlSwitch(label = "Show action", checked = showAction, onCheckedChange = { showAction = it })
+        },
+    )
 }

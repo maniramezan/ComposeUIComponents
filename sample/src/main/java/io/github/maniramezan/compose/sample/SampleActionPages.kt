@@ -9,12 +9,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import io.github.maniramezan.compose.components.ActionPill
+import io.github.maniramezan.compose.components.ExtendedFloatingActionButton
 import io.github.maniramezan.compose.components.FAB
 import io.github.maniramezan.compose.components.IconButton
 import io.github.maniramezan.compose.components.PrimaryButton
 import io.github.maniramezan.compose.components.SecondaryButton
 import io.github.maniramezan.compose.components.SegmentDensity
 import io.github.maniramezan.compose.components.SegmentedControl
+import io.github.maniramezan.compose.components.SingleChoiceSegmentedButtonRow
 import io.github.maniramezan.compose.components.TextButton
 import io.github.maniramezan.compose.theme.AppTheme
 
@@ -168,6 +170,57 @@ internal fun SegmentedControlPage() {
                 selectedIndex = densityIndex,
                 onOptionSelected = { densityIndex = it },
             )
+        },
+    )
+}
+
+@Composable
+internal fun ExtendedFloatingActionButtonPage() {
+    var longLabel by remember { mutableStateOf(false) }
+    var tapCount by remember { mutableIntStateOf(0) }
+
+    SamplePage(
+        preview = {
+            ExtendedFloatingActionButton(
+                text = if (longLabel) "Create a new item" else "Create",
+                icon = AppTheme.icons.check,
+                onClick = { tapCount += 1 },
+            )
+            Text(text = "Tap count: $tapCount")
+        },
+        controls = {
+            ControlSwitch(label = "Long label", checked = longLabel, onCheckedChange = { longLabel = it })
+        },
+    )
+}
+
+@Composable
+internal fun SingleChoiceSegmentedButtonRowPage() {
+    val allOptions = listOf("Day", "Week", "Month", "Year")
+    var optionCount by remember { mutableIntStateOf(3) }
+    var selectedIndex by remember { mutableIntStateOf(0) }
+    var enabled by remember { mutableStateOf(true) }
+    val options = allOptions.take(optionCount)
+    val safeIndex = selectedIndex.coerceAtMost(options.lastIndex)
+
+    SamplePage(
+        preview = {
+            SingleChoiceSegmentedButtonRow(
+                options = options,
+                selectedIndex = safeIndex,
+                onOptionSelected = { selectedIndex = it },
+                enabled = enabled,
+            )
+            Text(text = "Selected: ${options[safeIndex]}")
+        },
+        controls = {
+            ControlSegmented(
+                label = "Options",
+                options = listOf("2", "3", "4"),
+                selectedIndex = optionCount - 2,
+                onOptionSelected = { optionCount = it + 2 },
+            )
+            ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
         },
     )
 }
