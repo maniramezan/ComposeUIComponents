@@ -481,8 +481,8 @@ private fun ScrollableSegmentRow(
                 .fillMaxWidth()
                 .selectableGroup()
                 .edgeFade(
-                    leadingAlpha = leadingAlpha,
-                    trailingAlpha = trailingAlpha,
+                    leadingAlpha = { leadingAlpha },
+                    trailingAlpha = { trailingAlpha },
                     color = fadeColor,
                     fadeWidthPx = fadeWidthPx,
                     isRtl = isRtl,
@@ -508,18 +508,20 @@ private fun ScrollableSegmentRow(
  * painted within the element's own bounds so the fade always matches the row
  * height. [leadingAlpha] / [trailingAlpha] are layout-direction-aware; the draw
  * happens in raw left/right pixel space so the mapping is swapped under RTL.
+ * The alphas are lambdas so the animated values are read in the draw phase and
+ * the fade animation does not recompose the row every frame.
  */
 private fun Modifier.edgeFade(
-    leadingAlpha: Float,
-    trailingAlpha: Float,
+    leadingAlpha: () -> Float,
+    trailingAlpha: () -> Float,
     color: Color,
     fadeWidthPx: Float,
     isRtl: Boolean,
 ): Modifier =
     drawWithContent {
         drawContent()
-        val leftAlpha = if (isRtl) trailingAlpha else leadingAlpha
-        val rightAlpha = if (isRtl) leadingAlpha else trailingAlpha
+        val leftAlpha = if (isRtl) trailingAlpha() else leadingAlpha()
+        val rightAlpha = if (isRtl) leadingAlpha() else trailingAlpha()
         val w = fadeWidthPx.coerceAtMost(size.width)
         if (leftAlpha > 0f) {
             drawRect(
