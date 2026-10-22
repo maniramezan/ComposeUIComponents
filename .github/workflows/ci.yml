@@ -30,7 +30,7 @@ jobs:
       - name: Record component screenshots
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         run: ./gradlew :components:recordRoborazziDebug
-      - uses: actions/upload-artifact@v7.0.1
+      - uses: actions/upload-artifact@v7.0.2
         if: ${{ always() && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         with:
           name: component-screenshots
@@ -39,25 +39,25 @@ jobs:
             components/build/reports/roborazzi
       - name: Assemble catalog
         run: ./gradlew :catalog:assembleDebug
-      - uses: actions/upload-artifact@v7.0.1
+      - uses: actions/upload-artifact@v7.0.2
         with:
           name: catalog-debug-apk
           path: catalog/build/outputs/apk/debug/catalog-debug.apk
       - name: Assemble sample
         run: ./gradlew :sample:assembleDebug
-      - uses: actions/upload-artifact@v7.0.1
+      - uses: actions/upload-artifact@v7.0.2
         with:
           name: sample-debug-apk
           path: sample/build/outputs/apk/debug/sample-debug.apk
       - name: Assemble benchmark APK
         run: ./gradlew :baselineprofile:assemble
-      - uses: actions/upload-artifact@v7.0.1
+      - uses: actions/upload-artifact@v7.0.2
         with:
           name: baselineprofile-benchmark-release-apk
           path: baselineprofile/build/outputs/apk/benchmarkRelease/baselineprofile-benchmarkRelease.apk
       - name: Generate Compose compiler reports
         run: ./gradlew composeCompilerReports -PenableComposeCompilerReports=true
-      - uses: actions/upload-artifact@v7.0.1
+      - uses: actions/upload-artifact@v7.0.2
         with:
           name: compose-compiler-reports
           path: |
@@ -70,7 +70,7 @@ jobs:
         run: python -m pip install -r requirements-docs.txt
       - name: Build docs site
         run: mkdocs build --strict
-      - uses: actions/upload-artifact@v7.0.1
+      - uses: actions/upload-artifact@v7.0.2
         with:
           name: docs-site
           path: site
