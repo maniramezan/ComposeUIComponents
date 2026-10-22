@@ -26,7 +26,8 @@ for path in components.rglob("*.kt"):
         name = match.group(1)
         if not name[0].isupper():
             continue  # Lowercase composable helpers are not component entry points.
-        if not re.search(r"\b" + re.escape(name) + r"\s*\(", sample_text):
+        # Match a call with arguments `Name(` or a trailing-lambda-only call `Name {`.
+        if not re.search(r"\b" + re.escape(name) + r"\s*[({]", sample_text):
             missing.setdefault(name, set()).add(str(path.relative_to(root)))
 
 if missing:

@@ -9,13 +9,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import io.github.maniramezan.compose.components.ActionPill
+import io.github.maniramezan.compose.components.ExtendedFloatingActionButton
 import io.github.maniramezan.compose.components.FAB
 import io.github.maniramezan.compose.components.IconButton
 import io.github.maniramezan.compose.components.PrimaryButton
 import io.github.maniramezan.compose.components.SecondaryButton
 import io.github.maniramezan.compose.components.SegmentDensity
 import io.github.maniramezan.compose.components.SegmentedControl
+import io.github.maniramezan.compose.components.SingleChoiceSegmentedButtonRow
 import io.github.maniramezan.compose.components.TextButton
+import io.github.maniramezan.compose.components.TextField
 import io.github.maniramezan.compose.theme.AppTheme
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -124,10 +127,16 @@ internal fun FabPage() {
     val iconOptions = listOf("Check", "Close")
     var iconIndex by remember { mutableIntStateOf(0) }
     val icon = if (iconIndex == 0) AppTheme.icons.check else AppTheme.icons.close
+    var extended by remember { mutableStateOf(false) }
+    var label by remember { mutableStateOf("Create") }
 
     SamplePage(
         preview = {
-            FAB(icon = icon, contentDescription = iconOptions[iconIndex], onClick = {})
+            if (extended) {
+                ExtendedFloatingActionButton(text = label, icon = icon, onClick = {})
+            } else {
+                FAB(icon = icon, contentDescription = iconOptions[iconIndex], onClick = {})
+            }
         },
         controls = {
             ControlSegmented(
@@ -136,6 +145,10 @@ internal fun FabPage() {
                 selectedIndex = iconIndex,
                 onOptionSelected = { iconIndex = it },
             )
+            ControlSwitch(label = "Extended (with label)", checked = extended, onCheckedChange = { extended = it })
+            if (extended) {
+                TextField(value = label, onValueChange = { label = it }, label = "Label")
+            }
         },
     )
 }
@@ -168,6 +181,35 @@ internal fun SegmentedControlPage() {
                 selectedIndex = densityIndex,
                 onOptionSelected = { densityIndex = it },
             )
+        },
+    )
+}
+
+@Composable
+internal fun SingleChoiceSegmentedButtonRowPage() {
+    val optionSets = listOf(listOf("Day", "Week"), listOf("Day", "Week", "Month"), listOf("S", "M", "L", "XL"))
+    var setIndex by remember { mutableIntStateOf(1) }
+    var selected by remember { mutableIntStateOf(0) }
+    var enabled by remember { mutableStateOf(true) }
+    val options = optionSets[setIndex]
+
+    SamplePage(
+        preview = {
+            SingleChoiceSegmentedButtonRow(
+                options = options,
+                selectedIndex = selected.coerceAtMost(options.lastIndex),
+                onOptionSelected = { selected = it },
+                enabled = enabled,
+            )
+        },
+        controls = {
+            ControlSegmented(
+                label = "Option count",
+                options = optionSets.map { it.size.toString() },
+                selectedIndex = setIndex,
+                onOptionSelected = { setIndex = it },
+            )
+            ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
         },
     )
 }
