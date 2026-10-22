@@ -29,8 +29,8 @@ Audit source: `~/Developer/novalingo/mobile/Android`. Do not copy app code into 
 | 🟡 Partial | Error retry state | `components/ListComponents.kt::ErrorState` | `core-ui/ErrorRetryView.kt`, `feature/player/PlayerErrorOverlay.kt` | The consumer now wraps `ErrorState`. The media-overlay variant stays app-owned. |
 | ✅ Done | Typewriter text reveal | `compose-utils/TypewriterReveal.kt` | `core-ui/aiassistant/AIAssistantChatLog.kt::AIMarkdownBubble` | `rememberTypewriterReveal` state hook: progressively reveals a growing target string (e.g. token-stream chunks) instead of popping in whole chunks; catches up on extension, restarts on divergence. Rendering-agnostic — returns the revealed prefix as `State<String>`, caller renders it with any text/markdown composable. |
 | ✅ Done | Chat bubble | `components/ChatLog.kt` | `core-ui/aiassistant/AIAssistantChatLog.kt::{AIUserBubble, AIAssistantBubble}` | `ChatLog` owns sender alignment, typing, and error bubbles, and takes a rendering-agnostic `messageContent` slot for Markdown. Apps map their turn models to `ChatMessage` at the UI boundary. |
-| 🔄 In review | Typing dots | `components/TypingIndicator.kt` | `core-ui/AssistantTypingDots.kt` | Three-dot wave for a pending reply. Draw-phase only and static under Remove animations. `ChatLog`'s typing bubble uses it. |
-| 🔄 In review | Blocking loading overlay | `components/LoadingOverlay.kt` | `core-ui/LoadingOverlay.kt`, `core-ui/LoadingOverlayStyle.kt` | Scrim that swallows touches, swaps content semantics for a caller-supplied live-region announcement, and has an optional spinner card. The app's two-style sealed type maps to `showIndicator`. |
+| ✅ Done | Typing dots | `components/TypingIndicator.kt` | `core-ui/AssistantTypingDots.kt` | Three-dot wave for a pending reply. Draw-phase only and static under Remove animations. `ChatLog`'s typing bubble uses it. |
+| ✅ Done | Blocking loading overlay | `components/LoadingOverlay.kt` | `core-ui/LoadingOverlay.kt`, `core-ui/LoadingOverlayStyle.kt` | Scrim that swallows touches, swaps content semantics for a caller-supplied live-region announcement, and has an optional spinner card. The app's two-style sealed type maps to `showIndicator`. |
 | ⏳ Pending | Labeled divider | — | `core-ui/auth/AuthOrDivider.kt` | Rule + centered caption + rule, as in the "or" between sign-in methods. Good fit for `DividerComponents.kt` with a caller-supplied label. |
 | ⏳ Pending | Thumbs feedback row | — | `core-ui/FeedbackRow.kt` | One-shot up/down rating with an optional retry-on-down affordance. Needs a caller-owned rating enum or boolean, caller-supplied descriptions, and a 48dp target audit (the app uses 24dp targets). |
 | ❌ Not a candidate | Form error text | — | `core-ui/auth/FormErrorText.kt` | Covered by `TextField(isError = …, supportingText = …)`. A standalone error line has no reusable behaviour beyond a token-styled `Text`. |
@@ -42,8 +42,8 @@ The sibling SwiftUI library (`SwiftUIComponents`) ships the same design language
 
 | Status | SwiftUI component | Compose counterpart | Notes |
 |---|---|---|---|
-| 🔄 In review | `Badge`, `AvatarView` | `Badge`, `CountBadge`, `Avatar` | New **Indicators** category. |
-| 🔄 In review | `TypingDotsView`, `TypingIndicatorBubbleView` | `TypingIndicator`, `ChatLog` typing bubble | |
+| ✅ Done | `Badge`, `AvatarView` | `Badge`, `CountBadge`, `Avatar` | New **Indicators** category. |
+| ✅ Done | `TypingDotsView`, `TypingIndicatorBubbleView` | `TypingIndicator`, `ChatLog` typing bubble | |
 | ⏳ Pending | `NoticeCard`, `ErrorBanner`, `AssistantUnavailableBanner` | — | An inline, full-width tonal banner (info / success / warning / error) with an optional icon, action, and dismiss. `AssistantStatusBanner` is assistant-specific; a generic banner would let it delegate. |
 | ⏳ Pending | `AsyncContentView` | — | Loading / empty / error / content switcher over the existing `LoadingState`, `EmptyState`, and `ErrorState`, so screens stop hand-writing the same `when`. |
 | ⏳ Pending | `MenuPicker` | — | A themed dropdown or exposed-menu single-choice picker. Today callers fall back to raw Material 3 `ExposedDropdownMenuBox`. |
