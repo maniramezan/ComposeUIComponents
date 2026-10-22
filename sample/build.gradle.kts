@@ -11,6 +11,12 @@ android {
         versionCode = 1
         versionName = providers.gradleProperty("VERSION_NAME").get()
     }
+
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
 }
 
 // Generates/merges sample/src/main/baseline-prof.txt from the :baselineprofile
@@ -40,4 +46,10 @@ dependencies {
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.tooling.preview)
     baselineProfile(project(":baselineprofile"))
+
+    testImplementation(libs.junit)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.ext.junit)
+    testImplementation(libs.androidx.compose.ui.test.junit4)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
