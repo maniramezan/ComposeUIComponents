@@ -35,8 +35,10 @@ public fun AdaptiveContentContainer(
         Box(
             modifier =
                 Modifier
-                    .fillMaxWidth()
-                    .widthIn(max = maxWidth),
+                    // Cap before filling: fillMaxWidth() first would produce a tight width
+                    // constraint that widthIn(max) cannot shrink, so content never got capped.
+                    .widthIn(max = maxWidth)
+                    .fillMaxWidth(),
             content = content,
         )
     }
