@@ -213,4 +213,11 @@ public class ComponentCategoryScreenshotTest {
             LoadingOverlayPreview()
         }
     }
+
+    @Test
+    public fun indicatorComponentsMatchGolden() {
+        captureRoboImage("build/outputs/roborazzi/indicator-components.png") {
+            IndicatorComponentsPreview()
+        }
+    }
 }
