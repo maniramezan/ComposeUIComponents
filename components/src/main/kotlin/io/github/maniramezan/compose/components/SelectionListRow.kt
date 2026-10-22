@@ -16,7 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
@@ -112,7 +112,8 @@ internal fun SelectionListRow(
                     imageVector = AppTheme.icons.expand.imageVector,
                     contentDescription = null, // @check:suppress — decorative; expanded/collapsed state is on the row
                     tint = AppTheme.colors.onSurfaceVariant,
-                    modifier = Modifier.rotate(chevronRotation),
+                    // Rotate in the draw layer so the expand animation does not recompose the row.
+                    modifier = Modifier.graphicsLayer { rotationZ = chevronRotation },
                 )
             }
             isSelected ->

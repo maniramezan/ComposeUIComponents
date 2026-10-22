@@ -11,6 +11,22 @@ Run this checklist before a release and when adding complex components.
 - Avoid adding heavyweight icon packs or app-specific dependencies to core modules.
 - Use the `:sample` app for startup and navigation macrobenchmark scenarios before `1.0.0`.
 
+## Deferring Per-Frame State Reads
+
+Animated values, scroll offsets, and pager offsets change every frame. Reading them in a composable body recomposes that composable on every frame, even when only the drawing changes. Components read these values in the layout or draw phase instead:
+
+- Pass the value into `Modifier.graphicsLayer { }`, `Modifier.layout { }`, or a `draw*` lambda rather than `Modifier.alpha(value)`, `Modifier.rotate(value)`, or `Modifier.scale(value)`.
+- When a child composable needs the value, pass a `() -> Float` lambda or the `State` itself, not the unwrapped `Float`.
+- When composition only needs a coarse fact derived from the value (for example, "has the card turned past 90°"), wrap it in `derivedStateOf` so composition changes only when that fact changes.
+
+```kotlin
+val rotation by animateFloatAsState(targetValue, label = "rotation")
+// Recomposes every frame:
+Icon(modifier = Modifier.rotate(rotation))
+// Redraws every frame; composition is untouched:
+Icon(modifier = Modifier.graphicsLayer { rotationZ = rotation })
+```
+
 ## Compose Compiler Reports
 
 CI uploads `compose-compiler-reports` whenever the reports task runs. Local outputs are written under each Compose module's `build/compose-metrics` and `build/compose-reports` directories.
