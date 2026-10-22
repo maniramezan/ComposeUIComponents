@@ -144,7 +144,10 @@ public fun PasswordField(
     )
 }
 
-/** A themed, single-line outlined text field styled for search, with an optional [placeholder]. */
+/**
+ * A themed, single-line outlined text field styled for search, with an optional [placeholder].
+ * A blank [placeholder] renders no placeholder node.
+ */
 @Composable
 public fun SearchField(
     value: String,
@@ -161,7 +164,7 @@ public fun SearchField(
         onValueChange = onValueChange,
         modifier = modifier.fillMaxWidth(),
         enabled = enabled,
-        placeholder = { Text(text = placeholder) },
+        placeholder = placeholder.takeIf { it.isNotBlank() }?.let { text -> { Text(text = text) } },
         leadingIcon = leadingIcon,
         singleLine = true,
         keyboardOptions = keyboardOptions,
