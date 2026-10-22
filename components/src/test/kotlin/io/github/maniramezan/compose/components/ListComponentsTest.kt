@@ -1,8 +1,16 @@
 package io.github.maniramezan.compose.components
 
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Text
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.hasTextExactly
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.maniramezan.compose.theme.AppTheme
 import org.junit.Rule
@@ -31,5 +39,49 @@ public class ListComponentsTest {
         composeRule.onNodeWithText("Nothing here").assertIsDisplayed()
         composeRule.onNodeWithText("Items appear here").assertIsDisplayed()
         composeRule.onNodeWithText("Add").assertIsDisplayed()
+    }
+
+    @Test
+    public fun listItemMergesHeadlineAndSupportingTextIntoOneFocusStop() {
+        composeRule.setContent {
+            AppTheme {
+                ListItem(
+                    headline = "Headline",
+                    supportingText = "Supporting",
+                    trailingContent = { Text("Trailing") },
+                )
+            }
+        }
+
+        composeRule
+            .onNode(hasText("Headline") and hasText("Supporting"), useUnmergedTree = false)
+            .assertIsDisplayed()
+        composeRule.onNodeWithText("Trailing").assertIsDisplayed()
+    }
+
+    @Test
+    public fun listItemOmitsSupportingTextWhenNull() {
+        composeRule.setContent {
+            AppTheme {
+                ListItem(headline = "Headline only")
+            }
+        }
+
+        composeRule.onAllNodes(hasText("Headline only")).assertCountEquals(1)
+        composeRule.onNode(hasText("Headline only")).assert(hasTextExactly("Headline only"))
+    }
+
+    @Test
+    public fun lazyListRendersItemsLazily() {
+        composeRule.setContent {
+            AppTheme {
+                LazyList(modifier = Modifier.height(200.dp)) {
+                    items(100) { index -> Text("Row $index") }
+                }
+            }
+        }
+
+        composeRule.onNodeWithText("Row 0").assertIsDisplayed()
+        composeRule.onNodeWithText("Row 99").assertDoesNotExist()
     }
 }
