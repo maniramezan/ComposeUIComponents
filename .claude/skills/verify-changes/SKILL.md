@@ -12,7 +12,7 @@ Read `AGENTS.md`. Run focused checks first, then broaden when the change warrant
 | `:components` code | `./gradlew :components:testDebugUnitTest :components:ktlintCheck :components:detekt checkComponentTokenUsage` |
 | New or changed public API | The above, plus `./gradlew :components:binaryCompatibilityCheck` |
 | `:theme`, `:tokens`, `:compose-utils`, `:foundation` | `./gradlew :<module>:check :components:testDebugUnitTest` |
-| `:sample` pages | `./gradlew :sample:assembleDebug :sample:ktlintCheck` and `.claude/skills/verify-changes/check-sample-coverage.sh` |
+| `:sample` pages | `./gradlew :sample:assembleDebug :sample:ktlintCheck :sample:testDebugUnitTest` and `.claude/skills/verify-changes/check-sample-coverage.sh` |
 | Build logic or version catalog | `./gradlew help`, then the affected modules' assemble and test tasks |
 | Docs | `mkdocs build --strict` after `python -m pip install -r requirements-docs.txt` if needed |
 | Visual changes | `./gradlew :components:recordRoborazziDebug`, then inspect `components/build/outputs/roborazzi` |
@@ -33,7 +33,7 @@ mkdocs build --strict
 .claude/skills/verify-changes/check-sample-coverage.sh
 ```
 
-The helper lists public component composables with no call in `:sample`. Every new public component should be absent from its output. Existing primitives or overloads represented by a data-driven counterpart may need manual review. Confirm the browser registry entry and live controls separately; a name occurrence alone does not prove the demo is complete.
+The helper lists public component composables with no call in `:sample`; both `Name(` and trailing-lambda `Name {` calls count. `SampleComponentDemoSmokeTest` composes every registered demo page under Robolectric, so a page that throws fails `:sample:testDebugUnitTest` (and `check`). Every new public component should be absent from its output. Existing primitives or overloads represented by a data-driven counterpart may need manual review. Confirm the browser registry entry and live controls separately; a name occurrence alone does not prove the demo is complete.
 
 ## Binary compatibility
 

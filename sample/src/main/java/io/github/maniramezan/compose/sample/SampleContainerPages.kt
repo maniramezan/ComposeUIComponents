@@ -23,17 +23,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import io.github.maniramezan.compose.components.BottomSheet
 import io.github.maniramezan.compose.components.Card
+import io.github.maniramezan.compose.components.Dialog
 import io.github.maniramezan.compose.components.DisclosureCard
 import io.github.maniramezan.compose.components.FlipAxis
 import io.github.maniramezan.compose.components.FlipCard
 import io.github.maniramezan.compose.components.OverlayCard
 import io.github.maniramezan.compose.components.PrimaryButton
 import io.github.maniramezan.compose.components.SecondaryButton
+import io.github.maniramezan.compose.components.Section
 import io.github.maniramezan.compose.components.ShowcaseFeed
 import io.github.maniramezan.compose.components.ShowcaseItemWidth
 import io.github.maniramezan.compose.components.ShowcaseRow
 import io.github.maniramezan.compose.components.Snackbar
+import io.github.maniramezan.compose.components.TextButton
+import io.github.maniramezan.compose.components.TextField
 import io.github.maniramezan.compose.components.Toast
 import io.github.maniramezan.compose.components.ToastDuration
 import io.github.maniramezan.compose.components.ToastHost
@@ -472,4 +477,107 @@ internal fun ToastHostPage() {
             dismissContentDescription = "Dismiss",
         )
     }
+}
+
+@Composable
+internal fun SectionPage() {
+    var title by remember { mutableStateOf("Preferences") }
+    var showAction by remember { mutableStateOf(true) }
+    var rows by remember { mutableIntStateOf(3) }
+
+    SamplePage(
+        preview = {
+            Section(
+                title = title,
+                actions = {
+                    if (showAction) TextButton(text = "Edit", onClick = {})
+                },
+            ) {
+                repeat(rows) { index -> Text("Row ${index + 1}") }
+            }
+        },
+        controls = {
+            TextField(value = title, onValueChange = { title = it }, label = "Title")
+            ControlSwitch(label = "Trailing action", checked = showAction, onCheckedChange = { showAction = it })
+            ControlSegmented(
+                label = "Rows",
+                options = listOf("1", "3", "5"),
+                selectedIndex = listOf(1, 3, 5).indexOf(rows).coerceAtLeast(0),
+                onOptionSelected = { rows = listOf(1, 3, 5)[it] },
+            )
+        },
+    )
+}
+
+@Composable
+internal fun DialogPage() {
+    var open by remember { mutableStateOf(false) }
+    var showDismiss by remember { mutableStateOf(true) }
+    var lastResult by remember { mutableStateOf("None yet") }
+
+    SamplePage(
+        preview = {
+            Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
+                PrimaryButton(text = "Open dialog", onClick = { open = true })
+                Text("Last result: $lastResult")
+            }
+            if (open) {
+                Dialog(
+                    title = "Discard draft?",
+                    text = "Your unsaved changes will be lost.",
+                    confirmText = "Discard",
+                    onConfirm = {
+                        lastResult = "Confirmed"
+                        open = false
+                    },
+                    onDismissRequest = {
+                        lastResult = "Dismissed"
+                        open = false
+                    },
+                    dismissText = if (showDismiss) "Keep editing" else null,
+                )
+            }
+        },
+        controls = {
+            ControlSwitch(label = "Dismiss button", checked = showDismiss, onCheckedChange = { showDismiss = it })
+        },
+    )
+}
+
+@Composable
+internal fun BottomSheetPage() {
+    var open by remember { mutableStateOf(false) }
+    var rows by remember { mutableIntStateOf(3) }
+    var picked by remember { mutableStateOf("None") }
+
+    SamplePage(
+        preview = {
+            Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
+                PrimaryButton(text = "Open sheet", onClick = { open = true })
+                Text("Picked: $picked")
+            }
+            if (open) {
+                BottomSheet(onDismissRequest = { open = false }) {
+                    Text("Choose an option")
+                    repeat(rows) { index ->
+                        TextButton(
+                            text = "Option ${index + 1}",
+                            onClick = {
+                                picked = "Option ${index + 1}"
+                                open = false
+                            },
+                        )
+                    }
+                }
+            }
+        },
+        controls = {
+            ControlSegmented(
+                label = "Options",
+                options = listOf("2", "3", "6"),
+                selectedIndex = listOf(2, 3, 6).indexOf(rows).coerceAtLeast(0),
+                onOptionSelected = { rows = listOf(2, 3, 6)[it] },
+            )
+        },
+    )
 }

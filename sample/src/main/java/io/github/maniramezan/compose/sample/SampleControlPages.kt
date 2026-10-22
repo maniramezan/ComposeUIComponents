@@ -13,7 +13,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.github.maniramezan.compose.components.Checkbox
+import io.github.maniramezan.compose.components.PrimaryButton
 import io.github.maniramezan.compose.components.RadioGroup
+import io.github.maniramezan.compose.components.SelectionList
 import io.github.maniramezan.compose.components.SelectionListContent
 import io.github.maniramezan.compose.components.SelectionListNode
 import io.github.maniramezan.compose.components.Slider
@@ -160,9 +162,26 @@ internal fun SelectionListPage() {
     var searchable by remember { mutableStateOf(true) }
     var category by remember { mutableStateOf("banana") }
     var tags by remember { mutableStateOf(setOf("apple", "spinach", "rice")) }
+    var sheetOpen by remember { mutableStateOf(false) }
 
     SamplePage(
         preview = {
+            PrimaryButton(text = "Open as sheet (SelectionList)", onClick = { sheetOpen = true })
+            if (sheetOpen) {
+                SelectionList(
+                    title = "Category",
+                    nodes = sampleSelectionListNodes,
+                    selectedId = category,
+                    onSelect = {
+                        category = it
+                        sheetOpen = false
+                    },
+                    onDismissRequest = { sheetOpen = false },
+                    isSearchable = searchable,
+                    searchPlaceholder = "Search",
+                    noResultsText = "No results",
+                )
+            }
             if (modeIndex == 0) {
                 SelectionListContent(
                     title = "Category",
