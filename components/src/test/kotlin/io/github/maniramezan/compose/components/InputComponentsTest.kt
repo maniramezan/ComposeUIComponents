@@ -9,6 +9,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
@@ -77,5 +78,18 @@ public class InputComponentsTest {
         }
 
         composeRule.onNode(SemanticsMatcher.keyIsDefined(SemanticsProperties.EditableText)).assertIsNotEnabled()
+    }
+
+    @Test
+    public fun searchFieldWithBlankPlaceholderRendersNoPlaceholderNode() {
+        composeRule.setContent {
+            AppTheme {
+                SearchField(value = "", onValueChange = {})
+            }
+        }
+
+        composeRule
+            .onAllNodes(SemanticsMatcher.keyIsDefined(SemanticsProperties.Text), useUnmergedTree = true)
+            .assertCountEquals(0)
     }
 }
