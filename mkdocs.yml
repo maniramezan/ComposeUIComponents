@@ -41,6 +41,7 @@ nav:
       - Navigation: components/navigation.md
       - Media: components/media.md
       - Feedback: components/feedback.md
+      - Indicators: components/indicators.md
       - Typography: components/typography.md
   - Secure Storage: secure-storage.md
   - Quality:
