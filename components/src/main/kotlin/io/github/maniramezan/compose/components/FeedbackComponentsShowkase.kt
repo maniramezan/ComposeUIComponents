@@ -63,3 +63,11 @@ public fun AssistantChatSurfaceShowkase(): Unit = AssistantChatSurfacePreview()
 @ShowkaseComposable(name = "Assistant Quick Actions", group = "Feedback")
 @Composable
 public fun AssistantQuickActionChipsShowkase(): Unit = AssistantQuickActionChipsPreview()
+
+@ShowkaseComposable(name = "Typing Indicator", group = "Feedback")
+@Composable
+public fun TypingIndicatorShowkase(): Unit = TypingIndicatorPreview()
+
+@ShowkaseComposable(name = "Loading Overlay", group = "Feedback")
+@Composable
+public fun LoadingOverlayShowkase(): Unit = LoadingOverlayPreview()

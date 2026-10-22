@@ -199,4 +199,18 @@ public class ComponentCategoryScreenshotTest {
             ShowcaseFeedPreview()
         }
     }
+
+    @Test
+    public fun typingIndicatorMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/typing-indicator.png") {
+            TypingIndicatorPreview()
+        }
+    }
+
+    @Test
+    public fun loadingOverlayMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/loading-overlay.png") {
+            LoadingOverlayPreview()
+        }
+    }
 }

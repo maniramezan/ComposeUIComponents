@@ -34,11 +34,14 @@ import io.github.maniramezan.compose.components.ChatLog
 import io.github.maniramezan.compose.components.ChatMessage
 import io.github.maniramezan.compose.components.ChatMessageSender
 import io.github.maniramezan.compose.components.ChatMessageState
+import io.github.maniramezan.compose.components.LoadingOverlay
 import io.github.maniramezan.compose.components.LocalSkeletonShimmerEnabled
 import io.github.maniramezan.compose.components.PrimaryButton
 import io.github.maniramezan.compose.components.ProgressIndicator
 import io.github.maniramezan.compose.components.Skeleton
 import io.github.maniramezan.compose.components.SkeletonBlock
+import io.github.maniramezan.compose.components.TextField
+import io.github.maniramezan.compose.components.TypingIndicator
 import io.github.maniramezan.compose.components.skeletonShimmer
 import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.utils.rememberTypewriterReveal
@@ -172,6 +175,110 @@ internal fun SkeletonShimmerPage() {
         },
     )
 }
+
+@Composable
+internal fun TypingIndicatorPage() {
+    var announce by remember { mutableStateOf(true) }
+    var primaryColor by remember { mutableStateOf(false) }
+    var inBubble by remember { mutableStateOf(false) }
+
+    SamplePage(
+        preview = {
+            if (inBubble) {
+                ChatLog(
+                    messages =
+                        listOf(
+                            ChatMessage("1", ChatMessageSender.User, ChatMessageState.Content("Can you summarize this section?")),
+                            ChatMessage("2", ChatMessageSender.Assistant, ChatMessageState.Typing),
+                        ),
+                    idleHint = "Ask a question",
+                    typingDescription = if (announce) "Assistant is responding" else "",
+                    errorAction = ChatErrorAction(message = "Something went wrong", retryLabel = "Retry", onRetry = {}),
+                    modifier = Modifier.height(SAMPLE_CHAT_HEIGHT),
+                )
+            } else {
+                TypingIndicator(
+                    contentDescription = if (announce) "Responding" else "",
+                    color = if (primaryColor) AppTheme.colors.primary else AppTheme.colors.onSurfaceVariant,
+                )
+            }
+        },
+        controls = {
+            ControlSwitch(
+                label = "Announce to screen readers",
+                checked = announce,
+                onCheckedChange = { announce = it },
+            )
+            ControlSwitch(
+                label = "Primary color",
+                checked = primaryColor,
+                onCheckedChange = { primaryColor = it },
+            )
+            ControlSwitch(
+                label = "Inside ChatLog (Typing state)",
+                checked = inBubble,
+                onCheckedChange = { inBubble = it },
+            )
+        },
+    )
+}
+
+@Composable
+internal fun LoadingOverlayPage() {
+    var loading by remember { mutableStateOf(false) }
+    var showIndicator by remember { mutableStateOf(true) }
+    var showMessage by remember { mutableStateOf(true) }
+    var autoFinish by remember { mutableStateOf(true) }
+    var submitCount by remember { mutableIntStateOf(0) }
+    var title by remember { mutableStateOf("") }
+
+    LaunchedEffect(loading, autoFinish) {
+        if (loading && autoFinish) {
+            delay(SAMPLE_OVERLAY_DURATION_MILLIS)
+            loading = false
+        }
+    }
+
+    SamplePage(
+        preview = {
+            LoadingOverlay(
+                loading = loading,
+                contentDescription = "Submitting",
+                message = if (showMessage) "Submitting your entry" else null,
+                showIndicator = showIndicator,
+            ) {
+                Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
+                    TextField(value = title, onValueChange = { title = it }, label = "Title")
+                    PrimaryButton(
+                        text = "Submit",
+                        onClick = {
+                            submitCount++
+                            loading = true
+                        },
+                    )
+                    Text("Submitted $submitCount times")
+                }
+            }
+        },
+        controls = {
+            ControlSwitch(label = "Loading", checked = loading, onCheckedChange = { loading = it })
+            ControlSwitch(
+                label = "Show spinner card",
+                checked = showIndicator,
+                onCheckedChange = { showIndicator = it },
+            )
+            ControlSwitch(label = "Show message", checked = showMessage, onCheckedChange = { showMessage = it })
+            ControlSwitch(
+                label = "Finish automatically after 2s",
+                checked = autoFinish,
+                onCheckedChange = { autoFinish = it },
+            )
+        },
+    )
+}
+
+private val SAMPLE_CHAT_HEIGHT = 240.dp
+private const val SAMPLE_OVERLAY_DURATION_MILLIS = 2_000L
 
 private val TYPEWRITER_DEMO_WORDS =
     "The quick brown fox jumps over the lazy dog, revealing itself one word at a time."

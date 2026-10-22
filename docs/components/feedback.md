@@ -8,6 +8,8 @@ Feedback components communicate loading, transient status, and placeholder state
 - `Skeleton`
 - `SkeletonBlock`
 - `Modifier.skeletonShimmer`
+- `LoadingOverlay`
+- `TypingIndicator`
 - `Toast`
 - `ToastHost`
 - `ChatLog`
@@ -58,7 +60,8 @@ ChatLog(
 ```
 
 Use `ChatMessageState.Typing` for in-flight responses and provide a localized
-`typingDescription` so the state is announced accessibly. For markdown or rich
+`typingDescription` so the state is announced accessibly. The typing bubble renders a
+`TypingIndicator`. For markdown or rich
 text, pass `messageContent`; the design-system component intentionally does not
 depend on a markdown renderer:
 
@@ -72,6 +75,35 @@ ChatLog(
     },
 )
 ```
+
+### Typing indicator
+
+`TypingIndicator` is three dots pulsing in sequence. It reads as "composing a reply" rather
+than "loading". `ChatLog` uses it for `ChatMessageState.Typing`, and you can use it on its
+own, for example inside a custom `messageContent` bubble while the streamed text is still
+empty:
+
+```kotlin
+ChatLog(
+    messages = messages,
+    idleHint = "",
+    errorAction = errorAction,
+    messageContent = { _, text ->
+        if (text.isEmpty()) TypingIndicator() else MarkdownText(markdown = text)
+    },
+)
+```
+
+Rendering the dots and the streamed text in the same bubble means the first token grows the
+bubble instead of replacing it.
+
+| Parameter | Notes |
+|---|---|
+| `contentDescription` | Announced as a polite live region. Blank (default) hides the dots from accessibility, for when the enclosing bubble already announces the pending state. |
+| `color` | Dot color. Defaults to `AppTheme.colors.onSurfaceVariant`. |
+
+The wave is applied in the draw phase and never recomposes. It is static (all dots opaque)
+under the system **Remove animations** setting and in `@Preview`.
 
 ## Assistant chat surfaces
 
@@ -182,6 +214,36 @@ inspection. It adds no pointer input and no semantics.
 | `width` | `Dp?` | Fixed width; `null` expands to the constraints from `modifier`. |
 | `shape` | `Shape` | Clip shape. Defaults to `AppTheme.shapes.small`. |
 | `background` | `Color` | Placeholder color. Defaults to `AppTheme.colors.surfaceContainer`. |
+
+## Blocking loading overlay
+
+`LoadingOverlay` wraps a screen or form and, while `loading` is `true`, covers it with a scrim
+that swallows every touch, so controls without their own `enabled` flag can't be used either. Use
+it for work the person started and must wait for, like signing in, submitting, or purchasing.
+For loads people can keep interacting through, prefer `LoadingState`, `ProgressIndicator`,
+or skeletons.
+
+```kotlin
+LoadingOverlay(
+    loading = state.isSubmitting,
+    contentDescription = "Submitting",
+    message = "Submitting your entry",
+    modifier = Modifier.fillMaxSize(),
+) {
+    EntryForm(onSubmit = viewModel::submit)
+}
+```
+
+| Parameter | Notes |
+|---|---|
+| `contentDescription` | Required, caller-localized. Announced as a polite live region while loading. |
+| `message` | Optional text under the spinner. Visual only, so include it in `contentDescription` if screen-reader users need it. Blank renders nothing. |
+| `showIndicator` | `false` shows the scrim only. Use it when the tapped control already shows its own inline spinner, so the screen doesn't stack two. |
+
+While loading, the wrapped content is removed from the accessibility tree, so TalkBack
+announces the operation instead of landing on controls that no longer respond. The scrim
+fades with `AppTheme.motion.shortMillis`. The container sizes to its content, so pass
+`Modifier.fillMaxSize()` to cover a whole screen.
 
 ## Showing toasts
 

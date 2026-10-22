@@ -9,13 +9,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -50,7 +48,7 @@ public sealed interface ChatMessageState {
         val text: String,
     ) : ChatMessageState
 
-    /** Response is pending; renders an indeterminate typing/waiting indicator. */
+    /** Response is pending; renders a [TypingIndicator] bubble. */
     public data object Typing : ChatMessageState
 
     /** Message failed; renders [ChatErrorAction] copy and retry action. */
@@ -252,11 +250,8 @@ private fun ChatTypingBubble(
         shape = AppTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = AppTheme.colors.surfaceVariant),
     ) {
-        CircularProgressIndicator(
-            modifier = Modifier.padding(AppTheme.spacing.x2).size(AppTheme.spacing.x2),
-            strokeWidth = AppTheme.spacing.half,
-            color = AppTheme.colors.onSurfaceVariant,
-        )
+        // The bubble carries the announcement; the dots stay out of the accessibility tree.
+        TypingIndicator(modifier = Modifier.padding(horizontal = AppTheme.spacing.x2, vertical = AppTheme.spacing.x1_5))
     }
 }
 

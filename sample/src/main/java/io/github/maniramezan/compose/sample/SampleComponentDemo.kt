@@ -316,6 +316,20 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             content = { SkeletonShimmerPage() },
         ),
         SampleComponentDemo(
+            id = "typing-indicator",
+            title = "TypingIndicator",
+            category = "Feedback",
+            description = "Three dots pulsing in sequence while a reply is being composed.",
+            content = { TypingIndicatorPage() },
+        ),
+        SampleComponentDemo(
+            id = "loading-overlay",
+            title = "LoadingOverlay",
+            category = "Feedback",
+            description = "Blocking scrim with optional spinner card while a started task runs.",
+            content = { LoadingOverlayPage() },
+        ),
+        SampleComponentDemo(
             id = "typewriter-reveal",
             title = "rememberTypewriterReveal",
             category = "Feedback",
