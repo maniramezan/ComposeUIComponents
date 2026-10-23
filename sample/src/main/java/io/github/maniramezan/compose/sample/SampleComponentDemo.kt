@@ -162,6 +162,13 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             content = { NavRailPage() },
         ),
         SampleComponentDemo(
+            id = "page-indicator",
+            title = "PageIndicator",
+            category = "Navigation",
+            description = "Page position dots with configurable counts, colors, and accessibility announcements.",
+            content = { PageIndicatorPage() },
+        ),
+        SampleComponentDemo(
             id = "paginated-content",
             title = "PaginatedContent",
             category = "Pagination",

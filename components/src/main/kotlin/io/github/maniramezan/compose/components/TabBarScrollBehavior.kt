@@ -1,5 +1,6 @@
 package io.github.maniramezan.compose.components
 
+import androidx.compose.animation.core.animate
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -9,6 +10,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.unit.Velocity
+
+/** Collapsed fraction at or above which a settling bar snaps hidden rather than shown. */
+private const val SETTLE_HIDE_THRESHOLD = 0.5f
 
 /**
  * Hoisted state that lets a [TabBar] hide itself as the caller's scrollable content scrolls
@@ -18,6 +23,9 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
  * Attach [nestedScrollConnection] to the scrollable content via `Modifier.nestedScroll(...)`,
  * and pass this instance to [TabBar]'s `scrollBehavior` parameter. Obtain an instance via
  * [rememberTabBarScrollBehavior].
+ *
+ * When a scroll gesture or fling ends with the bar partially hidden, it settles to whichever
+ * of fully shown or fully hidden is closer, so it never rests half-visible.
  */
 @Stable
 public class TabBarScrollBehavior internal constructor() {
@@ -57,7 +65,25 @@ public class TabBarScrollBehavior internal constructor() {
                 heightOffset = (heightOffset + consumed.y).coerceIn(limit, 0f)
                 return Offset.Zero
             }
+
+            override suspend fun onPostFling(
+                consumed: Velocity,
+                available: Velocity,
+            ): Velocity {
+                settle()
+                return Velocity.Zero
+            }
         }
+
+    /** Animates a partially hidden bar to the nearer of fully shown or fully hidden. */
+    private suspend fun settle() {
+        val limit = heightOffsetLimit
+        if (limit == 0f || heightOffset == 0f || heightOffset == limit) return
+        val target = if (collapsedFraction >= SETTLE_HIDE_THRESHOLD) limit else 0f
+        animate(initialValue = heightOffset, targetValue = target) { value, _ ->
+            heightOffset = value.coerceIn(limit, 0f)
+        }
+    }
 }
 
 /** Creates and remembers a [TabBarScrollBehavior] for use with [TabBar]. */

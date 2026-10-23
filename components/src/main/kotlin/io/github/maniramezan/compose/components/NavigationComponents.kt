@@ -32,6 +32,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -158,8 +159,8 @@ public object TabBarDefaults {
         selectedIndicatorColor: Color = AppTheme.colors.primaryContainer,
         unselectedIconColor: Color = AppTheme.colors.onSurfaceVariant,
         unselectedTextColor: Color = AppTheme.colors.onSurfaceVariant,
-        disabledIconColor: Color = unselectedIconColor.copy(alpha = 0.38f),
-        disabledTextColor: Color = unselectedTextColor.copy(alpha = 0.38f),
+        disabledIconColor: Color = unselectedIconColor.copy(alpha = DISABLED_CONTENT_ALPHA),
+        disabledTextColor: Color = unselectedTextColor.copy(alpha = DISABLED_CONTENT_ALPHA),
     ): TabBarItemColors =
         TabBarItemColors(
             selectedIconColor = selectedIconColor,
@@ -188,13 +189,7 @@ public fun TopAppBar(
         modifier = modifier,
         navigationIcon = navigationIcon,
         actions = { actions() },
-        colors =
-            TopAppBarDefaults.topAppBarColors(
-                containerColor = AppTheme.colors.surface,
-                titleContentColor = AppTheme.colors.onSurface,
-                navigationIconContentColor = AppTheme.colors.primary,
-                actionIconContentColor = AppTheme.colors.primary,
-            ),
+        colors = appTopAppBarColors(),
     )
 }
 
@@ -538,6 +533,17 @@ public fun <T> NavRail(
     }
 }
 
+/** The shared [AppTheme] color treatment for [TopAppBar], [MediumTopAppBar], and [LargeTopAppBar]. */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun appTopAppBarColors(): TopAppBarColors =
+    TopAppBarDefaults.topAppBarColors(
+        containerColor = AppTheme.colors.surface,
+        titleContentColor = AppTheme.colors.onSurface,
+        navigationIconContentColor = AppTheme.colors.primary,
+        actionIconContentColor = AppTheme.colors.primary,
+    )
+
 /** A themed medium (two-line) top app bar with a [title] and optional [navigationIcon]/[actions] slots. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -552,13 +558,7 @@ public fun MediumTopAppBar(
         modifier = modifier,
         navigationIcon = navigationIcon,
         actions = { actions() },
-        colors =
-            TopAppBarDefaults.topAppBarColors(
-                containerColor = AppTheme.colors.surface,
-                titleContentColor = AppTheme.colors.onSurface,
-                navigationIconContentColor = AppTheme.colors.primary,
-                actionIconContentColor = AppTheme.colors.primary,
-            ),
+        colors = appTopAppBarColors(),
     )
 }
 
@@ -576,13 +576,7 @@ public fun LargeTopAppBar(
         modifier = modifier,
         navigationIcon = navigationIcon,
         actions = { actions() },
-        colors =
-            TopAppBarDefaults.topAppBarColors(
-                containerColor = AppTheme.colors.surface,
-                titleContentColor = AppTheme.colors.onSurface,
-                navigationIconContentColor = AppTheme.colors.primary,
-                actionIconContentColor = AppTheme.colors.primary,
-            ),
+        colors = appTopAppBarColors(),
     )
 }
 

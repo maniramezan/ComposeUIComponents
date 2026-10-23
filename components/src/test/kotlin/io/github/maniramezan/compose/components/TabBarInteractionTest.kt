@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -32,9 +33,12 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeUp
+import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.maniramezan.compose.theme.AppTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -286,6 +290,53 @@ public class TabBarInteractionTest {
         assert(lastBottomPaddingDp < fullyShownBottomPadding) {
             "Expected Scaffold's bottom content padding to shrink as the bar hides: " +
                 "was $fullyShownBottomPadding, now $lastBottomPaddingDp"
+        }
+    }
+
+    @Test
+    public fun flingEndSettlesAMostlyShownBarBackToFullyShown() {
+        assertSettlesTo(startFraction = 0.25f, expectHidden = false)
+    }
+
+    @Test
+    public fun flingEndSettlesAMostlyHiddenBarToFullyHidden() {
+        assertSettlesTo(startFraction = 0.75f, expectHidden = true)
+    }
+
+    private fun assertSettlesTo(
+        startFraction: Float,
+        expectHidden: Boolean,
+    ) {
+        lateinit var scrollBehavior: TabBarScrollBehavior
+        lateinit var scope: CoroutineScope
+        composeRule.setContent {
+            AppTheme {
+                scope = rememberCoroutineScope()
+                scrollBehavior = rememberTabBarScrollBehavior()
+                TabBar(
+                    items = items(),
+                    selection = 0,
+                    onSelectionChange = {},
+                    scrollBehavior = scrollBehavior,
+                )
+            }
+        }
+        composeRule.waitForIdle()
+        val limit = scrollBehavior.heightOffsetLimit
+        assert(limit < 0f) { "Expected a real collapse limit once measured, got $limit" }
+
+        composeRule.runOnIdle { scrollBehavior.heightOffset = limit * startFraction }
+        composeRule.runOnIdle {
+            scope.launch { scrollBehavior.nestedScrollConnection.onPostFling(Velocity.Zero, Velocity.Zero) }
+        }
+        composeRule.waitForIdle()
+
+        val expected = if (expectHidden) limit else 0f
+        composeRule.runOnIdle {
+            assert(scrollBehavior.heightOffset == expected) {
+                "Expected the bar to settle at $expected from ${limit * startFraction}, " +
+                    "but it rests at ${scrollBehavior.heightOffset}"
+            }
         }
     }
 }

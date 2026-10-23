@@ -15,6 +15,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import io.github.maniramezan.compose.theme.AppTheme
 
 /**
@@ -94,6 +95,7 @@ internal fun RowScope.ListPrimaryTextBlock(
                 style = supportingStyle,
                 color = supportingColor,
                 maxLines = supportingMaxLines,
+                overflow = TextOverflow.Ellipsis,
             )
         }
     }

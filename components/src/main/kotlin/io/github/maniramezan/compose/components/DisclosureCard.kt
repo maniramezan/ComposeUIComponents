@@ -1,6 +1,8 @@
 package io.github.maniramezan.compose.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,14 +13,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.utils.buttonRole
+
+private const val EXPANDED_CHEVRON_DEGREES = 180f
 
 /**
  * A themed card that keeps [summary] visible and reveals [detail] on demand.
@@ -41,6 +46,11 @@ public fun DisclosureCard(
     detail: @Composable () -> Unit,
 ) {
     val stateLabel = if (expanded) expandedStateDescription else collapsedStateDescription
+    val chevronRotation by animateFloatAsState(
+        targetValue = if (expanded) EXPANDED_CHEVRON_DEGREES else 0f,
+        animationSpec = tween(durationMillis = AppTheme.motion.shortMillis, easing = AppTheme.motion.emphasizedEasing),
+        label = "DisclosureCardChevron",
+    )
 
     Column(
         modifier =
@@ -65,7 +75,7 @@ public fun DisclosureCard(
             Icon(
                 imageVector = AppTheme.icons.expand.imageVector,
                 contentDescription = null, // @check:suppress
-                modifier = Modifier.rotate(if (expanded) 180f else 0f),
+                modifier = Modifier.graphicsLayer { rotationZ = chevronRotation },
                 tint = AppTheme.colors.onSurfaceVariant,
             )
         }

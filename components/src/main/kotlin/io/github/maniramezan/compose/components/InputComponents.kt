@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -12,8 +13,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -199,11 +202,16 @@ public fun Checkbox(
             onCheckedChange = null,
             enabled = enabled,
         )
-        Text(text = label)
+        Text(text = label, color = controlLabelColor(enabled))
     }
 }
 
-/** A themed single-choice radio button list; each row's full width is tappable. */
+/**
+ * A themed single-choice radio button list; each row's full width is tappable.
+ *
+ * Rows expose [Role.RadioButton] semantics inside a selectable group, so TalkBack
+ * announces each option as a radio button with its position ("1 of 3").
+ */
 @Composable
 public fun RadioGroup(
     options: List<String>,
@@ -212,7 +220,7 @@ public fun RadioGroup(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
-    Column(modifier = modifier) {
+    Column(modifier = modifier.selectableGroup()) {
         options.forEachIndexed { index, option ->
             Row(
                 modifier =
@@ -222,6 +230,7 @@ public fun RadioGroup(
                         .selectable(
                             selected = selectedIndex == index,
                             enabled = enabled,
+                            role = Role.RadioButton,
                             onClick = { onOptionSelected(index) },
                         ),
                 verticalAlignment = Alignment.CenterVertically,
@@ -232,7 +241,7 @@ public fun RadioGroup(
                     onClick = null,
                     enabled = enabled,
                 )
-                Text(text = option)
+                Text(text = option, color = controlLabelColor(enabled))
             }
         }
     }
@@ -267,7 +276,7 @@ public fun Switch(
             enabled = enabled,
             thumbContent = thumbContent,
         )
-        Text(text = label)
+        Text(text = label, color = controlLabelColor(enabled))
     }
 }
 
@@ -303,3 +312,13 @@ public fun Slider(
         enabled = enabled,
     )
 }
+
+/**
+ * Label color for a selection-control row: the inherited content color while
+ * enabled, and Material's disabled-content treatment otherwise so the label dims
+ * together with its checkbox/radio/switch.
+ */
+@Composable
+@ReadOnlyComposable
+private fun controlLabelColor(enabled: Boolean): Color =
+    if (enabled) Color.Unspecified else AppTheme.colors.onSurface.copy(alpha = DISABLED_CONTENT_ALPHA)
