@@ -1,10 +1,15 @@
 package io.github.maniramezan.compose.components
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.takahirom.roborazzi.captureRoboImage
 import io.github.maniramezan.compose.theme.AppTheme
@@ -33,6 +38,27 @@ public class ComponentCategoryScreenshotTest {
             ) {
                 AppTheme(darkTheme = true, dynamicColor = false) {
                     PageIndicator(pageCount = 5, currentPage = 1)
+                }
+            }
+        }
+    }
+
+    @Test
+    public fun statusTextMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/status-text.png") {
+            AppTheme {
+                Column(
+                    modifier = Modifier.width(240.dp),
+                    verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md),
+                ) {
+                    EmptyState(
+                        title = "No items in this section yet",
+                        message = "Items appear here after you add them to this section.",
+                    )
+                    ErrorState(
+                        title = "Items could not be loaded",
+                        message = "Try loading the items again when your connection is available.",
+                    )
                 }
             }
         }
