@@ -386,6 +386,27 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             content = { CachedAsyncImagePage() },
         ),
         SampleComponentDemo(
+            id = "badge",
+            title = "Badge",
+            category = "Indicators",
+            description = "Compact status label capsule, quiet or prominent.",
+            content = { BadgePage() },
+        ),
+        SampleComponentDemo(
+            id = "count-badge",
+            title = "CountBadge",
+            category = "Indicators",
+            description = "Dot or capped count marker for icon corners and tabs.",
+            content = { CountBadgePage() },
+        ),
+        SampleComponentDemo(
+            id = "avatar",
+            title = "Avatar",
+            category = "Indicators",
+            description = "Circular image or initials avatar in three sizes.",
+            content = { AvatarPage() },
+        ),
+        SampleComponentDemo(
             id = "typewriter-reveal",
             title = "rememberTypewriterReveal",
             category = "Feedback",
