@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.style.TextOverflow
@@ -20,7 +22,7 @@ import java.text.NumberFormat
  * Non-interactive. The text is read as-is by screen readers. For a tappable or selectable
  * capsule use [PillChip]; for an unread count on an icon use [CountBadge].
  *
- * @param text the caller-localized label.
+ * @param text supply a localized label. Blank labels render nothing.
  * @param prominent `true` fills with `AppTheme.colors.primary` for emphasis; `false` (default)
  *   uses the quieter `surfaceVariant` fill.
  */
@@ -30,6 +32,7 @@ public fun Badge(
     modifier: Modifier = Modifier,
     prominent: Boolean = false,
 ) {
+    if (text.isBlank()) return
     Text(
         text = text,
         modifier =
@@ -81,6 +84,8 @@ public fun CountBadge(
         )
         return
     }
+    val locale = LocalConfiguration.current.locales[0]
+    val numberFormat = remember(locale) { NumberFormat.getIntegerInstance(locale) }
     Box(
         modifier =
             modifier
@@ -91,7 +96,7 @@ public fun CountBadge(
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            text = formatBadgeCount(count, maxCount),
+            text = formatBadgeCount(count, maxCount, numberFormat),
             style = AppTheme.typography.labelSmallSemibold,
             color = AppTheme.colors.onError,
             maxLines = 1,
