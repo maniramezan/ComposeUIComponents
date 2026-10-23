@@ -86,7 +86,11 @@ public fun Avatar(
                     style = style,
                     color = AppTheme.colors.onPrimaryContainer,
                     maxLines = 1,
-                    autoSize = TextAutoSize.StepBased(maxFontSize = style.fontSize),
+                    autoSize =
+                        TextAutoSize.StepBased(
+                            minFontSize = style.fontSize / 2,
+                            maxFontSize = style.fontSize,
+                        ),
                 )
             }
         }
