@@ -74,7 +74,11 @@ public fun Avatar(
         contentAlignment = Alignment.Center,
     ) {
         when {
-            image != null -> image()
+            image != null -> {
+                Box(modifier = Modifier.matchParentSize(), propagateMinConstraints = true) {
+                    image()
+                }
+            }
             initials.isNotEmpty() -> {
                 val style = size.initialsStyle()
                 Text(
@@ -82,8 +86,6 @@ public fun Avatar(
                     style = style,
                     color = AppTheme.colors.onPrimaryContainer,
                     maxLines = 1,
-                    // The circle has a fixed diameter, so shrink the initials rather than clip
-                    // them at large font scales.
                     autoSize = TextAutoSize.StepBased(maxFontSize = style.fontSize),
                 )
             }
@@ -111,13 +113,13 @@ private fun AvatarSize.initialsStyle(): TextStyle =
 
 /**
  * Up to two uppercase initials from [name]: the first letter of the first and last words,
- * where words are separated by whitespace or punctuation and only letters count.
+ * where words are separated by Unicode whitespace or punctuation and only letters count.
  */
 internal fun avatarInitials(name: String): String {
     val letters =
         name
-            .split(Regex("[\\s\\p{Punct}]+"))
-            .mapNotNull { word -> word.firstOrNull()?.takeIf { it.isLetter() } }
+            .split(avatarWordSeparator)
+            .mapNotNull { word -> avatarInitialPattern.find(word)?.value }
     val first = letters.firstOrNull() ?: return ""
     val last = letters.drop(1).lastOrNull()
     return buildString {
@@ -125,3 +127,6 @@ internal fun avatarInitials(name: String): String {
         if (last != null) append(last)
     }.uppercase()
 }
+
+private val avatarWordSeparator = Regex("[\\s\\p{Z}\\p{P}]+")
+private val avatarInitialPattern = Regex("^\\p{L}\\p{M}*")

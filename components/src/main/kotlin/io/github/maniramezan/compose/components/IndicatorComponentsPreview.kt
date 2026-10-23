@@ -1,6 +1,8 @@
 package io.github.maniramezan.compose.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -43,6 +45,7 @@ public fun IndicatorComponentsPreview(): Unit =
                 Avatar(name = "Blake Rivera")
                 Avatar(name = "Casey Morgan", size = AvatarSize.Large)
                 Avatar(name = "", size = AvatarSize.Large)
+                Avatar(name = "Image", image = { Box(Modifier.background(AppTheme.colors.primary)) })
             }
         }
     }

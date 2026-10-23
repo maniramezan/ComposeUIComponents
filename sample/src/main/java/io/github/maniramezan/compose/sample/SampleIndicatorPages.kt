@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -12,7 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,14 +25,10 @@ import io.github.maniramezan.compose.components.TextField
 import io.github.maniramezan.compose.theme.AppTheme
 import kotlin.math.roundToInt
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Indicators
-// ─────────────────────────────────────────────────────────────────────────────
-
 @Composable
 internal fun BadgePage() {
-    var text by remember { mutableStateOf("Beta") }
-    var prominent by remember { mutableStateOf(false) }
+    var text by rememberSaveable { mutableStateOf("Beta") }
+    var prominent by rememberSaveable { mutableStateOf(false) }
 
     SamplePage(
         preview = {
@@ -46,9 +43,10 @@ internal fun BadgePage() {
 
 @Composable
 internal fun CountBadgePage() {
-    var dot by remember { mutableStateOf(false) }
-    var count by remember { mutableFloatStateOf(3f) }
-    var maxIndex by remember { mutableIntStateOf(1) }
+    var dot by rememberSaveable { mutableStateOf(false) }
+    var count by rememberSaveable { mutableFloatStateOf(3f) }
+    var maxIndex by rememberSaveable { mutableIntStateOf(1) }
+    var description by rememberSaveable { mutableStateOf("Unread items") }
     val maxOptions = listOf(9, 99, 999)
 
     SamplePage(
@@ -60,10 +58,9 @@ internal fun CountBadgePage() {
                 val value = if (dot) null else count.roundToInt()
                 CountBadge(
                     count = value,
-                    contentDescription = if (value == null) "New activity" else "$value unread",
+                    contentDescription = description,
                     maxCount = maxOptions[maxIndex],
                 )
-                // Pinned to an icon-sized placeholder's corner, as on a tab icon.
                 Box {
                     Box(
                         modifier =
@@ -83,6 +80,7 @@ internal fun CountBadgePage() {
             }
         },
         controls = {
+            TextField(value = description, onValueChange = { description = it }, label = "Description (blank is decorative)")
             ControlSwitch(label = "Dot (count = null)", checked = dot, onCheckedChange = { dot = it })
             ControlSlider(
                 label = "Count: ${count.roundToInt()} (0 hides the badge)",
@@ -102,9 +100,9 @@ internal fun CountBadgePage() {
 
 @Composable
 internal fun AvatarPage() {
-    var name by remember { mutableStateOf("Avery Quinn") }
-    var sizeIndex by remember { mutableIntStateOf(1) }
-    var withImage by remember { mutableStateOf(false) }
+    var name by rememberSaveable { mutableStateOf("Avery Quinn") }
+    var sizeIndex by rememberSaveable { mutableIntStateOf(1) }
+    var withImage by rememberSaveable { mutableStateOf(false) }
 
     SamplePage(
         preview = {
@@ -117,7 +115,7 @@ internal fun AvatarPage() {
                             Box(
                                 modifier =
                                     Modifier
-                                        .size(AppTheme.spacing.x6)
+                                        .fillMaxSize()
                                         .background(AppTheme.colors.primary),
                             )
                         }
