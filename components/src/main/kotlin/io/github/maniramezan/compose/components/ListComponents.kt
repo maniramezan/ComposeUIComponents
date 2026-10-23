@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import io.github.maniramezan.compose.theme.AppTheme
 
 /** A themed list row with a [headline], optional [supportingText], and optional leading/trailing slots. */
@@ -87,12 +88,14 @@ public fun EmptyState(
             text = title,
             style = AppTheme.typography.titleSmall,
             color = AppTheme.colors.onSurface,
+            textAlign = TextAlign.Center,
         )
         if (message != null) {
             Text(
                 text = message,
                 style = AppTheme.typography.bodyMedium,
                 color = AppTheme.colors.onSurfaceVariant,
+                textAlign = TextAlign.Center,
             )
         }
         action?.invoke()
@@ -114,6 +117,7 @@ public fun LoadingState(
             text = label,
             style = AppTheme.typography.bodyMedium,
             color = AppTheme.colors.onSurface,
+            textAlign = TextAlign.Center,
         )
     }
 }
@@ -136,11 +140,13 @@ public fun ErrorState(
             text = title,
             style = AppTheme.typography.titleSmall,
             color = AppTheme.colors.onSurface,
+            textAlign = TextAlign.Center,
         )
         Text(
             text = message,
             style = AppTheme.typography.bodyMedium,
             color = AppTheme.colors.onSurfaceVariant,
+            textAlign = TextAlign.Center,
         )
         action?.invoke()
     }

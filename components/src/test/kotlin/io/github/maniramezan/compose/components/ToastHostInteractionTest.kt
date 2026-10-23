@@ -1,12 +1,16 @@
 package io.github.maniramezan.compose.components
 
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.AccessibilityManager
+import androidx.compose.ui.platform.LocalAccessibilityManager
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.google.common.truth.Truth.assertThat
 import io.github.maniramezan.compose.theme.AppTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -20,6 +24,54 @@ import org.robolectric.annotation.Config
 public class ToastHostInteractionTest {
     @get:Rule
     public val composeRule = createComposeRule()
+
+    @Test
+    public fun autoDismissUsesTheAccessibilityRecommendedTimeout() {
+        lateinit var hostState: ToastHostState
+        lateinit var scope: CoroutineScope
+        var result: ToastResult? = null
+        var requestedTimeout: Long? = null
+        var requestedControls: Boolean? = null
+        val accessibilityManager =
+            object : AccessibilityManager {
+                override fun calculateRecommendedTimeoutMillis(
+                    originalTimeoutMillis: Long,
+                    containsIcons: Boolean,
+                    containsText: Boolean,
+                    containsControls: Boolean,
+                ): Long {
+                    requestedTimeout = originalTimeoutMillis
+                    requestedControls = containsControls
+                    return 12_000L
+                }
+            }
+        composeRule.mainClock.autoAdvance = false
+        composeRule.setContent {
+            AppTheme {
+                hostState = rememberToastHostState()
+                scope = rememberCoroutineScope()
+                CompositionLocalProvider(LocalAccessibilityManager provides accessibilityManager) {
+                    ToastHost(hostState = hostState, dismissContentDescription = "Dismiss")
+                }
+            }
+        }
+
+        composeRule.runOnIdle {
+            scope.launch {
+                result = hostState.showToast(message = "Saved", actionLabel = "Undo", duration = ToastDuration.Short)
+            }
+        }
+        composeRule.mainClock.advanceTimeBy(500)
+        composeRule.runOnIdle {
+            assertThat(requestedTimeout).isEqualTo(ToastDuration.Short.timeoutMillis)
+            assertThat(requestedControls).isTrue()
+        }
+        composeRule.mainClock.advanceTimeBy(ToastDuration.Short.timeoutMillis!!)
+        composeRule.onNodeWithText("Saved").assertIsDisplayed()
+        composeRule.runOnIdle { assertThat(result).isNull() }
+        composeRule.mainClock.advanceTimeBy(12_000L)
+        composeRule.runOnIdle { assertThat(result).isEqualTo(ToastResult.Dismissed) }
+    }
 
     private fun setUpHost(): Pair<ToastHostState, CoroutineScope> {
         lateinit var hostState: ToastHostState

@@ -265,6 +265,7 @@ private fun ChatErrorBubble(
             modifier
                 .clip(AppTheme.shapes.large)
                 .background(AppTheme.colors.surfaceVariant)
+                .semantics { liveRegion = LiveRegionMode.Polite }
                 .padding(AppTheme.spacing.x2),
         verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.x1),
     ) {

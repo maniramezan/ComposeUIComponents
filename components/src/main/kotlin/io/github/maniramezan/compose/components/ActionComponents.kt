@@ -186,31 +186,17 @@ public fun SegmentedControl(
                     ).semantics { this.selected = selected }
             val segmentModifier =
                 if (widthMode == SegmentWidthMode.Fill) baseModifier.weight(1f) else baseModifier
-            if (selected) {
-                Button(
-                    onClick = { onOptionSelected(index) },
-                    enabled = enabled,
-                    modifier = segmentModifier,
-                    contentPadding = contentPadding,
-                    colors =
-                        ButtonDefaults.buttonColors(
-                            containerColor = AppTheme.colors.primary,
-                            contentColor = AppTheme.colors.onPrimary,
-                        ),
-                ) { Text(text = option) }
-            } else {
-                Button(
-                    onClick = { onOptionSelected(index) },
-                    enabled = enabled,
-                    modifier = segmentModifier,
-                    contentPadding = contentPadding,
-                    colors =
-                        ButtonDefaults.buttonColors(
-                            containerColor = AppTheme.colors.surfaceVariant,
-                            contentColor = AppTheme.colors.onSurfaceVariant,
-                        ),
-                ) { Text(text = option) }
-            }
+            Button(
+                onClick = { onOptionSelected(index) },
+                enabled = enabled,
+                modifier = segmentModifier,
+                contentPadding = contentPadding,
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = if (selected) AppTheme.colors.primary else AppTheme.colors.surfaceVariant,
+                        contentColor = if (selected) AppTheme.colors.onPrimary else AppTheme.colors.onSurfaceVariant,
+                    ),
+            ) { Text(text = option) }
         }
     }
 }

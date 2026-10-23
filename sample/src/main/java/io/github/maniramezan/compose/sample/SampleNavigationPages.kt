@@ -23,11 +23,13 @@ import io.github.maniramezan.compose.components.IconButton
 import io.github.maniramezan.compose.components.LargeTopAppBar
 import io.github.maniramezan.compose.components.MediumTopAppBar
 import io.github.maniramezan.compose.components.NavRail
+import io.github.maniramezan.compose.components.PageIndicator
 import io.github.maniramezan.compose.components.SectionHeader
 import io.github.maniramezan.compose.components.TabBar
 import io.github.maniramezan.compose.components.TabBarItem
 import io.github.maniramezan.compose.components.TabBarItemData
 import io.github.maniramezan.compose.components.TabRow
+import io.github.maniramezan.compose.components.TextButton
 import io.github.maniramezan.compose.components.TopAppBar
 import io.github.maniramezan.compose.theme.AppTheme
 
@@ -223,3 +225,43 @@ internal fun AdaptiveNavScaffoldPage() {
 
 private val SAMPLE_SCAFFOLD_HEIGHT = 360.dp
 private val SAMPLE_UNREACHABLE_BREAKPOINT = 10_000.dp
+
+@Composable
+internal fun PageIndicatorPage() {
+    var pageCount by remember { mutableIntStateOf(5) }
+    var currentPage by remember { mutableIntStateOf(0) }
+    var announce by remember { mutableStateOf(true) }
+    var prominent by remember { mutableStateOf(false) }
+    val safePage = currentPage.coerceAtMost(pageCount - 1)
+
+    SamplePage(
+        preview = {
+            PageIndicator(
+                pageCount = pageCount,
+                currentPage = safePage,
+                activeColor = if (prominent) AppTheme.colors.error else AppTheme.colors.primary,
+                inactiveColor = if (prominent) AppTheme.colors.onSurfaceVariant else AppTheme.colors.surfaceVariant,
+                pagePositionDescription =
+                    if (announce) {
+                        { index, count -> "Page ${index + 1} of $count" }
+                    } else {
+                        null
+                    },
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
+                TextButton(text = "Previous", onClick = { currentPage = safePage - 1 }, enabled = safePage > 0)
+                TextButton(text = "Next", onClick = { currentPage = safePage + 1 }, enabled = safePage < pageCount - 1)
+            }
+        },
+        controls = {
+            ControlSegmented(
+                label = "Pages",
+                options = listOf("3", "5", "7"),
+                selectedIndex = (pageCount - 3) / 2,
+                onOptionSelected = { pageCount = it * 2 + 3 },
+            )
+            ControlSwitch(label = "Announce position", checked = announce, onCheckedChange = { announce = it })
+            ControlSwitch(label = "Alternate colors", checked = prominent, onCheckedChange = { prominent = it })
+        },
+    )
+}

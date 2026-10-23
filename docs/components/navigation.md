@@ -13,6 +13,7 @@ Navigation components provide themed Material 3 wrappers for common app structur
 - `AdaptiveNavScaffold`
 - `PaginatedContent`
 - `SegmentedContent`
+- `PageIndicator`
 
 ![Navigation components](https://maniramezan.github.io/ComposeUIComponents/images/screenshots/navigation-components.png)
 
@@ -81,6 +82,10 @@ TabBar(
     scrollBehavior = scrollBehavior,
 )
 ```
+
+When a scroll or fling ends with the bar partly hidden, it settles to whichever of fully shown
+or fully hidden is closer, so it never rests half-visible. The bar reads the scroll offset in
+its layout phase, so hiding it re-lays out the bar without recomposing its items.
 
 ## NavRail / AdaptiveNavScaffold
 
@@ -180,3 +185,8 @@ SegmentedContent(
 ```
 
 Use `SegmentSelectionIndicator` to choose between `Pill` (filled background, iOS-segmented feel), `Underline` (Material-tab feel), or `None` (style entirely through the title slot). Use `SegmentFitMode.EvenWhenFits` for distribute-evenly-or-scroll behavior, or `SegmentFitMode.Intrinsic` to always size segments to their content.
+
+## PageIndicator
+
+Use [PageIndicator](page-indicator.md) for standalone page position dots or bind it to a
+`PagerState`. It also supplies the `Dots` footer in `PaginatedContent`.

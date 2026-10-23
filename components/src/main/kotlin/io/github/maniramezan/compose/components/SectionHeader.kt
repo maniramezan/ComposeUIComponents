@@ -57,12 +57,12 @@ public fun SectionHeader(
             modifier
                 .fillMaxWidth()
                 .padding(horizontal = AppTheme.spacing.x2),
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.x1),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = title,
-            modifier = Modifier.semantics { heading() },
+            modifier = Modifier.weight(1f).semantics { heading() },
             style = titleStyle ?: AppTheme.typography.titleSmall,
             color = AppTheme.colors.onSurface,
         )

@@ -80,6 +80,7 @@ provide localized strings for a finished experience.
 - `Skeleton` / `SkeletonBlock` are removed from the accessibility tree (decorative
   loading placeholders carry no information).
 - `Section` and `SectionHeader` titles are marked as headings for heading navigation.
+- `PageIndicator` accepts a caller-localized `pagePositionDescription` formatter. Nonblank descriptions form one polite live region; omitted or blank descriptions leave the dots decorative.
 
 ## Automated Coverage
 
