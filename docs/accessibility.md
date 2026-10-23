@@ -90,3 +90,12 @@ provide localized strings for a finished experience.
 - `checkComponentTokenUsage` rejects nullable or null icon descriptions in the public component surface (`*Preview.kt`/`*Showkase.kt` demo files are excluded, since decorative icons there legitimately use `contentDescription = null`).
 - Empty and error states are covered by readable text assertions so feedback is not color-only.
 - Component preview entry points include `PreviewLightDark` and `PreviewFontScale` coverage for visual review at dark mode and 200% font scale.
+
+### Indicators
+
+- `Badge.text` supplies the localized status label; blank labels render nothing.
+- `CountBadge.contentDescription` supplies a localized count or activity description.
+  Blank descriptions make the marker decorative. Supply this description in a tab badge
+  unless the tab's visible label already announces the count.
+- `Avatar.name` supplies its display name and single image-node announcement. Blank names
+  make the avatar decorative and hide image-slot semantics.

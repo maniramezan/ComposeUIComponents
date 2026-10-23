@@ -1,33 +1,49 @@
 package io.github.maniramezan.compose.components
 
+import android.content.res.Configuration
+import android.os.LocaleList
 import androidx.compose.foundation.layout.Box
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.assertHeightIsEqualTo
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertWidthIsEqualTo
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.maniramezan.compose.theme.AppTheme
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
 import java.text.NumberFormat
 import java.util.Locale
 
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [35])
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
 public class IndicatorComponentsTest {
     @get:Rule
     public val composeRule = createComposeRule()
@@ -67,7 +83,6 @@ public class IndicatorComponentsTest {
         composeRule
             .onNodeWithContentDescription("Avery Quinn")
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Image))
-        // Initials are drawn but not announced separately.
         composeRule.onAllNodesWithText("AQ").assertCountEquals(0)
     }
 
@@ -116,6 +131,77 @@ public class IndicatorComponentsTest {
 
         composeRule.onNodeWithContentDescription("3 unread").assertIsDisplayed()
         composeRule.onAllNodesWithTag(ZERO).assertCountEquals(0)
+    }
+
+    @Test
+    public fun avatarImageFillsTheCircleWithoutCallerSizing() {
+        composeRule.setContent {
+            AppTheme {
+                Avatar(name = "Avery Quinn", image = { Box(Modifier.testTag(IMAGE)) })
+            }
+        }
+
+        composeRule
+            .onNodeWithTag(IMAGE, useUnmergedTree = true)
+            .assertWidthIsEqualTo(40.dp)
+            .assertHeightIsEqualTo(40.dp)
+    }
+
+    @Test
+    public fun blankBadgeLabelsRenderNothing() {
+        composeRule.setContent {
+            AppTheme {
+                Badge(text = "", modifier = Modifier.testTag("empty"))
+                Badge(text = "  ", modifier = Modifier.testTag("blank"))
+            }
+        }
+
+        composeRule.onAllNodesWithTag("empty").assertCountEquals(0)
+        composeRule.onAllNodesWithTag("blank").assertCountEquals(0)
+    }
+
+    @Test
+    public fun badgeCountFollowsConfigurationLocaleChanges() {
+        val locale = mutableStateOf(Locale.US)
+        composeRule.setContent {
+            val configuration = Configuration(LocalConfiguration.current)
+            configuration.setLocales(LocaleList(locale.value))
+            CompositionLocalProvider(LocalConfiguration provides configuration) {
+                AppTheme { CountBadge(count = 125, maxCount = 99) }
+            }
+        }
+
+        composeRule.onNodeWithText("99+", useUnmergedTree = true).assertIsDisplayed()
+        val arabic = Locale.forLanguageTag("ar")
+        composeRule.runOnIdle { locale.value = arabic }
+        val expected = NumberFormat.getIntegerInstance(arabic).format(99) + "+"
+        composeRule.onNodeWithText(expected, useUnmergedTree = true).assertIsDisplayed()
+    }
+
+    @Test
+    public fun initialsRecognizeUnicodeWordBoundariesAndLetters() {
+        assertEquals("AQ", avatarInitials("Avery\u00a0Quinn"))
+        assertEquals("AQ", avatarInitials("Avery—Quinn"))
+        assertEquals("𐐀Q", avatarInitials("𐐨very Quinn"))
+    }
+
+    @Test
+    public fun smallAvatarInitialsFitAtDoubleFontScale() {
+        composeRule.setContent {
+            CompositionLocalProvider(LocalDensity provides Density(LocalDensity.current.density, 2f)) {
+                AppTheme { Avatar(name = "Willow Morgan", size = AvatarSize.Small) }
+            }
+        }
+
+        val results = mutableListOf<TextLayoutResult>()
+        composeRule
+            .onNodeWithText("WM", useUnmergedTree = true)
+            .fetchSemanticsNode()
+            .config
+            .getOrNull(SemanticsActions.GetTextLayoutResult)
+            ?.action
+            ?.invoke(results)
+        assertFalse(results.single().hasVisualOverflow)
     }
 
     private companion object {
