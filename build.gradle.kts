@@ -48,16 +48,13 @@ tasks.withType<dev.detekt.gradle.Detekt>().configureEach {
     jvmTarget.set("17")
 }
 
+/** Downloads the published API baseline, leaving no output when the artifact is unpublished. */
 abstract class DownloadBaselineAar : DefaultTask() {
     @get:Input
     abstract val url: Property<String>
 
     @get:OutputFile
     abstract val outputFile: RegularFileProperty
-
-    /** True after [download] runs iff the baseline artifact actually exists and was fetched. */
-    @get:Internal
-    abstract val baselineExists: Property<Boolean>
 
     @TaskAction
     fun download() {
@@ -67,19 +64,12 @@ abstract class DownloadBaselineAar : DefaultTask() {
             URI(url.get()).toURL().openStream().use { input ->
                 Files.copy(input, destination.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
             }
-            baselineExists.set(true)
         } catch (e: java.io.FileNotFoundException) {
-            // No published artifact at this API_BASELINE_VERSION yet — this is expected right
-            // after bumping API_BASELINE_VERSION ahead of an intentional (pre-1.0) breaking
-            // release, before that version has actually been published to Maven Central.
-            // There is nothing to compare against yet, so skip the comparison for this build
-            // instead of failing; once the version is published, this resumes enforcing
-            // normally against the new baseline.
             logger.lifecycle(
                 "No binary-compatibility baseline artifact found at ${url.get()} " +
                     "(HTTP 404) — skipping binaryCompatibilityCheck for this module.",
             )
-            baselineExists.set(false)
+            Files.deleteIfExists(destination.toPath())
         }
     }
 }
@@ -121,8 +111,8 @@ subprojects {
         val extractBaseline =
             tasks.register<Sync>("extractBinaryCompatibilityBaseline") {
                 dependsOn(downloadBaseline)
-                val baselineExists = downloadBaseline.flatMap { it.baselineExists }
-                onlyIf { baselineExists.getOrElse(false) }
+                val baselineAar = downloadBaseline.flatMap { it.outputFile }
+                onlyIf { baselineAar.get().asFile.isFile }
                 from(downloadBaseline.map { zipTree(it.outputFile) }) {
                     include("classes.jar")
                 }
@@ -143,14 +133,11 @@ subprojects {
         val binaryCompatibilityCheck =
             tasks.register<me.champeau.gradle.japicmp.JapicmpTask>("binaryCompatibilityCheck") {
                 dependsOn(extractBaseline, extractCurrent)
-                // No baseline artifact exists yet at the current API_BASELINE_VERSION (e.g. it was
-                // just bumped ahead for an intentional pre-1.0 breaking release that hasn't
-                // published yet) — nothing to compare against, so skip rather than fail. See
-                // DownloadBaselineAar above.
-                val baselineExists = downloadBaseline.flatMap { it.baselineExists }
-                onlyIf { baselineExists.getOrElse(false) }
+                val baselineAar = downloadBaseline.flatMap { it.outputFile }
+                onlyIf { baselineAar.get().asFile.isFile }
                 oldClasspath.from(extractBaseline.map { File(it.destinationDir, "classes.jar") })
                 newClasspath.from(extractCurrent.map { File(it.destinationDir, "classes.jar") })
+                classExcludes = listOf("*\$\$inlined\$*")
                 onlyModified = true
                 onlyBinaryIncompatibleModified = true
                 failOnModification = true
