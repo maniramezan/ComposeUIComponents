@@ -11,23 +11,21 @@ Run this checklist before a release and when adding complex components.
 - Avoid adding heavyweight icon packs or app-specific dependencies to core modules.
 - Use the `:sample` app for startup and navigation macrobenchmark scenarios before `1.0.0`.
 
-## Deferring State Reads
+## Deferring Per-Frame State Reads
 
-Components that animate or track scroll should read fast-changing state in the latest phase
-that needs it, so each frame re-lays out or re-draws instead of recomposing:
+Animated values, scroll offsets, and pager offsets change every frame. Reading them in a composable body recomposes that composable on every frame, even when only the drawing changes. Components read these values in the layout or draw phase instead:
 
-- Read scroll offsets inside `Modifier.layout { }` (see `TabBar`'s scroll-to-hide) and
-  animation values inside `graphicsLayer { }` / `drawWithContent { }` lambdas (see `FlipCard`,
-  `DisclosureCard`'s chevron, `Modifier.skeletonShimmer`). Keep the `State` object and pass a
-  `() -> Float` lambda to child composables rather than the unwrapped value.
-- Derive coarse-grained booleans from per-frame values with `derivedStateOf` so composition
-  only reacts when the boolean flips (e.g. which `FlipCard` face is visible).
-- In long-lived effects, read caller callbacks through `rememberUpdatedState` instead of
-  keying the effect on the lambda; an effect keyed on a fresh lambda restarts on every
-  recomposition (see `PaginatedContent`'s `onPageChanged`).
-- `AppTheme` memoizes the Material color scheme, typography, and shapes it derives from the
-  token bundles, so pass stable (remembered or top-level) token instances to keep that cache
-  warm.
+- Pass the value into `Modifier.graphicsLayer { }`, `Modifier.layout { }`, or a `draw*` lambda rather than `Modifier.alpha(value)`, `Modifier.rotate(value)`, or `Modifier.scale(value)`.
+- When a child composable needs the value, pass a `() -> Float` lambda or the `State` itself, not the unwrapped `Float`.
+- When composition only needs a coarse fact derived from the value (for example, "has the card turned past 90°"), wrap it in `derivedStateOf` so composition changes only when that fact changes.
+
+```kotlin
+val rotation by animateFloatAsState(targetValue, label = "rotation")
+// Recomposes every frame:
+Icon(modifier = Modifier.rotate(rotation))
+// Redraws every frame; composition is untouched:
+Icon(modifier = Modifier.graphicsLayer { rotationZ = rotation })
+```
 
 ## Compose Compiler Reports
 

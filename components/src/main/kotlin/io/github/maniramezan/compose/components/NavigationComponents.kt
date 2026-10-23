@@ -41,8 +41,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.layout
@@ -269,15 +267,15 @@ public fun TabBar(
                 .graphicsLayer { clip = true }
                 .layout { measurable, constraints ->
                     val placeable = measurable.measure(constraints)
-                    // Read the scroll offset here, in the layout phase, so hiding/showing the
-                    // bar re-lays it out on each scroll frame without recomposing its items.
-                    val heightOffset = scrollBehavior?.heightOffset ?: 0f
                     // Report the bar's full natural height as the scroll behavior's collapse
                     // limit, then report a *shrunk* layout size to our own parent (e.g. Scaffold)
                     // as the bar hides — not just a draw-time offset — so the parent's reserved
                     // space (and therefore the content above it) actually shrinks/expands as the
                     // bar hides/reappears, instead of always reserving the bar's full height.
                     scrollBehavior?.updateHeightOffsetLimit(-placeable.height.toFloat())
+                    // Read the offset here, in the layout phase, so each scroll frame only
+                    // re-runs this measure/place block instead of recomposing the whole bar.
+                    val heightOffset = scrollBehavior?.heightOffset ?: 0f
                     val shrunkHeight = (placeable.height + heightOffset.roundToInt()).coerceIn(0, placeable.height)
                     layout(placeable.width, shrunkHeight) {
                         // Keep the bar's bottom edge pinned to the shrunk box's bottom edge, so it
@@ -412,14 +410,26 @@ private fun SelectionIndicatorBackground(
     modifier: Modifier = Modifier,
 ) {
     val motionSpec = tween<Float>(durationMillis = AppTheme.motion.mediumMillis, easing = AppTheme.motion.emphasizedEasing)
-    val alpha by animateFloatAsState(targetValue = if (visible) 1f else 0f, animationSpec = motionSpec, label = "TabBarIndicatorAlpha")
-    val scale by animateFloatAsState(targetValue = if (visible) 1f else 0.6f, animationSpec = motionSpec, label = "TabBarIndicatorScale")
+    val indicatorAlpha by animateFloatAsState(
+        targetValue = if (visible) 1f else 0f,
+        animationSpec = motionSpec,
+        label = "TabBarIndicatorAlpha",
+    )
+    val indicatorScale by animateFloatAsState(
+        targetValue = if (visible) 1f else 0.6f,
+        animationSpec = motionSpec,
+        label = "TabBarIndicatorScale",
+    )
     Box(
         modifier =
             modifier
-                .alpha(alpha)
-                .scale(scale)
-                .pillSurface(color),
+                // Read the animated values in the draw layer so the indicator animation does not
+                // recompose this composable on every frame.
+                .graphicsLayer {
+                    alpha = indicatorAlpha
+                    scaleX = indicatorScale
+                    scaleY = indicatorScale
+                }.pillSurface(color),
     )
 }
 
@@ -592,25 +602,11 @@ public fun <T> AdaptiveNavScaffold(
     val containerWidthPx = LocalWindowInfo.current.containerSize.width
     val screenWidthDp = with(LocalDensity.current) { containerWidthPx.toDp() }
     val isExpandedWidth = screenWidthDp >= AppTheme.spacing.expandedNavigationBreakpoint
-    if (isExpandedWidth) {
-        Scaffold(topBar = topBar, modifier = modifier) { innerPadding ->
-            Row(modifier = Modifier.padding(innerPadding)) {
-                NavRail(
-                    items = items,
-                    selection = selection,
-                    onSelectionChange = onSelectionChange,
-                    colors = colors,
-                )
-                Box(modifier = Modifier.weight(1f)) {
-                    content(PaddingValues())
-                }
-            }
-        }
-    } else {
-        Scaffold(
-            modifier = modifier,
-            topBar = topBar,
-            bottomBar = {
+    Scaffold(
+        topBar = topBar,
+        modifier = modifier,
+        bottomBar = {
+            if (!isExpandedWidth) {
                 TabBar(
                     items = items,
                     selection = selection,
@@ -618,9 +614,35 @@ public fun <T> AdaptiveNavScaffold(
                     colors = colors,
                     scrollBehavior = scrollBehavior,
                 )
-            },
-        ) { innerPadding ->
-            content(innerPadding)
+            }
+        },
+    ) { innerPadding ->
+        Row(
+            modifier =
+                if (isExpandedWidth) {
+                    Modifier.padding(innerPadding)
+                } else {
+                    Modifier
+                },
+        ) {
+            if (isExpandedWidth) {
+                NavRail(
+                    items = items,
+                    selection = selection,
+                    onSelectionChange = onSelectionChange,
+                    colors = colors,
+                )
+            }
+            Box(
+                modifier =
+                    if (isExpandedWidth) {
+                        Modifier.weight(1f)
+                    } else {
+                        Modifier
+                    },
+            ) {
+                content(if (isExpandedWidth) PaddingValues() else innerPadding)
+            }
         }
     }
 }

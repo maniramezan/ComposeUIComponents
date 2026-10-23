@@ -17,14 +17,14 @@ For non-`@Composable` code that needs default spacing values, the static `AppSpa
 
 ## Light + dark color pair
 
-`AppTheme` takes both light and dark color schemes and swaps between them based on `darkTheme`. Brand apps typically pass both:
+`AppTheme` takes both light and dark color schemes and swaps between them based on `darkTheme`. Apps can customize both:
 
 ```kotlin
 AppTheme(
-    lightColors = NovalingoColors.light(),
-    darkColors = NovalingoColors.dark(),
+    lightColors = AppColors.light().copy(primary = Color(0xFF005AC1)),
+    darkColors = AppColors.dark().copy(primary = Color(0xFFA8C7FA)),
 ) {
-    // content
+    Text(text = "Content")
 }
 ```
 
@@ -36,7 +36,7 @@ Android 12+ dynamic color is opt-in:
 
 ```kotlin
 AppTheme(dynamicColor = true) {
-    // Content
+    Text(text = "Content")
 }
 ```
 
@@ -60,8 +60,10 @@ Two parallel naming schemes are exposed for back-compat:
 - **T-shirt scale** — `xs` (4 dp) … `xl` (24 dp). Kept for back-compat and Material-style component sizing.
 - **Semantic aliases** — `padding`, `contentPadding`, `itemSpacing`, `gridSpacing`.
 - **Strokes** — `strokeThin`, `strokeRegular`, `strokeThick`.
-- **Interaction** — `minTapTarget` (44 dp).
-- **Layout dimensions (apps override)** — `gridItemMinWidth`, `gridImageHeight`, `videoCardThumbnailHeight`, `maxContentWidthForm`, `maxContentWidthList`, `maxContentWidthPlayer`. Default to `0.dp`; apps that use those layouts must supply real values.
+- **Interaction** — `minTapTarget` defaults to 44 dp for compatibility. Interactive
+  components enforce at least 48 dp through the shared minimum-target helpers.
+- **Layout dimensions (apps override)** — `gridItemMinWidth`, `gridImageHeight`, `videoCardThumbnailHeight`, `maxContentWidthForm`, `maxContentWidthList`, `maxContentWidthPlayer`. `AppSpacing.default()` sets `maxContentWidthForm` to 600 dp. The other layout
+  dimensions default to `0.dp`; apps using those slots must supply suitable values.
 
 ## Typography slot taxonomy
 
@@ -79,7 +81,7 @@ val brandLight = AppColors.light().copy(
     primary = BrandBlue,
     primaryContainer = BrandBlueSubtle,
     success = BrandGreen,
-    overlayHeavy = Color(0xBF000000), // app-specific gradient overlays
+    overlayHeavy = Color(0xBF000000),
     levels = LevelPalette(
         listOf(
             LevelTier(background = LevelGreen, foreground = Color.White),
@@ -90,7 +92,7 @@ val brandLight = AppColors.light().copy(
 )
 
 AppTheme(lightColors = brandLight) {
-    // Content reads tokens from `AppTheme.colors.*` etc.
+    Text(text = "Content", color = AppTheme.colors.onSurface)
 }
 ```
 

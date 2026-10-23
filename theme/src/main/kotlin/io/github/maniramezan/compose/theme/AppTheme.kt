@@ -59,8 +59,6 @@ public fun AppTheme(
             darkTheme = darkTheme,
             dynamicColor = dynamicColor,
         )
-    // Token bundles are immutable data classes, so these projections only need
-    // rebuilding when their inputs change — not on every recomposition of the root.
     val appColors = remember(colorScheme, resolvedColors) { colorScheme.toAppColors(base = resolvedColors) }
     val materialTypography = remember(typography) { typography.toMaterialTypography() }
     val materialShapes = remember(shapes) { shapes.toMaterialShapes() }
@@ -132,7 +130,6 @@ private fun appColorScheme(
 ): ColorScheme {
     val context = LocalContext.current
     if (dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        // Not remembered: the wallpaper-derived scheme is read fresh from the context.
         return if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
     }
     return remember(colors, darkTheme) {

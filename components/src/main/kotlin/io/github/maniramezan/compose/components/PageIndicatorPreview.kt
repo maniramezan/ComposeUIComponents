@@ -11,6 +11,7 @@ import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.utils.PreviewFontScale
 import io.github.maniramezan.compose.utils.PreviewLightDark
 
+/** Light, dark, and font-scale previews of page position dots. */
 @PreviewLightDark
 @PreviewFontScale
 @Preview(name = "Page Indicator", group = "Navigation")
@@ -26,6 +27,7 @@ public fun PageIndicatorPreview(): Unit =
         }
     }
 
+/** Catalog entry for page position dots. */
 @ShowkaseComposable(name = "Page Indicator", group = "Navigation")
 @Composable
 public fun PageIndicatorShowkase(): Unit = PageIndicatorPreview()

@@ -1,93 +1,40 @@
 ---
 name: new-component
-description: Add a new public component (or split an existing one into a reusable piece) in the :components module end to end — implementation, preview, Showkase entry, tests, configurable :sample page, and docs. Use when asked to add, extract, or break out a Compose component in this repo.
+description: Add or extract a public Compose component in this repo, including implementation, previews, Showkase, tests, a configurable sample page, and docs.
 ---
 
 # Adding a component
 
-A component PR is complete only when every item below is done in the same change. Read
-`AGENTS.md` first; this skill is the concrete file-by-file checklist for it.
+Read `AGENTS.md` first. A new public component is complete only when its implementation and validation surfaces are included in the same change.
 
 ## 1. Decide where it lives
 
-- Reads `AppTheme` → `:components`. Theme-agnostic modifier/utility → `:compose-utils`.
-  Pure Kotlin logic → `:foundation` (ADR 0002).
-- Check the existing building blocks before writing new ones:
-  - `Modifier.buttonRole` / `Modifier.selectableRole` / `minimumTouchTarget*` (`:compose-utils`).
-  - `Modifier.pillSurface`, `RowScope.ListPrimaryTextBlock` (`ComponentSurfaces.kt`).
-  - `minimumTouchTargetSize()`, `standardIconSize()`, `containerCornerRadius()`,
-    `DISABLED_CONTENT_ALPHA` (`ComponentMetrics.kt`).
-- If an existing component has a private sub-piece that is useful on its own (e.g.
-  `PageIndicator` was extracted from `PaginatedContent`), promote it to a public component and
-  make the original delegate to it rather than duplicating it.
+- Reads `AppTheme` → `:components`. Theme-agnostic modifier or utility → `:compose-utils`. Pure Kotlin logic → `:foundation` (ADR 0002).
+- Check existing building blocks first: `Modifier.buttonRole`, `Modifier.selectableRole`, and `minimumTouchTarget*` in `:compose-utils`; `Modifier.pillSurface` and `RowScope.ListPrimaryTextBlock` in `ComponentSurfaces.kt`; and `minimumTouchTargetSize()`, `standardIconSize()`, `containerCornerRadius()`, and `DISABLED_CONTENT_ALPHA` in `ComponentMetrics.kt`.
+- If an existing component has a private piece useful on its own, promote that piece and make the original delegate to it rather than duplicating it.
 
-## 2. Implement — `components/src/main/kotlin/.../components/<Name>.kt`
+## 2. Implement
 
-- `public` visibility on every public declaration; KDoc on the composable and each non-obvious
-  parameter.
-- Parameter order: required params, `modifier: Modifier = Modifier`, optional params, trailing
-  content slot.
-- Every user-visible or accessibility `String` is caller-supplied with no English default
-  (`String = ""` or `String? = null`; guard blanks so no empty nodes render). ADR 0004.
-- Colors, spacing, shapes, typography, and motion come from `AppTheme`; no raw `dp` or
-  `Color(0x…)`. The `checkComponentTokenUsage` task fails the build on raw `N.dp`,
-  `Color(0x…)`, `contentDescription = null`, and `contentDescription: String?` unless the line
-  ends with `// @check:suppress` (only for decorative icons whose meaning is carried elsewhere).
-- Interactive elements: 48dp minimum touch target, correct `Role`, `selectableGroup()` for
-  single-choice groups, `stateDescription` for custom states.
-- Defaults objects follow the `XxxDefaults` pattern (`TabBarDefaults`, `BadgeDefaults`).
-- Performance: read per-frame state (scroll offsets, animations) inside `layout {}`,
-  `graphicsLayer {}`, or draw lambdas; use `rememberUpdatedState` for callbacks read by
-  long-lived effects; see `docs/performance.md` → "Deferring State Reads".
+Add the public API in `components/src/main/kotlin/io/github/maniramezan/compose/components/`. Use explicit `public` visibility and KDoc for the composable and non-obvious public types or parameters. Order parameters as required parameters, `modifier: Modifier = Modifier`, optional parameters, then a trailing content slot.
 
-## 3. Preview + Showkase — `<Name>Preview.kt`
+- Hoist state and use slots where callers need to customize content. Follow the existing `XxxDefaults` convention for defaults objects.
+- Every UI or accessibility `String` is caller-supplied with no English default. Use `String = ""` only when blank is safe; otherwise use `String? = null` or guard blank values so no empty node renders (ADR 0004).
+- Use `AppTheme` for colors, spacing, shapes, typography, and motion. `checkComponentTokenUsage` rejects raw `N.dp`, `Color(0x…)`, `contentDescription = null`, and `contentDescription: String?` in component source unless the line has `// @check:suppress`. Use that marker only for an intentional exception, such as a decorative icon whose meaning is conveyed by the parent semantics.
+- Give interactive controls a 48dp minimum touch target and the correct role. Use `selectableGroup()` for single-choice groups and caller-supplied `stateDescription` for custom states.
+- Defer per-frame state reads to `layout {}`, `graphicsLayer {}`, or draw lambdas. Use `rememberUpdatedState` for callbacks read by long-lived effects. See `docs/performance.md`.
 
-```kotlin
-@PreviewLightDark
-@PreviewFontScale
-@Preview(name = "<Name>", group = "<Docs category>")
-@Composable
-public fun <Name>Preview(): Unit = AppTheme { /* representative states */ }
+## 3. Preview and Showkase
 
-@ShowkaseComposable(name = "<Name>", group = "<Docs category>")
-@Composable
-public fun <Name>Showkase(): Unit = <Name>Preview()
-```
+Add a `<Name>Preview.kt` with light/dark and font-scale coverage using `@PreviewLightDark` and `@PreviewFontScale`. Render it inside `AppTheme` with domain-neutral data. Add a `@ShowkaseComposable(name = "<Name>", group = "<Docs category>")` entry in a `<Name>Showkase.kt` file or the existing category Showkase file. Use an existing category when it fits.
 
-Use a domain-neutral fixture: labels, items, sections, statuses — never product names.
+## 4. Tests
 
-## 4. Tests — `components/src/test/kotlin/.../components/`
+Add focused Compose UI tests for semantics, interaction, disabled or empty states, and touch target behavior as applicable. Add or update Roborazzi coverage for visible changes. Pure logic belongs in JVM tests. Avoid tests that only compare a fixed list of public names with itself; binary compatibility checks cover public API stability. Follow ADR 0003 and the existing `components/src/test` patterns.
 
-- Pure logic (formatting, filtering, clamping) → JUnit 5 test (`org.junit.jupiter.api.Test`),
-  like `BadgeCountTextTest` or `SelectionListTest`.
-- Semantics and interaction → Robolectric Compose test (`@RunWith(AndroidJUnit4::class)`,
-  `@Config(sdk = [35])`, `createComposeRule()` from `androidx.compose.ui.test.junit4.v2`).
-  Assert roles, selection/toggle state, content descriptions, live regions, touch targets
-  (`assertMinimumTouchTarget()` from `:testing`).
-- Do not write "names are stable" tests that assert a literal list equals itself; API stability
-  is already enforced by `binaryCompatibilityCheck`.
-- Optional visual coverage: add a capture to `ComponentCategoryScreenshotTest`.
+## 5. Configurable sample page
 
-## 5. Sample page — required
+Register the component in `sample/src/main/java/io/github/maniramezan/compose/sample/SampleComponentDemo.kt`. Add a page using `SamplePage(preview = { … }, controls = { … })` and the existing `ControlSwitch`, `ControlSegmented`, and `ControlSlider` helpers where appropriate. Give reviewers live controls for every meaningful parameter and state. Bound the height of lazy lists and scaffolds because the sample detail pane scrolls vertically. A static demo, preview, or Showkase entry does not meet this requirement. Run `.claude/skills/verify-changes/check-sample-coverage.sh` and `./gradlew :sample:assembleDebug`.
 
-- Add `internal fun <Name>Page()` to the matching `sample/src/main/java/.../Sample<Category>Pages.kt`
-  (create one if the category is new), built with
-  `SamplePage(preview = { … }, controls = { … })` and `ControlSwitch` / `ControlSegmented` /
-  `ControlSlider` for **every** meaningful parameter and state.
-- Register it in `sampleDemos()` in `SampleComponentDemo.kt` (unique `id`, `title`, `category`,
-  one-line `description`).
-- Lazy lists or `Scaffold`s inside a page need a bounded height (the detail pane scrolls).
-- Run `.claude/skills/verify-changes/check-sample-coverage.sh`; the new component must not be
-  listed.
+## 6. Docs and compatibility
 
-## 6. Docs
-
-- Add the component to the list and a usage section in the matching `docs/components/*.md`.
-- New category page → also add it to `mkdocs.yml` `nav`.
-- Non-obvious design decisions → a new ADR in `docs/adr/` and `mkdocs.yml`.
-
-## 7. Verify
-
-Follow the `verify-changes` skill. At minimum:
-`./gradlew :components:testDebugUnitTest :components:ktlintCheck :components:detekt :sample:assembleDebug`
-plus the root `./gradlew checkComponentTokenUsage`.
+Update the relevant `docs/components/*.md` page and `mkdocs.yml` if a category or page is added. Document caller-provided strings, state, slots, and accessibility behavior. Avoid renaming existing public symbols casually; check binary compatibility for public API changes. Use [verify-changes](../verify-changes/SKILL.md) for the focused checks and visual review. Search changed lines for app-specific names, strings, fixtures, and business logic before opening a PR.

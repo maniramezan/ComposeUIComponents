@@ -18,6 +18,7 @@ import io.github.maniramezan.compose.components.SegmentDensity
 import io.github.maniramezan.compose.components.SegmentedControl
 import io.github.maniramezan.compose.components.SingleChoiceSegmentedButtonRow
 import io.github.maniramezan.compose.components.TextButton
+import io.github.maniramezan.compose.components.TextField
 import io.github.maniramezan.compose.theme.AppTheme
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -126,10 +127,16 @@ internal fun FabPage() {
     val iconOptions = listOf("Check", "Close")
     var iconIndex by remember { mutableIntStateOf(0) }
     val icon = if (iconIndex == 0) AppTheme.icons.check else AppTheme.icons.close
+    var extended by remember { mutableStateOf(false) }
+    var label by remember { mutableStateOf("Create") }
 
     SamplePage(
         preview = {
-            FAB(icon = icon, contentDescription = iconOptions[iconIndex], onClick = {})
+            if (extended) {
+                ExtendedFloatingActionButton(text = label, icon = icon, onClick = {})
+            } else {
+                FAB(icon = icon, contentDescription = iconOptions[iconIndex], onClick = {})
+            }
         },
         controls = {
             ControlSegmented(
@@ -138,6 +145,10 @@ internal fun FabPage() {
                 selectedIndex = iconIndex,
                 onOptionSelected = { iconIndex = it },
             )
+            ControlSwitch(label = "Extended (with label)", checked = extended, onCheckedChange = { extended = it })
+            if (extended) {
+                TextField(value = label, onValueChange = { label = it }, label = "Label")
+            }
         },
     )
 }
@@ -175,50 +186,28 @@ internal fun SegmentedControlPage() {
 }
 
 @Composable
-internal fun ExtendedFloatingActionButtonPage() {
-    var longLabel by remember { mutableStateOf(false) }
-    var tapCount by remember { mutableIntStateOf(0) }
-
-    SamplePage(
-        preview = {
-            ExtendedFloatingActionButton(
-                text = if (longLabel) "Create a new item" else "Create",
-                icon = AppTheme.icons.check,
-                onClick = { tapCount += 1 },
-            )
-            Text(text = "Tap count: $tapCount")
-        },
-        controls = {
-            ControlSwitch(label = "Long label", checked = longLabel, onCheckedChange = { longLabel = it })
-        },
-    )
-}
-
-@Composable
 internal fun SingleChoiceSegmentedButtonRowPage() {
-    val allOptions = listOf("Day", "Week", "Month", "Year")
-    var optionCount by remember { mutableIntStateOf(3) }
-    var selectedIndex by remember { mutableIntStateOf(0) }
+    val optionSets = listOf(listOf("Day", "Week"), listOf("Day", "Week", "Month"), listOf("S", "M", "L", "XL"))
+    var setIndex by remember { mutableIntStateOf(1) }
+    var selected by remember { mutableIntStateOf(0) }
     var enabled by remember { mutableStateOf(true) }
-    val options = allOptions.take(optionCount)
-    val safeIndex = selectedIndex.coerceAtMost(options.lastIndex)
+    val options = optionSets[setIndex]
 
     SamplePage(
         preview = {
             SingleChoiceSegmentedButtonRow(
                 options = options,
-                selectedIndex = safeIndex,
-                onOptionSelected = { selectedIndex = it },
+                selectedIndex = selected.coerceAtMost(options.lastIndex),
+                onOptionSelected = { selected = it },
                 enabled = enabled,
             )
-            Text(text = "Selected: ${options[safeIndex]}")
         },
         controls = {
             ControlSegmented(
-                label = "Options",
-                options = listOf("2", "3", "4"),
-                selectedIndex = optionCount - 2,
-                onOptionSelected = { optionCount = it + 2 },
+                label = "Option count",
+                options = optionSets.map { it.size.toString() },
+                selectedIndex = setIndex,
+                onOptionSelected = { setIndex = it },
             )
             ControlSwitch(label = "Enabled", checked = enabled, onCheckedChange = { enabled = it })
         },

@@ -6,98 +6,110 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextOverflow
 import io.github.maniramezan.compose.theme.AppTheme
-
-/** Default values used by [Badge]. */
-public object BadgeDefaults {
-    /** Largest count a [Badge] spells out before collapsing to `"$MaxCount+"`. */
-    public const val MaxCount: Int = 99
-}
+import java.text.NumberFormat
 
 /**
- * A small status indicator, typically pinned to an icon's corner (for example via the
- * `badge` slot of [TabBarItemData]) to flag unread or pending items.
+ * A compact status label such as "Beta" or "New", drawn as a capsule.
  *
- * - With [count] `null` it renders a small dot that only signals "something new".
- * - With a [count] it renders a capsule showing the number, collapsing values above
- *   [maxCount] to `"$maxCount+"`. The capsule grows with font scale, so the count stays
- *   legible at 200%.
+ * Non-interactive. The text is read as-is by screen readers. For a tappable or selectable
+ * capsule use [PillChip]; for an unread count on an icon use [CountBadge].
  *
- * Accessibility: a badge usually annotates another control, so describe it there when you
- * can (e.g. include "3 unread" in the destination's own label). When the badge must speak
- * for itself, pass a localized [contentDescription] such as `"3 unread messages"`; it
- * replaces the bare number. With a blank [contentDescription], a dot is decorative (kept
- * out of the accessibility tree) and a count is read as its visible digits.
- *
- * @param modifier Modifier applied to the badge.
- * @param count Number to show, or `null` for a dot. Negative values render as `0`.
- * @param maxCount Largest value shown verbatim; larger counts show as `"$maxCount+"`.
- * @param contentDescription Caller-supplied, localized description announced instead of
- *   the visible content. Leave blank to fall back to the behavior described above.
- * @param containerColor Fill color; defaults to the theme's attention color (`error`).
- * @param contentColor Color of the count text.
+ * @param text supply a localized label. Blank labels render nothing.
+ * @param prominent `true` fills with `AppTheme.colors.primary` for emphasis; `false` (default)
+ *   uses the quieter `surfaceVariant` fill.
  */
 @Composable
 public fun Badge(
+    text: String,
     modifier: Modifier = Modifier,
-    count: Int? = null,
-    maxCount: Int = BadgeDefaults.MaxCount,
-    contentDescription: String = "",
-    containerColor: Color = AppTheme.colors.error,
-    contentColor: Color = AppTheme.colors.onError,
+    prominent: Boolean = false,
 ) {
-    val semanticsModifier =
-        when {
-            contentDescription.isNotBlank() -> Modifier.clearAndSetSemantics { this.contentDescription = contentDescription }
-            count == null -> Modifier.clearAndSetSemantics {}
-            else -> Modifier.semantics(mergeDescendants = true) {}
-        }
+    if (text.isBlank()) return
+    Text(
+        text = text,
+        modifier =
+            modifier
+                .pillSurface(if (prominent) AppTheme.colors.primary else AppTheme.colors.surfaceVariant)
+                .padding(horizontal = AppTheme.spacing.x1, vertical = AppTheme.spacing.half),
+        style = AppTheme.typography.labelSmallSemibold,
+        color = if (prominent) AppTheme.colors.onPrimary else AppTheme.colors.onSurfaceVariant,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+    )
+}
 
+/**
+ * A small notification marker for an icon corner — pass it to [TabBarItemData.badge] or place
+ * it over any icon.
+ *
+ * A `null` [count] draws a dot. A positive count draws the number, capped as "[maxCount]+"
+ * (formatted for the current locale). A count of `0` or less draws nothing, so callers can pass
+ * an unread count straight through.
+ *
+ * @param count the number to show, or `null` for a dot.
+ * @param contentDescription caller-localized description such as "3 unread". Blank (the
+ *   default) hides the badge from accessibility — use that when the host (for example a tab's
+ *   own `contentDescription`) already announces the count.
+ * @param maxCount the largest number shown before collapsing to "[maxCount]+".
+ */
+@Composable
+public fun CountBadge(
+    count: Int?,
+    modifier: Modifier = Modifier,
+    contentDescription: String = "",
+    maxCount: Int = DEFAULT_MAX_BADGE_COUNT,
+) {
+    if (count != null && count <= 0) return
+    val semanticsModifier =
+        if (contentDescription.isNotBlank()) {
+            Modifier.clearAndSetSemantics { this.contentDescription = contentDescription }
+        } else {
+            Modifier.clearAndSetSemantics {}
+        }
     if (count == null) {
         Box(
             modifier =
                 modifier
                     .then(semanticsModifier)
                     .size(AppTheme.spacing.x1)
-                    .pillSurface(containerColor),
+                    .pillSurface(AppTheme.colors.error),
         )
         return
     }
-
+    val locale = LocalConfiguration.current.locales[0]
+    val numberFormat = remember(locale) { NumberFormat.getIntegerInstance(locale) }
     Box(
         modifier =
             modifier
                 .then(semanticsModifier)
-                // A single digit renders as a circle; longer counts stretch into a capsule.
                 .defaultMinSize(minWidth = AppTheme.spacing.x2, minHeight = AppTheme.spacing.x2)
-                .pillSurface(containerColor)
+                .pillSurface(AppTheme.colors.error)
                 .padding(horizontal = AppTheme.spacing.half),
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            text = badgeCountText(count = count, maxCount = maxCount),
-            style = AppTheme.typography.labelSmall,
-            color = contentColor,
+            text = formatBadgeCount(count, maxCount, numberFormat),
+            style = AppTheme.typography.labelSmallSemibold,
+            color = AppTheme.colors.onError,
             maxLines = 1,
         )
     }
 }
 
-/**
- * The visible text for a [Badge] count: the number itself up to [maxCount], otherwise
- * `"$maxCount+"`. Negative counts clamp to `0`, and a [maxCount] below `1` is treated as `1`.
- */
-internal fun badgeCountText(
+/** Default cap for [CountBadge]; larger counts render as "99+". */
+private const val DEFAULT_MAX_BADGE_COUNT = 99
+
+/** Formats [count] for [CountBadge], collapsing anything above [maxCount] to "[maxCount]+". */
+internal fun formatBadgeCount(
     count: Int,
     maxCount: Int,
-): String {
-    val cap = maxCount.coerceAtLeast(1)
-    val clamped = count.coerceAtLeast(0)
-    return if (clamped > cap) "$cap+" else clamped.toString()
-}
+    format: NumberFormat = NumberFormat.getIntegerInstance(),
+): String = if (count > maxCount) "${format.format(maxCount)}+" else format.format(count)

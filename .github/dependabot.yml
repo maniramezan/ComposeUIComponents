@@ -1,34 +1,24 @@
 version: 2
+multi-ecosystem-groups:
+  dependencies:
+    schedule:
+      interval: weekly
+      day: monday
+      time: 09:00
+    open-pull-requests-limit: 1
 updates:
   - package-ecosystem: gradle
     directory: /
-    schedule:
-      interval: weekly
-      day: monday
-      time: "09:00"
-    groups:
-      gradle-dependencies:
-        patterns:
-          - "*"
-
+    patterns:
+      - '*'
+    multi-ecosystem-group: dependencies
   - package-ecosystem: github-actions
     directory: /
-    schedule:
-      interval: weekly
-      day: monday
-      time: "09:00"
-    groups:
-      github-actions:
-        patterns:
-          - "*"
-
+    patterns:
+      - '*'
+    multi-ecosystem-group: dependencies
   - package-ecosystem: pip
     directory: /
-    schedule:
-      interval: weekly
-      day: monday
-      time: "09:00"
-    groups:
-      docs-python:
-        patterns:
-          - "*"
+    patterns:
+      - '*'
+    multi-ecosystem-group: dependencies

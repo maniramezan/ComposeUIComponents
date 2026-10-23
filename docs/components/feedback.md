@@ -5,10 +5,11 @@ Feedback components communicate loading, transient status, and placeholder state
 ## Components
 
 - `ProgressIndicator`
-- `Badge`
 - `Skeleton`
 - `SkeletonBlock`
 - `Modifier.skeletonShimmer`
+- `LoadingOverlay`
+- `TypingIndicator`
 - `Toast`
 - `ToastHost`
 - `ChatLog`
@@ -32,21 +33,6 @@ AppTheme {
 ```
 
 Use `progress = null` for indeterminate loading. `Toast` is an in-composition visual component, not a platform `android.widget.Toast` wrapper.
-
-## Badge
-
-`Badge` flags unread or pending items. Omit `count` for a small dot, or pass a count to show
-a capsule that collapses values above `maxCount` (default `BadgeDefaults.MaxCount`, 99) to
-`"99+"`. It is usually pinned to an icon — for example through `TabBarItemData`'s `badge`
-slot.
-
-```kotlin
-Badge(count = unreadCount, contentDescription = "$unreadCount unread messages")
-```
-
-Prefer describing the count on the control the badge annotates. When the badge must speak
-for itself, pass a localized `contentDescription`; it replaces the bare number. Without one,
-a dot is decorative and a count is read as its digits.
 
 ## Chat logs
 
@@ -74,7 +60,8 @@ ChatLog(
 ```
 
 Use `ChatMessageState.Typing` for in-flight responses and provide a localized
-`typingDescription` so the state is announced accessibly. For markdown or rich
+`typingDescription` so the state is announced accessibly. The typing bubble renders a
+`TypingIndicator`. For markdown or rich
 text, pass `messageContent`; the design-system component intentionally does not
 depend on a markdown renderer:
 
@@ -88,6 +75,35 @@ ChatLog(
     },
 )
 ```
+
+### Typing indicator
+
+`TypingIndicator` is three dots pulsing in sequence. It reads as "composing a reply" rather
+than "loading". `ChatLog` uses it for `ChatMessageState.Typing`, and you can use it on its
+own, for example inside a custom `messageContent` bubble while the streamed text is still
+empty:
+
+```kotlin
+ChatLog(
+    messages = messages,
+    idleHint = "",
+    errorAction = errorAction,
+    messageContent = { _, text ->
+        if (text.isEmpty()) TypingIndicator() else MarkdownText(markdown = text)
+    },
+)
+```
+
+Rendering the dots and the streamed text in the same bubble means the first token grows the
+bubble instead of replacing it.
+
+| Parameter | Notes |
+|---|---|
+| `contentDescription` | Announced as a polite live region. Blank (default) hides the dots from accessibility, for when the enclosing bubble already announces the pending state. |
+| `color` | Dot color. Defaults to `AppTheme.colors.onSurfaceVariant`. |
+
+The wave is applied in the draw phase and never recomposes. It is static (all dots opaque)
+under the system **Remove animations** setting and in `@Preview`.
 
 ## Assistant chat surfaces
 
@@ -199,6 +215,36 @@ inspection. It adds no pointer input and no semantics.
 | `shape` | `Shape` | Clip shape. Defaults to `AppTheme.shapes.small`. |
 | `background` | `Color` | Placeholder color. Defaults to `AppTheme.colors.surfaceContainer`. |
 
+## Blocking loading overlay
+
+`LoadingOverlay` wraps a screen or form and, while `loading` is `true`, covers it with a scrim
+that swallows every touch, so controls without their own `enabled` flag can't be used either. Use
+it for work the person started and must wait for, like signing in, submitting, or purchasing.
+For loads people can keep interacting through, prefer `LoadingState`, `ProgressIndicator`,
+or skeletons.
+
+```kotlin
+LoadingOverlay(
+    loading = state.isSubmitting,
+    contentDescription = "Submitting",
+    message = "Submitting your entry",
+    modifier = Modifier.fillMaxSize(),
+) {
+    EntryForm(onSubmit = viewModel::submit)
+}
+```
+
+| Parameter | Notes |
+|---|---|
+| `contentDescription` | Required, caller-localized. Announced as a polite live region while loading. |
+| `message` | Optional text under the spinner. Visual only, so include it in `contentDescription` if screen-reader users need it. Blank renders nothing. |
+| `showIndicator` | `false` shows the scrim only. Use it when the tapped control already shows its own inline spinner, so the screen doesn't stack two. |
+
+While loading, the wrapped content is removed from the accessibility tree, so TalkBack
+announces the operation instead of landing on controls that no longer respond. The scrim
+fades with `AppTheme.motion.shortMillis`. The container sizes to its content, so pass
+`Modifier.fillMaxSize()` to cover a whole screen.
+
 ## Showing toasts
 
 `Toast` is only the visual; `ToastHost` is the driver. Hold a `ToastHostState`,
@@ -209,9 +255,7 @@ until the toast is dismissed — returning how it ended (`ToastResult`).
 Choose the lifetime per call with `ToastDuration`: `Short`/`Long` auto-dismiss
 after a timeout, while `Indefinite` keeps the toast until the user or caller
 dismisses it. An `Indefinite` toast with no action becomes tap-to-dismiss, so
-pass `dismissContentDescription` for TalkBack. When an accessibility service is active,
-`ToastHost` extends `Short`/`Long` timeouts to the platform's recommended duration, matching
-Material's `SnackbarHost`.
+pass `dismissContentDescription` for TalkBack.
 
 Anchor the toast with `position = ToastPosition.Top` or `ToastPosition.Bottom`
 (default). Pass an `icon` for a leading glyph; the icon is tinted to the surface

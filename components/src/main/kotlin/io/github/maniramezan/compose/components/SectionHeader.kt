@@ -62,8 +62,6 @@ public fun SectionHeader(
     ) {
         Text(
             text = title,
-            // Take the remaining width so a long title wraps instead of pushing the
-            // trailing action off-screen.
             modifier = Modifier.weight(1f).semantics { heading() },
             style = titleStyle ?: AppTheme.typography.titleSmall,
             color = AppTheme.colors.onSurface,

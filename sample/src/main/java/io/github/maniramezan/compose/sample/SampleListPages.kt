@@ -2,16 +2,15 @@ package io.github.maniramezan.compose.sample
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -26,6 +25,8 @@ import io.github.maniramezan.compose.components.PillChip
 import io.github.maniramezan.compose.components.TextButton
 import io.github.maniramezan.compose.theme.AppTheme
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.math.roundToLong
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Lists
@@ -147,58 +148,79 @@ internal fun ErrorStatePage() {
     )
 }
 
-/** Items appended per simulated page load in [LazyListPage]. */
-private const val LAZY_LIST_PAGE_SIZE = 10
-
-/** Total items available before [LazyListPage] reports there is nothing more to load. */
-private const val LAZY_LIST_TOTAL_ITEMS = 40
-
-/** Simulated network latency for one page load in [LazyListPage]. */
-private const val LAZY_LIST_LOAD_DELAY_MILLIS = 1_200L
-
 @Composable
-internal fun LazyListPage() {
-    var itemCount by remember { mutableIntStateOf(LAZY_LIST_PAGE_SIZE) }
+internal fun InfiniteLazyListPage() {
+    val pageSizes = listOf(10, 20, 40)
+    var pageSizeIndex by remember { mutableIntStateOf(1) }
+    var latencyMillis by remember { mutableFloatStateOf(800f) }
+    var maxPages by remember { mutableIntStateOf(4) }
+    var loadedPages by remember { mutableIntStateOf(1) }
     var isLoadingMore by remember { mutableStateOf(false) }
-    var paginate by remember { mutableStateOf(true) }
-    val hasMore = paginate && itemCount < LAZY_LIST_TOTAL_ITEMS
-
-    // Simulates a repository call: each LoadMoreFooter trigger appends one page.
-    LaunchedEffect(isLoadingMore) {
-        if (isLoadingMore) {
-            delay(LAZY_LIST_LOAD_DELAY_MILLIS)
-            itemCount = (itemCount + LAZY_LIST_PAGE_SIZE).coerceAtMost(LAZY_LIST_TOTAL_ITEMS)
-            isLoadingMore = false
-        }
-    }
+    var loadRequests by remember { mutableIntStateOf(0) }
+    val scope = rememberCoroutineScope()
+    val pageSize = pageSizes[pageSizeIndex]
+    val hasMore = loadedPages < maxPages
 
     SamplePage(
         preview = {
-            // Lazy lists need a bounded height inside the scrolling detail pane.
-            LazyList(modifier = Modifier.fillMaxWidth().height(320.dp)) {
-                items(items = List(itemCount) { it }, key = { it }) { index ->
-                    ListItem(headline = "Item ${index + 1}", supportingText = "Supporting text")
-                }
-                if (hasMore) {
-                    item(key = "load-more") {
-                        LoadMoreFooter(
-                            isLoadingMore = isLoadingMore,
-                            onLoadMore = { if (!isLoadingMore) isLoadingMore = true },
-                        )
+            Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
+                Text("Loaded ${loadedPages * pageSize} rows · footer requests: $loadRequests")
+                LazyList(modifier = Modifier.height(SAMPLE_LIST_HEIGHT)) {
+                    items(count = loadedPages * pageSize, key = { it }) { index ->
+                        ListItem(headline = "Row ${index + 1}")
+                    }
+                    if (hasMore) {
+                        item(key = "load-more") {
+                            LoadMoreFooter(
+                                isLoadingMore = isLoadingMore,
+                                onLoadMore = {
+                                    loadRequests++
+                                    if (!isLoadingMore) {
+                                        isLoadingMore = true
+                                        scope.launch {
+                                            delay(latencyMillis.roundToLong())
+                                            loadedPages++
+                                            isLoadingMore = false
+                                        }
+                                    }
+                                },
+                            )
+                        }
                     }
                 }
             }
-            Text(text = "Loaded $itemCount of $LAZY_LIST_TOTAL_ITEMS")
         },
         controls = {
-            ControlSwitch(label = "Load more on scroll", checked = paginate, onCheckedChange = { paginate = it })
+            ControlSegmented(
+                label = "Page size",
+                options = pageSizes.map { it.toString() },
+                selectedIndex = pageSizeIndex,
+                onOptionSelected = {
+                    pageSizeIndex = it
+                    loadedPages = 1
+                },
+            )
+            ControlSegmented(
+                label = "Total pages",
+                options = listOf("2", "4", "8"),
+                selectedIndex = listOf(2, 4, 8).indexOf(maxPages).coerceAtLeast(0),
+                onOptionSelected = { maxPages = listOf(2, 4, 8)[it] },
+            )
+            ControlSlider(
+                label = "Load latency: ${latencyMillis.roundToLong()}ms",
+                value = latencyMillis,
+                onValueChange = { latencyMillis = it },
+                valueRange = 0f..3000f,
+            )
             TextButton(
                 text = "Reset",
                 onClick = {
-                    itemCount = LAZY_LIST_PAGE_SIZE
-                    isLoadingMore = false
+                    loadedPages = 1
+                    loadRequests = 0
                 },
             )
         },
     )
 }
+
+private val SAMPLE_LIST_HEIGHT = 320.dp

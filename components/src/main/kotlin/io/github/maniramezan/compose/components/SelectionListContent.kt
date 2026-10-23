@@ -49,7 +49,6 @@ public fun <ID : Any> SelectionListContent(
     collapsedDescription: String = "",
     confirmButton: (@Composable () -> Unit)? = null,
 ) {
-    // Saveable so the search survives configuration changes (rotation, dark-mode toggle).
     var query by rememberSaveable { mutableStateOf("") }
     var expandedIds by remember {
         mutableStateOf(

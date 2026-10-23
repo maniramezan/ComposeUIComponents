@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,9 +35,10 @@ import io.github.maniramezan.compose.components.SecondaryButton
 import io.github.maniramezan.compose.components.Section
 import io.github.maniramezan.compose.components.ShowcaseFeed
 import io.github.maniramezan.compose.components.ShowcaseItemWidth
+import io.github.maniramezan.compose.components.ShowcaseRow
 import io.github.maniramezan.compose.components.Snackbar
-import io.github.maniramezan.compose.components.Surface
 import io.github.maniramezan.compose.components.TextButton
+import io.github.maniramezan.compose.components.TextField
 import io.github.maniramezan.compose.components.Toast
 import io.github.maniramezan.compose.components.ToastDuration
 import io.github.maniramezan.compose.components.ToastHost
@@ -266,6 +266,67 @@ internal fun ShowcaseFeedPage() {
 }
 
 @Composable
+internal fun ShowcaseRowPage() {
+    var widthIndex by remember { mutableIntStateOf(0) }
+    var rowsIndex by remember { mutableIntStateOf(0) }
+    var peek by remember { mutableFloatStateOf(0.85f) }
+    val widthOptions = listOf("Peek", "Fixed", "Wrap")
+    val rows = rowsIndex + 1
+    val items = listOf("Focus", "Sky Notes", "Trailhead", "Loop", "Pixel Paint")
+    val itemWidth =
+        when (widthIndex) {
+            1 -> ShowcaseItemWidth.Fixed(140.dp)
+            2 -> ShowcaseItemWidth.Wrap
+            else -> ShowcaseItemWidth.Peek(peek)
+        }
+
+    SamplePage(
+        preview = {
+            ShowcaseRow(
+                items = items,
+                itemWidth = itemWidth,
+                rows = rows,
+                rowHeight = if (rows > 1) 64.dp else null,
+            ) { label ->
+                Box(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(64.dp)
+                            .clip(AppTheme.shapes.large)
+                            .background(AppTheme.colors.surfaceVariant),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(text = label)
+                }
+            }
+        },
+        controls = {
+            ControlSegmented(
+                label = "Item width",
+                options = widthOptions,
+                selectedIndex = widthIndex,
+                onOptionSelected = { widthIndex = it },
+            )
+            ControlSegmented(
+                label = "Rows",
+                options = listOf("1", "2"),
+                selectedIndex = rowsIndex,
+                onOptionSelected = { rowsIndex = it },
+            )
+            if (widthIndex == 0) {
+                ControlSlider(
+                    label = "Peek fraction",
+                    value = peek,
+                    onValueChange = { peek = it },
+                    valueRange = 0.5f..1f,
+                )
+            }
+        },
+    )
+}
+
+@Composable
 private fun ShowcaseDemoCard(
     label: String,
     fillHeight: Boolean,
@@ -419,104 +480,104 @@ internal fun ToastHostPage() {
 }
 
 @Composable
-internal fun DialogPage() {
-    var showDialog by remember { mutableStateOf(false) }
-    var withDismiss by remember { mutableStateOf(true) }
-    var lastResult by remember { mutableStateOf("None") }
+internal fun SectionPage() {
+    var title by remember { mutableStateOf("Preferences") }
+    var showAction by remember { mutableStateOf(true) }
+    var rows by remember { mutableIntStateOf(3) }
 
     SamplePage(
         preview = {
-            PrimaryButton(text = "Open dialog", onClick = { showDialog = true })
-            Text(text = "Last result: $lastResult")
-            if (showDialog) {
-                Dialog(
-                    title = "Discard changes?",
-                    text = "Unsaved changes to this item will be lost.",
-                    confirmText = "Discard",
-                    onConfirm = {
-                        lastResult = "Confirmed"
-                        showDialog = false
-                    },
-                    onDismissRequest = {
-                        lastResult = "Dismissed"
-                        showDialog = false
-                    },
-                    dismissText = if (withDismiss) "Keep editing" else null,
-                )
+            Section(
+                title = title,
+                actions = {
+                    if (showAction) TextButton(text = "Edit", onClick = {})
+                },
+            ) {
+                repeat(rows) { index -> Text("Row ${index + 1}") }
             }
         },
         controls = {
-            ControlSwitch(label = "Dismiss button", checked = withDismiss, onCheckedChange = { withDismiss = it })
-        },
-    )
-}
-
-@Composable
-internal fun BottomSheetPage() {
-    var showSheet by remember { mutableStateOf(false) }
-    var rowCount by remember { mutableIntStateOf(3) }
-
-    SamplePage(
-        preview = {
-            PrimaryButton(text = "Open bottom sheet", onClick = { showSheet = true })
-            if (showSheet) {
-                BottomSheet(onDismissRequest = { showSheet = false }) {
-                    Text(text = "Sheet title", style = AppTheme.typography.titleMedium)
-                    repeat(rowCount) { index -> Text(text = "Option ${index + 1}") }
-                    TextButton(text = "Close", onClick = { showSheet = false })
-                }
-            }
-        },
-        controls = {
+            TextField(value = title, onValueChange = { title = it }, label = "Title")
+            ControlSwitch(label = "Trailing action", checked = showAction, onCheckedChange = { showAction = it })
             ControlSegmented(
                 label = "Rows",
-                options = listOf("1", "3", "8"),
-                selectedIndex = listOf(1, 3, 8).indexOf(rowCount),
-                onOptionSelected = { rowCount = listOf(1, 3, 8)[it] },
+                options = listOf("1", "3", "5"),
+                selectedIndex = listOf(1, 3, 5).indexOf(rows).coerceAtLeast(0),
+                onOptionSelected = { rows = listOf(1, 3, 5)[it] },
             )
         },
     )
 }
 
 @Composable
-internal fun SurfacePage() {
-    var roomy by remember { mutableStateOf(false) }
+internal fun DialogPage() {
+    var open by remember { mutableStateOf(false) }
+    var showDismiss by remember { mutableStateOf(true) }
+    var lastResult by remember { mutableStateOf("None yet") }
 
     SamplePage(
         preview = {
-            Surface(
-                contentPadding = PaddingValues(if (roomy) AppTheme.spacing.x3 else AppTheme.spacing.lg),
-            ) {
-                Text(text = "Flat surface")
-                Text(text = "Groups related content without elevation.")
+            Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
+                PrimaryButton(text = "Open dialog", onClick = { open = true })
+                Text("Last result: $lastResult")
+            }
+            if (open) {
+                Dialog(
+                    title = "Discard draft?",
+                    text = "Your unsaved changes will be lost.",
+                    confirmText = "Discard",
+                    onConfirm = {
+                        lastResult = "Confirmed"
+                        open = false
+                    },
+                    onDismissRequest = {
+                        lastResult = "Dismissed"
+                        open = false
+                    },
+                    dismissText = if (showDismiss) "Keep editing" else null,
+                )
             }
         },
         controls = {
-            ControlSwitch(label = "Roomy padding", checked = roomy, onCheckedChange = { roomy = it })
+            ControlSwitch(label = "Dismiss button", checked = showDismiss, onCheckedChange = { showDismiss = it })
         },
     )
 }
 
 @Composable
-internal fun SectionPage() {
-    var longTitle by remember { mutableStateOf(false) }
-    var showAction by remember { mutableStateOf(true) }
+internal fun BottomSheetPage() {
+    var open by remember { mutableStateOf(false) }
+    var rows by remember { mutableIntStateOf(3) }
+    var picked by remember { mutableStateOf("None") }
 
     SamplePage(
         preview = {
-            Section(
-                title = if (longTitle) "A section title long enough to wrap onto a second line" else "Details",
-                actions = {
-                    if (showAction) TextButton(text = "Edit", onClick = {})
-                },
-            ) {
-                Text(text = "First row of section content")
-                Text(text = "Second row of section content")
+            Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
+                PrimaryButton(text = "Open sheet", onClick = { open = true })
+                Text("Picked: $picked")
+            }
+            if (open) {
+                BottomSheet(onDismissRequest = { open = false }) {
+                    Text("Choose an option")
+                    repeat(rows) { index ->
+                        TextButton(
+                            text = "Option ${index + 1}",
+                            onClick = {
+                                picked = "Option ${index + 1}"
+                                open = false
+                            },
+                        )
+                    }
+                }
             }
         },
         controls = {
-            ControlSwitch(label = "Long title", checked = longTitle, onCheckedChange = { longTitle = it })
-            ControlSwitch(label = "Show action", checked = showAction, onCheckedChange = { showAction = it })
+            ControlSegmented(
+                label = "Options",
+                options = listOf("2", "3", "6"),
+                selectedIndex = listOf(2, 3, 6).indexOf(rows).coerceAtLeast(0),
+                onOptionSelected = { rows = listOf(2, 3, 6)[it] },
+            )
         },
     )
 }

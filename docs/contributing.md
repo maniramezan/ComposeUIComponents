@@ -31,8 +31,7 @@ Before writing a new component or modifier, reuse the shared building blocks the
 **Interaction modifiers (`:compose-utils`)** — for tappable, `Role.Button` surfaces:
 - `Modifier.minimumTouchTarget(size)`, `Modifier.minimumTouchTargetHeight(height)`, `Modifier.minimumTouchTargetWidth(width)` — the accessibility touch-target primitives.
 - `Modifier.buttonRole(onClick, minimumTouchTarget)` — `clickable(role = Role.Button)` + minimum touch target in one chain. Use for single-action surfaces (pills, links, tappable rows, buttons).
-- `Modifier.selectableRole(selected, onClick, minimumTouchTarget)` — `selectable(role = Role.Button)` + minimum touch target for single-choice options (filter chips, selectable rows). For radio-style lists, use `selectable(role = Role.RadioButton)` inside a `selectableGroup()` instead (see `RadioGroup`).
-- `DISABLED_CONTENT_ALPHA` (`ComponentMetrics.kt`) — Material's disabled-content opacity; use it instead of re-inlining `0.38f`.
+- `Modifier.selectableRole(selected, onClick, minimumTouchTarget)` — `selectable(role = Role.Button)` + minimum touch target for single-choice options (filter chips, selectable rows).
 - Prefer the `minimumTouchTargetSize()`/`standardIconSize()`/`containerCornerRadius()` metrics helpers in `:components` (`ComponentMetrics.kt`) for the canonical values.
 
 **Theme-coupled component building blocks (`:components`, package-internal)**:
@@ -44,22 +43,27 @@ Before writing a new component or modifier, reuse the shared building blocks the
 
 When adding a shared helper, follow the module-boundary rules from ADR 0002: theme-agnostic Modifier/utility helpers belong in `:compose-utils`; anything that reads `AppTheme` belongs in `:components`. Keep cross-module helpers public and documented with KDoc. Keep implementation helpers that are shared only within `:components` package-internal and document non-obvious behavior so later components reuse them instead of drifting.
 
-## Binary Compatibility
-
-`check` runs `binaryCompatibilityCheck` (japicmp) for every published Android library against the release named by `API_BASELINE_VERSION`. Adding a parameter to an existing public function — even one with a default — changes its JVM signature and fails that check. To evolve an existing API:
-
-- Add the new overload with the extra parameter, and keep the old signature as a `@Deprecated(level = DeprecationLevel.HIDDEN)` overload that forwards to it (see `ExtendedFloatingActionButton` for the pattern).
-- Changing a parameter from `String` to `String?`, adding new top-level functions/classes, or adding members to a final class are binary compatible.
-- Prefer brand-new components or new overloads over reshaping widely used signatures.
-
 ## Verification
 
 Run the focused task for your change first, then the full verification before opening a PR:
 
 ```bash
-./gradlew ktlintCheck detekt check :components:recordRoborazziDebug :catalog:assembleDebug :sample:assembleDebug :baselineprofile:assemble
+./gradlew ktlintCheck detekt check :components:recordRoborazziDebug :catalog:assembleDebug :sample:assembleDebug :baselineprofile:assembleDebug
 mkdocs build --strict
 ```
+
+### Published API compatibility
+
+`:<module>:binaryCompatibilityCheck` compares each Android library's release AAR
+against `API_BASELINE_VERSION` from Maven Central. Its baseline guard checks the
+persisted AAR so the comparison still runs when the download is up to date or the
+configuration cache is reused. An unpublished baseline (HTTP 404) is logged and
+skipped; report that as unverified compatibility.
+
+Compiler-generated classes containing `$$inlined$` are excluded because their names
+can change after internal edits without changing the library API. Public nested
+classes and public component methods remain checked. Reports are written to
+`<module>/build/reports/binary-compatibility/japicmp.txt`.
 
 ## Releases
 

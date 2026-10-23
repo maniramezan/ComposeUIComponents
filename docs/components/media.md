@@ -18,4 +18,6 @@ CachedAsyncImage(
 
 `CachedAsyncImage` enables Coil memory and disk caching by default. Override `memoryCachePolicy`, `diskCachePolicy`, or `networkCachePolicy` when a screen needs read-only, write-only, or disabled cache behavior.
 
+Pass `contentDescription = null` for decorative images that add no information beyond nearby text.
+
 The public API uses `ImageCachePolicy` instead of Coil cache types so app feature modules do not need to depend on Coil directly.

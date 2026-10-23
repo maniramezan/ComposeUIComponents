@@ -207,8 +207,6 @@ public fun ToastHost(
     LaunchedEffect(current) {
         val timeout = current?.duration?.timeoutMillis
         if (current != null && timeout != null) {
-            // Give assistive-technology users the longer timeout the platform recommends
-            // (e.g. TalkBack's "time to take action"), mirroring Material's SnackbarHost.
             val recommendedTimeout =
                 accessibilityManager?.calculateRecommendedTimeoutMillis(
                     originalTimeoutMillis = timeout,

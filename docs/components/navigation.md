@@ -61,6 +61,9 @@ TabBar {
 }
 ```
 
+The sample browser includes a standalone `TabBarItem` page so the primitive slot API can be
+exercised independently from the data-driven `TabBar` wrapper.
+
 ### Scroll-to-hide
 
 Pass a `scrollBehavior` (from `rememberTabBarScrollBehavior()`) to have the bar hide itself as
@@ -83,17 +86,6 @@ TabBar(
 When a scroll or fling ends with the bar partly hidden, it settles to whichever of fully shown
 or fully hidden is closer, so it never rests half-visible. The bar reads the scroll offset in
 its layout phase, so hiding it re-lays out the bar without recomposing its items.
-
-Use `Badge` in an item's `badge` slot for unread counts or a "new" dot:
-
-```kotlin
-TabBarItemData(
-    value = Destination.Inbox,
-    icon = { Icon(inboxIcon, contentDescription = null) },
-    label = { Text("Inbox") },
-    badge = { Badge(count = unreadCount) },
-)
-```
 
 ## NavRail / AdaptiveNavScaffold
 
@@ -196,22 +188,5 @@ Use `SegmentSelectionIndicator` to choose between `Pill` (filled background, iOS
 
 ## PageIndicator
 
-`PageIndicator` is the dot row used by `PaginatedContent`'s `Dots` footer, available on its
-own for carousels, onboarding flows, or any `HorizontalPager`. Pass explicit
-`pageCount`/`currentPage`, or bind it to a `PagerState` so page reads stay scoped to the
-indicator:
-
-```kotlin
-val pagerState = rememberPagerState(pageCount = { pages.size })
-
-HorizontalPager(state = pagerState) { page -> PageContent(pages[page]) }
-PageIndicator(
-    pagerState = pagerState,
-    pagePositionDescription = { index, count -> "Page ${index + 1} of $count" },
-)
-```
-
-The dots are color-only, so they stay out of the accessibility tree unless you supply
-`pagePositionDescription`; the indicator then reads as a single node and announces page
-changes politely. `currentPage` is clamped into range.
-
+Use [PageIndicator](page-indicator.md) for standalone page position dots or bind it to a
+`PagerState`. It also supplies the `Dots` footer in `PaginatedContent`.

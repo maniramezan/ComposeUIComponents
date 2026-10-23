@@ -1,7 +1,13 @@
 package io.github.maniramezan.compose.components
 
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.takahirom.roborazzi.captureRoboImage
+import io.github.maniramezan.compose.theme.AppTheme
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
@@ -11,6 +17,27 @@ import org.robolectric.annotation.GraphicsMode
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [35], qualifiers = "w360dp-h640dp-xhdpi")
 public class ComponentCategoryScreenshotTest {
+    @Test
+    public fun pageIndicatorMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/page-indicator.png") {
+            PageIndicatorPreview()
+        }
+    }
+
+    @Test
+    public fun pageIndicatorDarkRtlAtDoubleFontScaleMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/page-indicator-dark-rtl-font200.png") {
+            CompositionLocalProvider(
+                LocalLayoutDirection provides LayoutDirection.Rtl,
+                LocalDensity provides Density(density = LocalDensity.current.density, fontScale = 2f),
+            ) {
+                AppTheme(darkTheme = true, dynamicColor = false) {
+                    PageIndicator(pageCount = 5, currentPage = 1)
+                }
+            }
+        }
+    }
+
     @Test
     public fun actionComponentsMatchGolden() {
         captureRoboImage("build/outputs/roborazzi/actions-components.png") {
@@ -201,16 +228,35 @@ public class ComponentCategoryScreenshotTest {
     }
 
     @Test
-    public fun badgeMatchesGolden() {
-        captureRoboImage("build/outputs/roborazzi/badge.png") {
-            BadgePreview()
+    public fun typingIndicatorMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/typing-indicator.png") {
+            TypingIndicatorPreview()
         }
     }
 
     @Test
-    public fun pageIndicatorMatchesGolden() {
-        captureRoboImage("build/outputs/roborazzi/page-indicator.png") {
-            PageIndicatorPreview()
+    public fun loadingOverlayMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/loading-overlay.png") {
+            LoadingOverlayPreview()
+        }
+    }
+
+    @Test
+    public fun indicatorComponentsMatchGolden() {
+        captureRoboImage("build/outputs/roborazzi/indicator-components.png") {
+            IndicatorComponentsPreview()
+        }
+    }
+
+    @Test
+    public fun indicatorComponentsFontScaleMatchGolden() {
+        captureRoboImage("build/outputs/roborazzi/indicator-components-font-scale.png") {
+            CompositionLocalProvider(
+                LocalDensity provides Density(LocalDensity.current.density, fontScale = 2f),
+                LocalLayoutDirection provides LayoutDirection.Rtl,
+            ) {
+                IndicatorComponentsPreview()
+            }
         }
     }
 }

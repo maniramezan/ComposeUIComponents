@@ -188,9 +188,6 @@ public fun PaginatedContent(
 ) {
     if (pages.isEmpty()) return
 
-    // Notify caller when the settled page changes. The latest callback is read through
-    // rememberUpdatedState so a caller passing a fresh lambda on each recomposition doesn't
-    // restart the collector (which would re-deliver the current page every time).
     val currentOnPageChanged by rememberUpdatedState(onPageChanged)
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.settledPage }
@@ -468,8 +465,6 @@ private fun PageDotIndicator(
     modifier: Modifier = Modifier,
     pagePositionDescription: ((Int, Int) -> String)? = null,
 ) {
-    // Read currentPage here so recomposition is scoped to this wrapper, not to
-    // PaginatedContent. currentPage changes only when the page settles.
     PageIndicator(
         pageCount = pageCount,
         currentPage = pagerState.currentPage,

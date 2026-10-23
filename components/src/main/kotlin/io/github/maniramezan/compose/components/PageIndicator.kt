@@ -29,7 +29,7 @@ import io.github.maniramezan.compose.theme.AppTheme
  * @param currentPage Zero-based index of the active page; clamped into range.
  * @param modifier Modifier applied to the dot row.
  * @param pagePositionDescription Builds the caller-localized announcement for the
- *   position, e.g. `{ index, count -> "Page ${index + 1} of $count" }`.
+ *   position; supply a localized string. Omit the formatter or return blank to keep the dots decorative.
  * @param activeColor Color of the dot for [currentPage].
  * @param inactiveColor Color of every other dot.
  */
@@ -48,7 +48,7 @@ public fun PageIndicator(
     Row(
         modifier =
             modifier.clearAndSetSemantics {
-                if (positionDescription != null) {
+                if (!positionDescription.isNullOrBlank()) {
                     contentDescription = positionDescription
                     liveRegion = LiveRegionMode.Polite
                 }

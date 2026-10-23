@@ -42,6 +42,7 @@ public fun TextField(
     supportingText: String? = null,
     leadingIcon: (@Composable () -> Unit)? = null,
     trailingIcon: (@Composable () -> Unit)? = null,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
 ) {
     OutlinedTextField(
         value = value,
@@ -54,6 +55,34 @@ public fun TextField(
         singleLine = true,
         leadingIcon = leadingIcon,
         trailingIcon = trailingIcon,
+        keyboardOptions = keyboardOptions,
+    )
+}
+
+@Deprecated("Use the overload with keyboardOptions.", level = DeprecationLevel.HIDDEN)
+@Composable
+public fun TextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    isError: Boolean = false,
+    supportingText: String? = null,
+    leadingIcon: (@Composable () -> Unit)? = null,
+    trailingIcon: (@Composable () -> Unit)? = null,
+) {
+    TextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = label,
+        modifier = modifier,
+        enabled = enabled,
+        isError = isError,
+        supportingText = supportingText,
+        leadingIcon = leadingIcon,
+        trailingIcon = trailingIcon,
+        keyboardOptions = KeyboardOptions.Default,
     )
 }
 
@@ -74,6 +103,7 @@ public fun PasswordField(
     supportingText: String? = null,
     revealPassword: Boolean = false,
     trailingIcon: (@Composable () -> Unit)? = null,
+    keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
 ) {
     OutlinedTextField(
         value = value,
@@ -85,12 +115,42 @@ public fun PasswordField(
         supportingText = supportingText?.let { { Text(text = it) } },
         singleLine = true,
         visualTransformation = if (revealPassword) VisualTransformation.None else PasswordVisualTransformation(),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+        keyboardOptions = keyboardOptions,
         trailingIcon = trailingIcon,
     )
 }
 
-/** A themed, single-line outlined text field styled for search, with an optional [placeholder]. */
+@Deprecated("Use the overload with keyboardOptions.", level = DeprecationLevel.HIDDEN)
+@Composable
+public fun PasswordField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    isError: Boolean = false,
+    supportingText: String? = null,
+    revealPassword: Boolean = false,
+    trailingIcon: (@Composable () -> Unit)? = null,
+) {
+    PasswordField(
+        value = value,
+        onValueChange = onValueChange,
+        label = label,
+        modifier = modifier,
+        enabled = enabled,
+        isError = isError,
+        supportingText = supportingText,
+        revealPassword = revealPassword,
+        trailingIcon = trailingIcon,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+    )
+}
+
+/**
+ * A themed, single-line outlined text field styled for search, with an optional [placeholder].
+ * A blank [placeholder] renders no placeholder node.
+ */
 @Composable
 public fun SearchField(
     value: String,
@@ -107,8 +167,7 @@ public fun SearchField(
         onValueChange = onValueChange,
         modifier = modifier.fillMaxWidth(),
         enabled = enabled,
-        // A blank placeholder would add an empty text node; omit it instead.
-        placeholder = if (placeholder.isNotBlank()) ({ Text(text = placeholder) }) else null,
+        placeholder = placeholder.takeIf { it.isNotBlank() }?.let { text -> { Text(text = text) } },
         leadingIcon = leadingIcon,
         singleLine = true,
         keyboardOptions = keyboardOptions,

@@ -13,6 +13,7 @@ Container components provide themed layout surfaces and transient UI wrappers.
 - `Snackbar`
 - `HorizontalDivider`
 - `VerticalDivider`
+- `LabeledDivider`
 - `OverlayCard`
 - `AdaptiveContentContainer`
 - `DisclosureCard`
@@ -36,7 +37,7 @@ Prefer slot content for extensibility. `BottomSheet`, `Dialog`, and `Snackbar` a
 
 ## FlipCard
 
-`FlipCard` is a two-sided card that animates a 3D flip between a `front` and a `back` face — the building block for flash-card style UIs (vocabulary cards, quiz answers, reveal interactions). It is slot-based: each face is a `@Composable BoxScope.() -> Unit`, so you control the content entirely.
+`FlipCard` is a two-sided card that animates a 3D flip between a `front` and a `back` face — the building block for two-sided surfaces (item summaries, details, reveal interactions). It is slot-based: each face is a `@Composable BoxScope.() -> Unit`, so you control the content entirely.
 
 ```kotlin
 AppTheme {
@@ -197,3 +198,19 @@ tokens (`AppTheme.spacing.maxContentWidthForm` is provided as a form-width defau
 | `maxWidth` | `Dp` | Maximum width of the content area. Defaults to `AppSpacingDefaults.maxContentWidthForm`. |
 | `contentAlignment` | `Alignment` | Alignment of the capped content area within the outer box. Defaults to `Alignment.TopCenter`. |
 | `content` | `@Composable BoxScope.() -> Unit` | Content rendered inside the width-capped box. |
+
+## LabeledDivider
+
+`LabeledDivider` centers a caller-localized label between two themed horizontal rules.
+Use it to separate sections or indicate alternatives. The rules use `outlineVariant`
+and `spacing.strokeThin` by default; `color` and `thickness` can be customized.
+
+```kotlin
+LabeledDivider(label = "Section")
+```
+
+The label wraps within half the available width to preserve space for both rules at
+large font scales. It is announced once as plain text; the rules are decorative.
+Blank or whitespace-only labels draw one full-width rule without an empty text node.
+The layout is symmetric in RTL. The sample browser provides live controls for label,
+rule color, thickness, and a narrow-width layout.

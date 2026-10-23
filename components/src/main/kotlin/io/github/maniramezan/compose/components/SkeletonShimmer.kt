@@ -1,12 +1,10 @@
 package io.github.maniramezan.compose.components
 
-import android.provider.Settings
 import androidx.compose.animation.core.withInfiniteAnimationFrameMillis
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
@@ -16,8 +14,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalInspectionMode
 import io.github.maniramezan.compose.theme.AppTheme
 
 /** Length of one shimmer cycle: one sweep plus the rest before the next. */
@@ -65,18 +61,7 @@ public val LocalSkeletonShimmerEnabled: ProvidableCompositionLocal<Boolean> =
  */
 @Composable
 public fun Modifier.skeletonShimmer(highlight: Color = AppTheme.colors.shimmerHighlight): Modifier {
-    val context = LocalContext.current
-    val inInspection = LocalInspectionMode.current
-    val enabledByLocal = LocalSkeletonShimmerEnabled.current
-    val reduceMotion =
-        remember(context) {
-            Settings.Global.getFloat(
-                context.contentResolver,
-                Settings.Global.ANIMATOR_DURATION_SCALE,
-                1f,
-            ) == 0f
-        }
-    val animate = enabledByLocal && !inInspection && !reduceMotion
+    val animate = LocalSkeletonShimmerEnabled.current && rememberDecorativeAnimationsEnabled()
 
     // Call produceState unconditionally so the composable structure is stable even if
     // `animate` flips (e.g. LocalSkeletonShimmerEnabled toggled by a caller).

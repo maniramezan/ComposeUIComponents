@@ -9,13 +9,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -50,7 +48,7 @@ public sealed interface ChatMessageState {
         val text: String,
     ) : ChatMessageState
 
-    /** Response is pending; renders an indeterminate typing/waiting indicator. */
+    /** Response is pending; renders a [TypingIndicator] bubble. */
     public data object Typing : ChatMessageState
 
     /** Message failed; renders [ChatErrorAction] copy and retry action. */
@@ -116,7 +114,16 @@ public fun ChatLog(
         // Preserve a reader's position in history; only follow updates when they
         // were already reading the newest message.
         if (isAtLatestMessage) {
-            listState.animateScrollToItem(messages.lastIndex)
+            val lastIndex = messages.lastIndex
+            if (listState.layoutInfo.visibleItemsInfo.none { it.index == lastIndex }) {
+                listState.scrollToItem(lastIndex)
+            }
+            // An offset equal to the measured height reaches the end of even a
+            // viewport-tall message. The list clamps it to its actual scroll limit.
+            val lastItem = listState.layoutInfo.visibleItemsInfo.lastOrNull { it.index == lastIndex }
+            if (lastItem != null) {
+                listState.animateScrollToItem(lastIndex, scrollOffset = lastItem.size)
+            }
         }
     }
 
@@ -243,11 +250,8 @@ private fun ChatTypingBubble(
         shape = AppTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = AppTheme.colors.surfaceVariant),
     ) {
-        CircularProgressIndicator(
-            modifier = Modifier.padding(AppTheme.spacing.x2).size(AppTheme.spacing.x2),
-            strokeWidth = AppTheme.spacing.half,
-            color = AppTheme.colors.onSurfaceVariant,
-        )
+        // The bubble carries the announcement; the dots stay out of the accessibility tree.
+        TypingIndicator(modifier = Modifier.padding(horizontal = AppTheme.spacing.x2, vertical = AppTheme.spacing.x1_5))
     }
 }
 
@@ -261,7 +265,6 @@ private fun ChatErrorBubble(
             modifier
                 .clip(AppTheme.shapes.large)
                 .background(AppTheme.colors.surfaceVariant)
-                // Announce a failed response when it appears, like the other status states.
                 .semantics { liveRegion = LiveRegionMode.Polite }
                 .padding(AppTheme.spacing.x2),
         verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.x1),

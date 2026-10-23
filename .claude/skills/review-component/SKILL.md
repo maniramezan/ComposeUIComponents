@@ -1,76 +1,38 @@
 ---
 name: review-component
-description: Review a change to this Compose design-system repo (components, theme, sample, docs) for bugs, accessibility, performance, API/binary compatibility, and product leakage. Use when asked to review a PR, a diff, or a component in this repo, or before opening a PR.
+description: Review a change to this Compose design-system repo for correctness, accessibility, performance, API compatibility, sample coverage, and product leakage.
 ---
 
 # Reviewing a design-system change
 
-Work through each section against the diff. Report concrete findings with file:line, the
-failure scenario, and a fix; skip sections that do not apply.
+Read `AGENTS.md`, the relevant ADRs, and the diff. Apply the sections that fit the change. Report only concrete findings, each with `file:line`, the failure scenario, and a suggested fix. Order findings by severity; say explicitly when no findings remain.
 
 ## Correctness
 
-- Selection is compared by value (not index) where the API promises it; indices are clamped
-  (`coerceIn(0, lastIndex)`) before indexing into lists; empty lists render nothing instead of
-  crashing.
-- `remember` keys cover every input the remembered value depends on; UI state a user would
-  expect to survive rotation (search queries, expanded flags with saveable keys) uses
-  `rememberSaveable`.
-- Effects: `LaunchedEffect` keyed on a caller lambda restarts on every recomposition — read
-  callbacks via `rememberUpdatedState` instead.
-- Early `return` from a composable is fine, but state created after it is lost when the
-  branch flips; confirm that is intended.
+- Compare selection by value where the API promises value selection. Clamp indices before indexing; empty lists should render safely.
+- Check every `remember` key against its inputs. Use `rememberSaveable` for local UI state that should survive rotation, with saveable keys where needed.
+- A `LaunchedEffect` keyed on a changing caller lambda can restart on recomposition; read such callbacks through `rememberUpdatedState`.
+- Check whether state declared after an early composable return should be discarded when that branch flips.
 
-## Accessibility (ADR 0004, `docs/accessibility.md`)
+## Accessibility
 
-- Every user-visible or a11y string is caller-supplied; no English defaults; blank strings do
-  not produce empty nodes.
-- Correct semantics: `Role.Button` / `Role.Tab` / `Role.RadioButton` (+ `selectableGroup()`) /
-  `Role.Switch` / `Role.Checkbox`; `stateDescription` for custom states; `heading()` on section
-  titles; `liveRegion = Polite` on status/loading/error surfaces that appear dynamically.
-- Decorative icons use `contentDescription = null // @check:suppress` only when meaning is
-  carried elsewhere; icon-only controls require a description.
-- 48dp minimum touch targets; long labels wrap instead of pushing actions off-screen (give the
-  text `Modifier.weight(1f)` in rows); 200% font scale does not clip (prefer `defaultMinSize`
-  over fixed sizes for text containers).
-- Disabled state dims labels with the control (`DISABLED_CONTENT_ALPHA`).
-- Timed UI (toasts) honors `LocalAccessibilityManager.calculateRecommendedTimeoutMillis`.
+Use ADR 0004 and `docs/accessibility.md`.
 
-## Performance (`docs/performance.md`)
+- All visible and accessibility strings come from callers; blanks do not create empty nodes.
+- Check roles (`Button`, `Tab`, `RadioButton`, `Switch`, `Checkbox`), `selectableGroup()`, `stateDescription` for custom states, `heading()` for section titles, and `liveRegion = Polite` for dynamic status, loading, or error surfaces where appropriate.
+- Decorative icons may use `contentDescription = null // @check:suppress` only when another node or property carries their meaning. Icon-only controls need a description.
+- Verify 48dp interactive targets, long labels at narrow widths, RTL, and 200% font scale. In rows, weighted text often prevents actions being pushed off-screen; text containers usually need `defaultMinSize` rather than a fixed height.
+- Disabled labels should dim with controls, using `DISABLED_CONTENT_ALPHA` where appropriate. Timed UI should honor `LocalAccessibilityManager.calculateRecommendedTimeoutMillis`.
 
-- Per-frame values (scroll offsets, animation progress) are read in `layout {}`,
-  `graphicsLayer {}`, or draw lambdas — not in composition. Look for `val x by animate*AsState`
-  whose value is then passed as a plain `Float` parameter.
-- Derived booleans from fast-changing state use `derivedStateOf`.
-- Expensive conversions in frequently recomposed scopes are remembered.
-- Lazy lists pass stable keys; no nested unbounded scrolling containers.
+## Performance
 
-## Theming and tokens
+Use `docs/performance.md`. Check that scroll offsets and animation progress are read inside `layout {}`, `graphicsLayer {}`, or draw lambdas when they change per frame. A plain `Float` parameter fed from `animate*AsState` can force composition every frame. Use `derivedStateOf` for derived booleans from fast-changing state when it avoids unnecessary recomposition. Check stable keys in lazy lists and bounded height for nested scrolling containers.
 
-- No raw `dp`, raw `Color(0x…)`, or ad-hoc alpha literals in `:components`; use `AppTheme` and
-  `ComponentMetrics.kt`. Text uses an explicit `AppTheme.typography` style and color rather
-  than inheriting Material defaults.
-- Reuse `pillSurface`, `ListPrimaryTextBlock`, `buttonRole`, `selectableRole` instead of
-  re-inlining them.
+## API and repository fit
 
-## API and binary compatibility
+- Check state hoisting, slot flexibility, stable naming, explicit `public`, KDoc, and compatibility with existing callers. Identify intentional breaking changes and migration needs; run `:components:binaryCompatibilityCheck` for changed public APIs.
+- Check module boundaries, `AppTheme` tokens, and reuse of shared modifiers and component building blocks. Avoid raw colors, dimensions, and ad hoc alpha literals in `:components`.
+- New public components need light/dark and font-scale previews, Showkase, tests, docs, and a registered `SamplePage` with live controls for meaningful states and parameters.
+- Search changed code, examples, previews, tests, and docs for branding, feature names, analytics, domain models, and product fixtures.
 
-- `binaryCompatibilityCheck` (japicmp) compares against the published `API_BASELINE_VERSION`.
-  Adding a parameter to an existing public function breaks it; require a new overload plus a
-  `@Deprecated(level = HIDDEN)` forwarding overload. Renames of public names or files
-  referenced by docs/Showkase need migration notes (`docs/migration.md`).
-- New public API has KDoc, `public` modifiers, and a `XxxDefaults` object for shared defaults.
-
-## Coverage
-
-- Preview (`@PreviewLightDark` + `@PreviewFontScale`) and Showkase entry for new visuals.
-- Behavior tests assert semantics/interaction; no tautological "names are stable" tests.
-- A configurable `:sample` page is registered for every new public component — run
-  `.claude/skills/verify-changes/check-sample-coverage.sh`.
-- `docs/components/*.md` and `mkdocs.yml` updated.
-
-## Product leakage (blocking)
-
-Search every changed line — code, KDoc, previews, tests, sample data — for consuming-app
-names, domain terms (e.g. vocabulary, lessons, levels tied to a specific product), analytics,
-or business rules. Use generic labels: items, sections, statuses, actions.
+Use [verify-changes](../verify-changes/SKILL.md) to select checks when the review includes local validation.
