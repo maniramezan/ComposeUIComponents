@@ -29,7 +29,7 @@ Use `LazyList` for edge-to-edge compatible scrollable content and pass stable ke
 ## ContentRow
 
 `ContentRow` is a two-line list row with a title, optional secondary/supporting text,
-and leading + trailing content slots. It suits vocabulary rows, document lists,
+and leading + trailing content slots. It suits item rows, document lists,
 settings rows, and similar single-tap entry points.
 
 ```kotlin
