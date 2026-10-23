@@ -36,7 +36,7 @@ Prefer slot content for extensibility. `BottomSheet`, `Dialog`, and `Snackbar` a
 
 ## FlipCard
 
-`FlipCard` is a two-sided card that animates a 3D flip between a `front` and a `back` face — the building block for flash-card style UIs (vocabulary cards, quiz answers, reveal interactions). It is slot-based: each face is a `@Composable BoxScope.() -> Unit`, so you control the content entirely.
+`FlipCard` is a two-sided card that animates a 3D flip between a `front` and a `back` face — the building block for two-sided surfaces (item summaries, details, reveal interactions). It is slot-based: each face is a `@Composable BoxScope.() -> Unit`, so you control the content entirely.
 
 ```kotlin
 AppTheme {
