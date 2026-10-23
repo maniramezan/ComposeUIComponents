@@ -23,3 +23,10 @@ public fun VerticalDividerShowkase(): Unit =
     AppTheme {
         VerticalDivider(modifier = Modifier.height(AppTheme.spacing.x3))
     }
+
+@ShowkaseComposable(name = "Labeled Divider", group = "Dividers")
+@Composable
+public fun LabeledDividerShowkase(): Unit =
+    AppTheme {
+        LabeledDivider(label = "Section")
+    }
