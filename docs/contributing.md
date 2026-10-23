@@ -52,6 +52,19 @@ Run the focused task for your change first, then the full verification before op
 mkdocs build --strict
 ```
 
+### Published API compatibility
+
+`:<module>:binaryCompatibilityCheck` compares each Android library's release AAR
+against `API_BASELINE_VERSION` from Maven Central. Its baseline guard checks the
+persisted AAR so the comparison still runs when the download is up to date or the
+configuration cache is reused. An unpublished baseline (HTTP 404) is logged and
+skipped; report that as unverified compatibility.
+
+Compiler-generated classes containing `$$inlined$` are excluded because their names
+can change after internal edits without changing the library API. Public nested
+classes and public component methods remain checked. Reports are written to
+`<module>/build/reports/binary-compatibility/japicmp.txt`.
+
 ## Releases
 
 Releases are automated after `CI` succeeds on `main`, with tags matching `X.Y.Z` (no `v` prefix).
