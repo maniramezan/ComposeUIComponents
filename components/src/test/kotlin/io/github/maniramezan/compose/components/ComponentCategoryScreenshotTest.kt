@@ -1,5 +1,10 @@
 package io.github.maniramezan.compose.components
 
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Test
@@ -218,6 +223,18 @@ public class ComponentCategoryScreenshotTest {
     public fun indicatorComponentsMatchGolden() {
         captureRoboImage("build/outputs/roborazzi/indicator-components.png") {
             IndicatorComponentsPreview()
+        }
+    }
+
+    @Test
+    public fun indicatorComponentsFontScaleMatchGolden() {
+        captureRoboImage("build/outputs/roborazzi/indicator-components-font-scale.png") {
+            CompositionLocalProvider(
+                LocalDensity provides Density(LocalDensity.current.density, fontScale = 2f),
+                LocalLayoutDirection provides LayoutDirection.Rtl,
+            ) {
+                IndicatorComponentsPreview()
+            }
         }
     }
 }
