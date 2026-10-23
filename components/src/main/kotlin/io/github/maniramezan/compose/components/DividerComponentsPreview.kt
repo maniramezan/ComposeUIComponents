@@ -22,6 +22,7 @@ public fun DividerComponentsPreview(): Unit =
         Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
             Text(text = "Above")
             HorizontalDivider()
+            LabeledDivider(label = "Section")
             Text(text = "Below")
             Row(
                 horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md),

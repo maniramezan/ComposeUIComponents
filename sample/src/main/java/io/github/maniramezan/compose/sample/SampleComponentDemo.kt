@@ -29,6 +29,13 @@ internal data class SampleComponentDemo(
 internal fun sampleDemos(): List<SampleComponentDemo> =
     listOf(
         SampleComponentDemo(
+            id = "labeled-divider",
+            title = "LabeledDivider",
+            category = "Containers",
+            description = "Centered label between themed rules, with wrapping and a blank-label fallback.",
+            content = { LabeledDividerPage() },
+        ),
+        SampleComponentDemo(
             id = "action-pill",
             title = "ActionPill",
             category = "Actions",
