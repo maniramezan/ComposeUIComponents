@@ -1,6 +1,8 @@
 package io.github.maniramezan.compose.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.CompositionLocalProvider
@@ -257,6 +259,36 @@ public class ComponentCategoryScreenshotTest {
     public fun typingIndicatorMatchesGolden() {
         captureRoboImage("build/outputs/roborazzi/typing-indicator.png") {
             TypingIndicatorPreview()
+        }
+    }
+
+    @Test
+    public fun chatComposerMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/chat-composer.png") {
+            ChatComposerPreview()
+        }
+    }
+
+    @Test
+    public fun chatComposerDarkMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/chat-composer-dark.png") {
+            AppTheme(darkTheme = true, dynamicColor = false) {
+                Box(modifier = Modifier.background(AppTheme.colors.background)) {
+                    ChatComposerPreviewContent()
+                }
+            }
+        }
+    }
+
+    @Test
+    public fun chatComposerFontScaleRtlMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/chat-composer-font200-rtl.png") {
+            CompositionLocalProvider(
+                LocalDensity provides Density(LocalDensity.current.density, fontScale = 2f),
+                LocalLayoutDirection provides LayoutDirection.Rtl,
+            ) {
+                ChatComposerPreview()
+            }
         }
     }
 

@@ -330,6 +330,13 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             content = { SkeletonShimmerPage() },
         ),
         SampleComponentDemo(
+            id = "chat-composer",
+            title = "ChatComposer",
+            category = "Feedback",
+            description = "Growing message field with a send button and optional voice input.",
+            content = { ChatComposerPage() },
+        ),
+        SampleComponentDemo(
             id = "typing-indicator",
             title = "TypingIndicator",
             category = "Feedback",
