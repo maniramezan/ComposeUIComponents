@@ -106,6 +106,13 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             content = { SearchFieldPage() },
         ),
         SampleComponentDemo(
+            id = "menu-picker",
+            title = "MenuPicker",
+            category = "Inputs",
+            description = "Single-choice dropdown picker with label, placeholder, supporting and error text.",
+            content = { MenuPickerPage() },
+        ),
+        SampleComponentDemo(
             id = "checkbox",
             title = "Checkbox",
             category = "Controls",

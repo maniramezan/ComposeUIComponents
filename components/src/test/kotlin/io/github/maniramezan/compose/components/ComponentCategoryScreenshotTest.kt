@@ -82,6 +82,36 @@ public class ComponentCategoryScreenshotTest {
     }
 
     @Test
+    public fun menuPickerMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/menu-picker.png") {
+            MenuPickerPreview()
+        }
+    }
+
+    @Test
+    public fun menuPickerDarkMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/menu-picker-dark.png") {
+            AppTheme(darkTheme = true, dynamicColor = false) {
+                Box(modifier = Modifier.background(AppTheme.colors.background)) {
+                    MenuPickerPreviewContent()
+                }
+            }
+        }
+    }
+
+    @Test
+    public fun menuPickerFontScaleRtlMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/menu-picker-font200-rtl.png") {
+            CompositionLocalProvider(
+                LocalDensity provides Density(LocalDensity.current.density, fontScale = 2f),
+                LocalLayoutDirection provides LayoutDirection.Rtl,
+            ) {
+                MenuPickerPreview()
+            }
+        }
+    }
+
+    @Test
     public fun containerComponentsMatchGolden() {
         captureRoboImage("build/outputs/roborazzi/container-components.png") {
             ContainerComponentsPreview()
