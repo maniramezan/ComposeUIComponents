@@ -438,4 +438,34 @@ public class ComponentCategoryScreenshotTest {
             }
         }
     }
+
+    @Test
+    public fun thumbsFeedbackRowMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/thumbs-feedback-row.png") {
+            ThumbsFeedbackRowPreview()
+        }
+    }
+
+    @Test
+    public fun thumbsFeedbackRowDarkMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/thumbs-feedback-row-dark.png") {
+            AppTheme(darkTheme = true, dynamicColor = false) {
+                Box(modifier = Modifier.background(AppTheme.colors.background)) {
+                    ThumbsFeedbackRowPreviewContent()
+                }
+            }
+        }
+    }
+
+    @Test
+    public fun thumbsFeedbackRowFontScaleRtlMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/thumbs-feedback-row-font200-rtl.png") {
+            CompositionLocalProvider(
+                LocalDensity provides Density(LocalDensity.current.density, fontScale = 2f),
+                LocalLayoutDirection provides LayoutDirection.Rtl,
+            ) {
+                ThumbsFeedbackRowPreview()
+            }
+        }
+    }
 }
