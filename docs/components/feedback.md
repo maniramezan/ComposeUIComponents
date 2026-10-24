@@ -12,6 +12,7 @@ Feedback components communicate loading, transient status, and placeholder state
 - `TypingIndicator`
 - `Toast`
 - `ToastHost`
+- `NoticeBanner`
 - `ChatLog`
 - `ChatComposer`
 - `AssistantContextCard`
@@ -34,6 +35,54 @@ AppTheme {
 ```
 
 Use `progress = null` for indeterminate loading. `Toast` is an in-composition visual component, not a platform `android.widget.Toast` wrapper.
+
+## Inline notice banner
+
+`NoticeBanner` is a full-width, tonal banner that reports a status inside the screen layout:
+a saved state, a degraded service, a validation failure. Unlike `Toast`, it is part of the
+layout and stays until you remove it, so hoist its visibility and drop it from composition in
+`onDismiss` or after `onAction`.
+
+```kotlin
+if (state.notice != null) {
+    NoticeBanner(
+        message = state.notice.message,
+        severity = NoticeSeverity.Error,
+        icon = AppTheme.icons.check,
+        iconContentDescription = "Error",
+        actionLabel = "Retry",
+        onAction = onRetry,
+        dismissContentDescription = "Dismiss",
+        onDismiss = onDismissNotice,
+    )
+}
+```
+
+| Parameter | Notes |
+|---|---|
+| `message` | Caller-supplied banner text. |
+| `severity` | `Info` (default), `Success`, `Warning`, or `Error`. Picks the tint from `AppTheme.colors.primary`, `success`, `warning`, or `error`. |
+| `icon` | Optional leading `IconToken`. |
+| `iconContentDescription` | Caller-supplied label for the icon, for example the severity name. `null` or blank makes the icon decorative. |
+| `actionLabel` / `onAction` | The action button renders only when the label is non-blank and `onAction` is set. |
+| `dismissContentDescription` / `onDismiss` | The dismiss button renders only when the label is non-blank and `onDismiss` is set, so it is never unlabeled. |
+
+The container is the severity color at 12% over `AppTheme.colors.surface`, outlined in the full
+severity color. Text and the icon use `onSurface` so every severity stays legible in light and dark
+themes; the default light warning color is only about 2.4:1 against its own tint, below the 3:1
+bar for graphics. Because color should not be the only signal, pass an `icon` with an
+`iconContentDescription` when the severity matters to the reader.
+
+Accessibility behavior:
+
+- The icon and message are one TalkBack focus stop; the icon label is read before the message.
+- `Error` is an assertive live region and `Warning` a polite one, so they are announced when they
+  appear. `Info` and `Success` are not announced on their own. The live region covers the message
+  only, never the action or dismiss labels.
+- The action and dismiss controls are separate `Role.Button` nodes with at least 48dp touch
+  targets. The action sits below the message, end-aligned, and dismiss sits at the trailing
+  edge, so the message keeps most of the width and wraps rather than clipping at large font scales.
+- Dismiss uses `AppTheme.icons.close`, so provide icons to `AppTheme` as with the other components.
 
 ## Chat logs
 

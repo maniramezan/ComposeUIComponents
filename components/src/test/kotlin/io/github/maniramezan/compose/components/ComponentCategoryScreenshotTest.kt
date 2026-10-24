@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.takahirom.roborazzi.captureRoboImage
+import io.github.maniramezan.compose.icons.defaultAppIcons
 import io.github.maniramezan.compose.theme.AppTheme
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -288,6 +289,36 @@ public class ComponentCategoryScreenshotTest {
                 LocalLayoutDirection provides LayoutDirection.Rtl,
             ) {
                 ChatComposerPreview()
+            }
+        }
+    }
+
+    @Test
+    public fun noticeBannerMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/notice-banner.png") {
+            NoticeBannerPreview()
+        }
+    }
+
+    @Test
+    public fun noticeBannerDarkMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/notice-banner-dark.png") {
+            AppTheme(darkTheme = true, dynamicColor = false, icons = defaultAppIcons()) {
+                Box(modifier = Modifier.background(AppTheme.colors.background)) {
+                    NoticeBannerPreviewContent()
+                }
+            }
+        }
+    }
+
+    @Test
+    public fun noticeBannerFontScaleRtlMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/notice-banner-font200-rtl.png") {
+            CompositionLocalProvider(
+                LocalDensity provides Density(LocalDensity.current.density, fontScale = 2f),
+                LocalLayoutDirection provides LayoutDirection.Rtl,
+            ) {
+                NoticeBannerPreview()
             }
         }
     }
