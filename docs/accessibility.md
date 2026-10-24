@@ -85,7 +85,7 @@ provide localized strings for a finished experience.
 ## Automated Coverage
 
 - `AccessibilityComponentsTest` verifies representative action and input components keep at least a 48dp touch target, and that `PillChip`, `SegmentedControl`, and `Slider` expose selection state and accessibility labels.
-- `:testing` exposes `assertMinimumTouchTarget` and `onNodeWithRequiredContentDescription` helpers for downstream app tests.
+- `assertMinimumTouchTarget` and `onNodeWithRequiredContentDescription` live in [KotlinTestCommons](https://github.com/maniramezan/KotlinTestCommons) (`io.github.maniramezan.testcommons.compose`, see [ADR 0008](adr/0008-adopt-kotlin-test-commons.md)). `:testing` re-exposes the library transitively and keeps deprecated delegates of the old names for binary compatibility.
 - `:compose-utils` exposes `minimumTouchTarget` and `minimumTouchTargetHeight` modifiers for shared component sizing.
 - Icon-only actions are covered by semantics assertions for meaningful content descriptions.
 - `checkComponentTokenUsage` rejects nullable or null icon descriptions in the public component surface (`*Preview.kt`/`*Showkase.kt` demo files are excluded, since decorative icons there legitimately use `contentDescription = null`).

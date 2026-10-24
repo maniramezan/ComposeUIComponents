@@ -6,11 +6,11 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
-import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.maniramezan.compose.theme.AppTheme
+import io.github.maniramezan.testcommons.compose.ThemedComposeRule
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -22,7 +22,7 @@ import org.robolectric.annotation.Config
 @Config(sdk = [35])
 public class TypingIndicatorTest {
     @get:Rule
-    public val composeRule = createComposeRule()
+    public val composeRule = ThemedComposeRule(theme = { content -> AppTheme(content = content) })
 
     @Test
     public fun dotsRestDimOutsideTheirSlotAndCrestInSequence() {
@@ -48,9 +48,7 @@ public class TypingIndicatorTest {
 
     @Test
     public fun nonBlankDescriptionIsAnnouncedAsPoliteLiveRegion() {
-        composeRule.setContent {
-            AppTheme { TypingIndicator(contentDescription = "Responding") }
-        }
+        composeRule.setContent { TypingIndicator(contentDescription = "Responding") }
 
         composeRule
             .onNodeWithContentDescription("Responding")
@@ -59,9 +57,7 @@ public class TypingIndicatorTest {
 
     @Test
     public fun blankDescriptionHidesIndicatorFromAccessibility() {
-        composeRule.setContent {
-            AppTheme { TypingIndicator(modifier = Modifier.testTag(TAG)) }
-        }
+        composeRule.setContent { TypingIndicator(modifier = Modifier.testTag(TAG)) }
 
         val node = composeRule.onNodeWithTag(TAG).fetchSemanticsNode()
         assertTrue(node.config.isClearingSemantics)

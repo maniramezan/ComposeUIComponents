@@ -6,12 +6,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.maniramezan.compose.icons.defaultAppIcons
 import io.github.maniramezan.compose.theme.AppTheme
+import io.github.maniramezan.testcommons.compose.ThemedComposeRule
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -21,22 +21,20 @@ import org.robolectric.annotation.Config
 @Config(sdk = [35])
 public class DisclosureCardTest {
     @get:Rule
-    public val composeRule = createComposeRule()
+    public val composeRule = ThemedComposeRule(theme = { content -> AppTheme(icons = defaultAppIcons(), content = content) })
 
     @Test
     public fun revealsDetailAfterTap() {
         composeRule.setContent {
-            AppTheme(icons = defaultAppIcons()) {
-                var expanded by remember { mutableStateOf(false) }
-                DisclosureCard(
-                    expanded = expanded,
-                    onExpandedChange = { expanded = it },
-                    expandedStateDescription = "Expanded",
-                    collapsedStateDescription = "Collapsed",
-                    summary = { Text("Summary") },
-                    detail = { Text("Detail") },
-                )
-            }
+            var expanded by remember { mutableStateOf(false) }
+            DisclosureCard(
+                expanded = expanded,
+                onExpandedChange = { expanded = it },
+                expandedStateDescription = "Expanded",
+                collapsedStateDescription = "Collapsed",
+                summary = { Text("Summary") },
+                detail = { Text("Detail") },
+            )
         }
 
         composeRule.onNodeWithText("Summary").performClick()

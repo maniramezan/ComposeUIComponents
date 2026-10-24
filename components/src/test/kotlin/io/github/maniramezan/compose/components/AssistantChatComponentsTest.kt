@@ -6,11 +6,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
-import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.maniramezan.compose.theme.AppTheme
+import io.github.maniramezan.testcommons.compose.ThemedComposeRule
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -20,19 +20,17 @@ import org.robolectric.annotation.Config
 @Config(sdk = [35])
 public class AssistantChatComponentsTest {
     @get:Rule
-    public val composeRule = createComposeRule()
+    public val composeRule = ThemedComposeRule(theme = { content -> AppTheme(content = content) })
 
     @Test
     public fun contextCardSkipsBlankOptionalContent() {
         composeRule.setContent {
-            AppTheme {
-                AssistantContextCard(
-                    title = "Subject",
-                    highlight = "",
-                    body = AssistantContextBody(""),
-                    footnote = null,
-                )
-            }
+            AssistantContextCard(
+                title = "Subject",
+                highlight = "",
+                body = AssistantContextBody(""),
+                footnote = null,
+            )
         }
 
         composeRule.onNodeWithText("Subject").assertIsDisplayed()
@@ -43,19 +41,17 @@ public class AssistantChatComponentsTest {
         var selectedAction: String? = null
 
         composeRule.setContent {
-            AppTheme {
-                AssistantQuickActionChips(
-                    actions = listOf("Explain", "Examples"),
-                    actionState = { action ->
-                        AssistantQuickActionState(
-                            isSelected = action == "Explain",
-                            isEnabled = action != "Examples",
-                        )
-                    },
-                    label = { it },
-                    onAction = { selectedAction = it },
-                )
-            }
+            AssistantQuickActionChips(
+                actions = listOf("Explain", "Examples"),
+                actionState = { action ->
+                    AssistantQuickActionState(
+                        isSelected = action == "Explain",
+                        isEnabled = action != "Examples",
+                    )
+                },
+                label = { it },
+                onAction = { selectedAction = it },
+            )
         }
 
         composeRule.onNodeWithText("Explain").assertIsEnabled().performClick()
@@ -68,15 +64,13 @@ public class AssistantChatComponentsTest {
     @Test
     public fun quickActionChipsRenderCallerSuppliedLeadingIcon() {
         composeRule.setContent {
-            AppTheme {
-                AssistantQuickActionChips(
-                    actions = listOf("Explain"),
-                    actionState = { AssistantQuickActionState(isSelected = false, isEnabled = true) },
-                    label = { it },
-                    onAction = {},
-                    icon = { Icons.Filled.Star },
-                )
-            }
+            AssistantQuickActionChips(
+                actions = listOf("Explain"),
+                actionState = { AssistantQuickActionState(isSelected = false, isEnabled = true) },
+                label = { it },
+                onAction = {},
+                icon = { Icons.Filled.Star },
+            )
         }
 
         composeRule.onNodeWithText("Explain").assertIsDisplayed()
@@ -87,14 +81,12 @@ public class AssistantChatComponentsTest {
         val actions = mutableStateOf(listOf("Explain"))
 
         composeRule.setContent {
-            AppTheme {
-                AssistantQuickActionChips(
-                    actions = actions.value,
-                    actionState = { AssistantQuickActionState(isSelected = false, isEnabled = true) },
-                    label = { it },
-                    onAction = { actions.value = emptyList() },
-                )
-            }
+            AssistantQuickActionChips(
+                actions = actions.value,
+                actionState = { AssistantQuickActionState(isSelected = false, isEnabled = true) },
+                label = { it },
+                onAction = { actions.value = emptyList() },
+            )
         }
 
         composeRule.onNodeWithText("Explain").performClick()
@@ -106,19 +98,17 @@ public class AssistantChatComponentsTest {
     @Test
     public fun limitPromptRendersCallerCopyAndActions() {
         composeRule.setContent {
-            AppTheme {
-                AssistantLimitPromptCard(
-                    copy =
-                        AssistantLimitPromptCopy(
-                            message = "Limit reached",
-                            supportingText = "Try again tomorrow or upgrade.",
-                            primaryActionLabel = "Upgrade",
-                            secondaryActionLabel = "Not now",
-                        ),
-                    onPrimaryAction = {},
-                    onSecondaryAction = {},
-                )
-            }
+            AssistantLimitPromptCard(
+                copy =
+                    AssistantLimitPromptCopy(
+                        message = "Limit reached",
+                        supportingText = "Try again tomorrow or upgrade.",
+                        primaryActionLabel = "Upgrade",
+                        secondaryActionLabel = "Not now",
+                    ),
+                onPrimaryAction = {},
+                onSecondaryAction = {},
+            )
         }
 
         composeRule.onNodeWithText("Limit reached").assertIsDisplayed()
@@ -130,9 +120,7 @@ public class AssistantChatComponentsTest {
     @Test
     public fun blankDisclaimerDoesNotRenderTextNode() {
         composeRule.setContent {
-            AppTheme {
-                AssistantDisclaimerFooter(text = "")
-            }
+            AssistantDisclaimerFooter(text = "")
         }
 
         composeRule.onNodeWithText("").assertDoesNotExist()

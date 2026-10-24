@@ -15,7 +15,7 @@ Reusable Kotlin-first Jetpack Compose design system for Android apps.
 - `:icons` — curated default icon implementations.
 - `:compose-utils` — preview, modifier, and semantics helpers.
 - `:components` — public UI components.
-- `:testing` — Compose test utilities.
+- `:testing` — design-system-specific Compose test utilities; re-exposes KotlinTestCommons Compose helpers.
 - `:catalog` — exhaustive component browser app.
 - `:sample` — consumer-like sample app.
 - `:baselineprofile` — sample startup macrobenchmark and baseline profile generator.

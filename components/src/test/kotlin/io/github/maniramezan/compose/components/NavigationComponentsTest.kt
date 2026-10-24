@@ -11,13 +11,13 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
-import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.maniramezan.compose.theme.AppTheme
+import io.github.maniramezan.testcommons.compose.ThemedComposeRule
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -29,23 +29,21 @@ import org.robolectric.annotation.Config
 @Config(sdk = [35])
 public class NavigationComponentsTest {
     @get:Rule
-    public val composeRule = createComposeRule()
+    public val composeRule = ThemedComposeRule(theme = { content -> AppTheme(content = content) })
 
     @Test
     public fun topAppBarVariantsRenderTitleAndSlots() {
         var navigationClicks = 0
         var actionClicks = 0
         composeRule.setContent {
-            AppTheme {
-                Column {
-                    TopAppBar(
-                        title = "Small title",
-                        navigationIcon = { TextButton(text = "Back", onClick = { navigationClicks++ }) },
-                        actions = { TextButton(text = "Action", onClick = { actionClicks++ }) },
-                    )
-                    MediumTopAppBar(title = "Medium title")
-                    LargeTopAppBar(title = "Large title")
-                }
+            Column {
+                TopAppBar(
+                    title = "Small title",
+                    navigationIcon = { TextButton(text = "Back", onClick = { navigationClicks++ }) },
+                    actions = { TextButton(text = "Action", onClick = { actionClicks++ }) },
+                )
+                MediumTopAppBar(title = "Medium title")
+                LargeTopAppBar(title = "Large title")
             }
         }
 
@@ -61,14 +59,12 @@ public class NavigationComponentsTest {
     @Test
     public fun navRailSelectsByValueAndReportsTaps() {
         composeRule.setContent {
-            AppTheme {
-                var selection by remember { mutableStateOf(Destination.First) }
-                NavRail(
-                    items = railItems(),
-                    selection = selection,
-                    onSelectionChange = { selection = it },
-                )
-            }
+            var selection by remember { mutableStateOf(Destination.First) }
+            NavRail(
+                items = railItems(),
+                selection = selection,
+                onSelectionChange = { selection = it },
+            )
         }
 
         composeRule.onNodeWithText("First").assertIsSelected()
@@ -84,13 +80,11 @@ public class NavigationComponentsTest {
     public fun navRailDisabledItemIgnoresTaps() {
         val selections = mutableListOf<Destination>()
         composeRule.setContent {
-            AppTheme {
-                NavRail(
-                    items = railItems(disabled = Destination.Second),
-                    selection = Destination.First,
-                    onSelectionChange = { selections += it },
-                )
-            }
+            NavRail(
+                items = railItems(disabled = Destination.Second),
+                selection = Destination.First,
+                onSelectionChange = { selections += it },
+            )
         }
 
         composeRule.onNodeWithText("Second").assertIsNotEnabled().performClick()
@@ -100,20 +94,18 @@ public class NavigationComponentsTest {
     @Test
     public fun navRailIconOnlyItemUsesContentDescriptionAndMeetsTouchTarget() {
         composeRule.setContent {
-            AppTheme {
-                NavRail(
-                    items =
-                        listOf(
-                            TabBarItemData(
-                                value = Destination.First,
-                                icon = { Text("•") },
-                                contentDescription = "First destination",
-                            ),
+            NavRail(
+                items =
+                    listOf(
+                        TabBarItemData(
+                            value = Destination.First,
+                            icon = { Text("•") },
+                            contentDescription = "First destination",
                         ),
-                    selection = Destination.First,
-                    onSelectionChange = {},
-                )
-            }
+                    ),
+                selection = Destination.First,
+                onSelectionChange = {},
+            )
         }
 
         composeRule
