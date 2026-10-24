@@ -358,6 +358,13 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             content = { ChatComposerPage() },
         ),
         SampleComponentDemo(
+            id = "thumbs-feedback-row",
+            title = "ThumbsFeedbackRow",
+            category = "Feedback",
+            description = "Thumbs up and thumbs down rating buttons with hoisted selection.",
+            content = { ThumbsFeedbackRowPage() },
+        ),
+        SampleComponentDemo(
             id = "typing-indicator",
             title = "TypingIndicator",
             category = "Feedback",
