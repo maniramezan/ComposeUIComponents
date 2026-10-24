@@ -17,6 +17,7 @@ Container components provide themed layout surfaces and transient UI wrappers.
 - `OverlayCard`
 - `AdaptiveContentContainer`
 - `DisclosureCard`
+- `SelectableCard`
 
 ![Container components](https://maniramezan.github.io/ComposeUIComponents/images/screenshots/container-components.png)
 
@@ -143,6 +144,76 @@ FlipCard(
 | `frontStateDescription` | `String?` | TalkBack state description while the front shows. |
 | `backStateDescription` | `String?` | TalkBack state description while the back shows. |
 | `onClickLabel` | `String?` | Accessibility label for the flip action. |
+
+## SelectableCard
+
+`SelectableCard` is a card surface for choosing one option from a set, such as a plan, a tier,
+or a delivery method. The whole card is one selectable target with merged semantics, and the
+selection is shown with an outline in `AppTheme.colors.primary`. It is state-hoisted: it never
+changes `selected` on its own.
+
+```kotlin
+var current by remember { mutableStateOf(plans.first()) }
+
+Column(
+    modifier = Modifier.selectableGroup(),
+    verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm),
+) {
+    plans.forEach { plan ->
+        SelectableCard(
+            selected = plan == current,
+            onClick = { current = plan },
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text(plan.name, style = AppTheme.typography.titleSmall)
+            Text(plan.summary)
+        }
+    }
+}
+```
+
+### Selection outline
+
+The outline is drawn inside the card bounds, so changing `selected` recolors and thickens it
+(`strokeRegular` in `primary` when selected, `strokeThin` in `outlineVariant` otherwise)
+without changing the card size or moving its content. A selected card that is also disabled
+keeps its outline.
+
+### Single-choice groups
+
+The card cannot see its siblings, so it does not apply group semantics. Apply
+`Modifier.selectableGroup()` to the container that holds the cards so TalkBack announces them
+as one group of mutually exclusive options. There is no dedicated group component: the
+caller's own `Column`, `Row`, or lazy list is the group, and your state decides which card is
+selected.
+
+### Accessibility
+
+- Each card exposes `Role.RadioButton` and the platform `selected` state, so TalkBack
+  announces "selected" or "not selected" without extra strings. Pass `role = Role.Checkbox`
+  when several cards can be selected at once.
+- Pass `stateDescription` only when the platform wording is not enough, for example
+  "Current plan". It is caller-supplied and localized; blank or `null` adds nothing and there
+  is no English default ([ADR 0004](../adr/0004-localization-and-a11y-string-contract.md)).
+- The card keeps at least a 48dp touch target. The text inside is merged into a single
+  focus stop, so put the option name first.
+- `enabled = false` dims the card, ignores taps, and exposes it as disabled.
+
+### Parameters
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `selected` | `Boolean` | Whether this option is the current choice. |
+| `onClick` | `() -> Unit` | Called on tap. Update your selected state here. |
+| `modifier` | `Modifier` | Applied to the card. The card wraps its content; pass `fillMaxWidth()` or `weight(1f)` to size it. |
+| `enabled` | `Boolean` | Whether the card can be selected. Defaults to `true`. |
+| `stateDescription` | `String?` | Optional localized state text announced instead of the platform wording. |
+| `role` | `Role` | Accessibility role. Defaults to `Role.RadioButton`. |
+| `shape` | `Shape` | Clip and outline shape. Defaults to `AppTheme.shapes.large`. |
+| `containerColor` | `Color` | Card fill. Defaults to `AppTheme.colors.surfaceVariant`. |
+| `contentColor` | `Color` | Default text and icon color. Defaults to `AppTheme.colors.onSurfaceVariant`. |
+| `contentPadding` | `PaddingValues` | Padding around the content. Defaults to `AppTheme.spacing.lg`. |
+| `content` | `@Composable ColumnScope.() -> Unit` | Card content, laid out in a column. |
 
 ## OverlayCard
 
