@@ -2,10 +2,10 @@ package io.github.maniramezan.compose.components
 
 import androidx.compose.material3.Text
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.maniramezan.compose.theme.AppTheme
+import io.github.maniramezan.testcommons.compose.ThemedComposeRule
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -15,16 +15,14 @@ import org.robolectric.annotation.Config
 @Config(sdk = [35])
 public class FlowLayoutTest {
     @get:Rule
-    public val composeRule = createComposeRule()
+    public val composeRule = ThemedComposeRule(theme = { content -> AppTheme(content = content) })
 
     @Test
     public fun displaysDynamicItems() {
         composeRule.setContent {
-            AppTheme {
-                FlowLayout {
-                    Text("First")
-                    Text("Second")
-                }
+            FlowLayout {
+                Text("First")
+                Text("Second")
             }
         }
 

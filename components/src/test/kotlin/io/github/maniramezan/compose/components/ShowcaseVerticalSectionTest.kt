@@ -1,11 +1,11 @@
 package io.github.maniramezan.compose.components
 
 import androidx.compose.material3.Text
-import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import io.github.maniramezan.compose.theme.AppTheme
+import io.github.maniramezan.testcommons.compose.ThemedComposeRule
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -15,16 +15,14 @@ import org.robolectric.annotation.Config
 @Config(sdk = [35])
 public class ShowcaseVerticalSectionTest {
     @get:Rule
-    public val composeRule = createComposeRule()
+    public val composeRule = ThemedComposeRule(theme = { content -> AppTheme(content = content) })
 
     @Test
     public fun verticalSectionRendersHeaderAndItems() {
         composeRule.setContent {
-            AppTheme {
-                ShowcaseFeed {
-                    verticalSection(title = "New Videos", items = listOf("First", "Second")) {
-                        Text(it)
-                    }
+            ShowcaseFeed {
+                verticalSection(title = "New Videos", items = listOf("First", "Second")) {
+                    Text(it)
                 }
             }
         }
@@ -38,15 +36,13 @@ public class ShowcaseVerticalSectionTest {
     public fun verticalSectionInvokesLoadMoreWhenHasMoreIsTrue() {
         var loadMoreCount = 0
         composeRule.setContent {
-            AppTheme {
-                ShowcaseFeed {
-                    verticalSection(
-                        title = "New Videos",
-                        items = listOf("First"),
-                        hasMore = true,
-                        onLoadMore = { loadMoreCount++ },
-                    ) { Text(it) }
-                }
+            ShowcaseFeed {
+                verticalSection(
+                    title = "New Videos",
+                    items = listOf("First"),
+                    hasMore = true,
+                    onLoadMore = { loadMoreCount++ },
+                ) { Text(it) }
             }
         }
 
@@ -59,15 +55,13 @@ public class ShowcaseVerticalSectionTest {
     public fun verticalSectionDoesNotInvokeLoadMoreWhenHasMoreIsFalse() {
         var loadMoreCount = 0
         composeRule.setContent {
-            AppTheme {
-                ShowcaseFeed {
-                    verticalSection(
-                        title = "New Videos",
-                        items = listOf("First"),
-                        hasMore = false,
-                        onLoadMore = { loadMoreCount++ },
-                    ) { Text(it) }
-                }
+            ShowcaseFeed {
+                verticalSection(
+                    title = "New Videos",
+                    items = listOf("First"),
+                    hasMore = false,
+                    onLoadMore = { loadMoreCount++ },
+                ) { Text(it) }
             }
         }
 
@@ -79,11 +73,9 @@ public class ShowcaseVerticalSectionTest {
     @Test
     public fun verticalSectionCoexistsWithHorizontalSections() {
         composeRule.setContent {
-            AppTheme {
-                ShowcaseFeed {
-                    section(title = "Trending", items = listOf("Hit")) { Text(it) }
-                    verticalSection(title = "New Videos", items = listOf("Fresh")) { Text(it) }
-                }
+            ShowcaseFeed {
+                section(title = "Trending", items = listOf("Hit")) { Text(it) }
+                verticalSection(title = "New Videos", items = listOf("Fresh")) { Text(it) }
             }
         }
 

@@ -14,13 +14,13 @@ import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasTestTag
-import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.maniramezan.compose.theme.AppTheme
+import io.github.maniramezan.testcommons.compose.ThemedComposeRule
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -30,7 +30,7 @@ import org.robolectric.annotation.Config
 @Config(sdk = [35])
 public class SegmentedContentInteractionTest {
     @get:Rule
-    public val composeRule = createComposeRule()
+    public val composeRule = ThemedComposeRule(theme = { content -> AppTheme(content = content) })
 
     private val items =
         listOf(
@@ -43,13 +43,11 @@ public class SegmentedContentInteractionTest {
     public fun tappingSegmentInvokesCallbackWithItsIndex() {
         var lastIndex = -1
         composeRule.setContent {
-            AppTheme {
-                SegmentedContent(
-                    items = items,
-                    selectedIndex = 0,
-                    onSelectionChanged = { lastIndex = it },
-                ) { _, item -> Text("${item.title} body") }
-            }
+            SegmentedContent(
+                items = items,
+                selectedIndex = 0,
+                onSelectionChanged = { lastIndex = it },
+            ) { _, item -> Text("${item.title} body") }
         }
 
         composeRule.onNodeWithText("Settings").performClick()
@@ -62,14 +60,12 @@ public class SegmentedContentInteractionTest {
     @Test
     public fun selectingSegmentSwapsContent() {
         composeRule.setContent {
-            AppTheme {
-                var selected by remember { mutableIntStateOf(0) }
-                SegmentedContent(
-                    items = items,
-                    selectedIndex = selected,
-                    onSelectionChanged = { selected = it },
-                ) { _, item -> Text("${item.title} body") }
-            }
+            var selected by remember { mutableIntStateOf(0) }
+            SegmentedContent(
+                items = items,
+                selectedIndex = selected,
+                onSelectionChanged = { selected = it },
+            ) { _, item -> Text("${item.title} body") }
         }
 
         composeRule.onNodeWithText("Overview body").assertExists()
@@ -83,13 +79,11 @@ public class SegmentedContentInteractionTest {
     @Test
     public fun selectedSegmentExposesSelectedState() {
         composeRule.setContent {
-            AppTheme {
-                SegmentedContent(
-                    items = items,
-                    selectedIndex = 1,
-                    onSelectionChanged = {},
-                ) { _, item -> Text("${item.title} body") }
-            }
+            SegmentedContent(
+                items = items,
+                selectedIndex = 1,
+                onSelectionChanged = {},
+            ) { _, item -> Text("${item.title} body") }
         }
 
         composeRule.onNodeWithText("Activity").assertIsSelected()
@@ -98,13 +92,11 @@ public class SegmentedContentInteractionTest {
     @Test
     public fun segmentsMeetMinimumTouchTargetHeight() {
         composeRule.setContent {
-            AppTheme {
-                SegmentedContent(
-                    items = items,
-                    selectedIndex = 0,
-                    onSelectionChanged = {},
-                ) { _, item -> Text("${item.title} body") }
-            }
+            SegmentedContent(
+                items = items,
+                selectedIndex = 0,
+                onSelectionChanged = {},
+            ) { _, item -> Text("${item.title} body") }
         }
 
         composeRule.onNodeWithText("Overview").assertHeightIsAtLeast(48.dp)
@@ -115,14 +107,12 @@ public class SegmentedContentInteractionTest {
     public fun compactDensityRendersAVisuallyShorterSlotThanRegular() {
         var density by mutableStateOf(SegmentDensity.Regular)
         composeRule.setContent {
-            AppTheme {
-                SegmentedContent(
-                    items = items,
-                    selectedIndex = 0,
-                    onSelectionChanged = {},
-                    density = density,
-                ) { _, item -> Text("${item.title} body") }
-            }
+            SegmentedContent(
+                items = items,
+                selectedIndex = 0,
+                onSelectionChanged = {},
+                density = density,
+            ) { _, item -> Text("${item.title} body") }
         }
         val regularVisualHeight =
             composeRule
@@ -153,14 +143,12 @@ public class SegmentedContentInteractionTest {
     public fun highlightedAreaIsAlwaysExactlyTheClickableArea() {
         var density by mutableStateOf(SegmentDensity.Regular)
         composeRule.setContent {
-            AppTheme {
-                SegmentedContent(
-                    items = items,
-                    selectedIndex = 0,
-                    onSelectionChanged = {},
-                    density = density,
-                ) { _, item -> Text("${item.title} body") }
-            }
+            SegmentedContent(
+                items = items,
+                selectedIndex = 0,
+                onSelectionChanged = {},
+                density = density,
+            ) { _, item -> Text("${item.title} body") }
         }
 
         for (nextDensity in SegmentDensity.entries) {
@@ -195,15 +183,13 @@ public class SegmentedContentInteractionTest {
                 SegmentedItem(title = "Billing"),
             )
         composeRule.setContent {
-            AppTheme {
-                SegmentedContent(
-                    items = manyItems,
-                    selectedIndex = manyItems.lastIndex,
-                    onSelectionChanged = {},
-                    fitMode = SegmentFitMode.Intrinsic,
-                    modifier = Modifier.width(200.dp),
-                ) { _, item -> Text("${item.title} body") }
-            }
+            SegmentedContent(
+                items = manyItems,
+                selectedIndex = manyItems.lastIndex,
+                onSelectionChanged = {},
+                fitMode = SegmentFitMode.Intrinsic,
+                modifier = Modifier.width(200.dp),
+            ) { _, item -> Text("${item.title} body") }
         }
 
         // The initially-selected last segment must be scrolled into the viewport
@@ -224,15 +210,13 @@ public class SegmentedContentInteractionTest {
                 SegmentedItem(title = "Billing"),
             )
         composeRule.setContent {
-            AppTheme {
-                SegmentedContent(
-                    items = manyItems,
-                    selectedIndex = 3,
-                    onSelectionChanged = {},
-                    fitMode = SegmentFitMode.Intrinsic,
-                    modifier = Modifier.width(220.dp),
-                ) { _, item -> Text("${item.title} body") }
-            }
+            SegmentedContent(
+                items = manyItems,
+                selectedIndex = 3,
+                onSelectionChanged = {},
+                fitMode = SegmentFitMode.Intrinsic,
+                modifier = Modifier.width(220.dp),
+            ) { _, item -> Text("${item.title} body") }
         }
 
         // We scrolled far enough that the first segment is gone…

@@ -25,10 +25,10 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.maniramezan.compose.icons.defaultAppIcons
-import io.github.maniramezan.compose.testing.MinimumTouchTargetSize
-import io.github.maniramezan.compose.testing.assertMinimumTouchTarget
-import io.github.maniramezan.compose.testing.onNodeWithRequiredContentDescription
 import io.github.maniramezan.compose.theme.AppTheme
+import io.github.maniramezan.testcommons.compose.MinimumTouchTargetSize
+import io.github.maniramezan.testcommons.compose.assertMinimumTouchTarget
+import io.github.maniramezan.testcommons.compose.onNodeWithRequiredContentDescription
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

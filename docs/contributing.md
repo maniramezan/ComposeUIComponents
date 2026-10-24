@@ -22,7 +22,7 @@ mkdocs build --strict
 - Keep APIs state-hoisted and slot-based.
 - Add or update light/dark previews, 200% font-scale previews, tests, docs, and screenshot coverage for visible changes.
 - Check accessibility: 48dp touch targets, meaningful icon descriptions, readable state text, and 200% font scale behavior.
-- Prefer `:testing` helpers for repeated Compose accessibility assertions.
+- Prefer KotlinTestCommons helpers (`assertMinimumTouchTarget`, `ThemedComposeRule`, `advanceFrames`, wait helpers) for repeated Compose test code; `:testing` keeps only design-system-specific helpers (see [ADR 0008](adr/0008-adopt-kotlin-test-commons.md)).
 
 ### Reuse shared helpers and utilities before reinventing them
 

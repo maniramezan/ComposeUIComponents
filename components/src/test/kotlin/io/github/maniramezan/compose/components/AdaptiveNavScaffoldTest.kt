@@ -7,12 +7,12 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.maniramezan.compose.theme.AppTheme
+import io.github.maniramezan.testcommons.compose.ThemedComposeRule
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -22,25 +22,23 @@ import org.robolectric.annotation.Config
 @Config(sdk = [35])
 public class AdaptiveNavScaffoldTest {
     @get:Rule
-    public val composeRule = createComposeRule()
+    public val composeRule = ThemedComposeRule(theme = { content -> AppTheme(content = content) })
 
     @Test
     public fun contentRemembersStateAcrossWidthBreakpoint() {
         var expanded by mutableStateOf(false)
         composeRule.setContent {
-            AppTheme {
-                val spacing = AppTheme.spacing
-                AppTheme(spacing = spacing.copy(expandedNavigationBreakpoint = if (expanded) 0.dp else 10_000.dp)) {
-                    AdaptiveNavScaffold(
-                        items = listOf(TabBarItemData(value = 0, icon = { Text("Icon") }, label = { Text("Home") })),
-                        selection = 0,
-                        onSelectionChange = {},
-                    ) {
-                        var count by remember { mutableIntStateOf(0) }
-                        Column {
-                            Text("Count $count")
-                            TextButton(text = "Increment", onClick = { count++ })
-                        }
+            val spacing = AppTheme.spacing
+            AppTheme(spacing = spacing.copy(expandedNavigationBreakpoint = if (expanded) 0.dp else 10_000.dp)) {
+                AdaptiveNavScaffold(
+                    items = listOf(TabBarItemData(value = 0, icon = { Text("Icon") }, label = { Text("Home") })),
+                    selection = 0,
+                    onSelectionChange = {},
+                ) {
+                    var count by remember { mutableIntStateOf(0) }
+                    Column {
+                        Text("Count $count")
+                        TextButton(text = "Increment", onClick = { count++ })
                     }
                 }
             }

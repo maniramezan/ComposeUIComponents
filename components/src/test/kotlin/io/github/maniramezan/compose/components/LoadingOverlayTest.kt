@@ -13,7 +13,6 @@ import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.click
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
-import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
@@ -22,6 +21,7 @@ import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.unit.DpRect
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.maniramezan.compose.theme.AppTheme
+import io.github.maniramezan.testcommons.compose.ThemedComposeRule
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -32,7 +32,7 @@ import org.robolectric.annotation.Config
 @Config(sdk = [35])
 public class LoadingOverlayTest {
     @get:Rule
-    public val composeRule = createComposeRule()
+    public val composeRule = ThemedComposeRule(theme = { content -> AppTheme(content = content) })
 
     private var loading by mutableStateOf(false)
     private var showIndicator by mutableStateOf(true)
@@ -40,16 +40,14 @@ public class LoadingOverlayTest {
 
     private fun setOverlayContent() {
         composeRule.setContent {
-            AppTheme {
-                LoadingOverlay(
-                    loading = loading,
-                    contentDescription = "Saving",
-                    message = "Saving changes",
-                    showIndicator = showIndicator,
-                ) {
-                    Column {
-                        TextButton(text = "Submit", onClick = { clicks++ })
-                    }
+            LoadingOverlay(
+                loading = loading,
+                contentDescription = "Saving",
+                message = "Saving changes",
+                showIndicator = showIndicator,
+            ) {
+                Column {
+                    TextButton(text = "Submit", onClick = { clicks++ })
                 }
             }
         }

@@ -16,12 +16,12 @@ import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertHeightIsEqualTo
 import androidx.compose.ui.test.assertWidthIsEqualTo
-import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.maniramezan.compose.theme.AppTheme
+import io.github.maniramezan.testcommons.compose.ThemedComposeRule
 import kotlinx.coroutines.launch
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -34,7 +34,7 @@ import org.robolectric.annotation.Config
 @Config(sdk = [35])
 public class FeedbackComponentsTest {
     @get:Rule
-    public val composeRule = createComposeRule()
+    public val composeRule = ThemedComposeRule(theme = { content -> AppTheme(content = content) })
 
     private val indeterminateProgress =
         SemanticsMatcher.expectValue(SemanticsProperties.ProgressBarRangeInfo, ProgressBarRangeInfo.Indeterminate)
@@ -42,11 +42,9 @@ public class FeedbackComponentsTest {
     @Test
     public fun skeletonPlaceholdersAreHiddenFromAccessibility() {
         composeRule.setContent {
-            AppTheme {
-                Box {
-                    Skeleton(modifier = Modifier.testTag(SKELETON))
-                    SkeletonBlock(height = 24.dp, modifier = Modifier.testTag(BLOCK))
-                }
+            Box {
+                Skeleton(modifier = Modifier.testTag(SKELETON))
+                SkeletonBlock(height = 24.dp, modifier = Modifier.testTag(BLOCK))
             }
         }
 
@@ -61,9 +59,7 @@ public class FeedbackComponentsTest {
     @Test
     public fun skeletonBlockHonorsExplicitSize() {
         composeRule.setContent {
-            AppTheme {
-                SkeletonBlock(height = 24.dp, width = 120.dp, modifier = Modifier.testTag(BLOCK))
-            }
+            SkeletonBlock(height = 24.dp, width = 120.dp, modifier = Modifier.testTag(BLOCK))
         }
 
         composeRule
@@ -77,9 +73,7 @@ public class FeedbackComponentsTest {
         var loadRequests = 0
         var loading by mutableStateOf(false)
         composeRule.setContent {
-            AppTheme {
-                LoadMoreFooter(isLoadingMore = loading, onLoadMore = { loadRequests++ })
-            }
+            LoadMoreFooter(isLoadingMore = loading, onLoadMore = { loadRequests++ })
         }
 
         composeRule.runOnIdle { assertEquals(1, loadRequests) }
@@ -99,15 +93,13 @@ public class FeedbackComponentsTest {
         lateinit var scrollToTop: () -> Unit
         lateinit var scrollToBottom: () -> Unit
         composeRule.setContent {
-            AppTheme {
-                val state = rememberLazyListState()
-                val scope = rememberCoroutineScope()
-                scrollToTop = { scope.launch { state.scrollToItem(0) } }
-                scrollToBottom = { scope.launch { state.scrollToItem(ROW_COUNT) } }
-                LazyColumn(state = state, modifier = Modifier.testTag(LIST)) {
-                    items(ROW_COUNT) { index -> Text("Row $index", modifier = Modifier.testTag(ROW)) }
-                    item { LoadMoreFooter(isLoadingMore = false, onLoadMore = { loadRequests++ }) }
-                }
+            val state = rememberLazyListState()
+            val scope = rememberCoroutineScope()
+            scrollToTop = { scope.launch { state.scrollToItem(0) } }
+            scrollToBottom = { scope.launch { state.scrollToItem(ROW_COUNT) } }
+            LazyColumn(state = state, modifier = Modifier.testTag(LIST)) {
+                items(ROW_COUNT) { index -> Text("Row $index", modifier = Modifier.testTag(ROW)) }
+                item { LoadMoreFooter(isLoadingMore = false, onLoadMore = { loadRequests++ }) }
             }
         }
 

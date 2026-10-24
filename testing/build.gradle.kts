@@ -13,4 +13,5 @@ dependencies {
     api(project(":compose-utils"))
     implementation(platform(libs.androidx.compose.bom))
     api(libs.androidx.compose.ui.test.junit4)
+    api(libs.testcommons.compose)
 }

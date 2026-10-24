@@ -1,13 +1,13 @@
 package io.github.maniramezan.compose.components
 
 import androidx.compose.material3.Text
-import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import io.github.maniramezan.compose.theme.AppTheme
+import io.github.maniramezan.testcommons.compose.ThemedComposeRule
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -17,7 +17,7 @@ import org.robolectric.annotation.Config
 @Config(sdk = [35])
 public class ShowcaseTest {
     @get:Rule
-    public val composeRule = createComposeRule()
+    public val composeRule = ThemedComposeRule(theme = { content -> AppTheme(content = content) })
 
     @Test
     public fun peekDefaultsToAppStoreFraction() {
@@ -34,11 +34,9 @@ public class ShowcaseTest {
     @Test
     public fun feedRendersEverySectionTitleAndItsItems() {
         composeRule.setContent {
-            AppTheme {
-                ShowcaseFeed {
-                    section(title = "Top Apps", items = listOf("Focus", "Loop")) { Text(it) }
-                    section(title = "Games", items = listOf("Nova")) { Text(it) }
-                }
+            ShowcaseFeed {
+                section(title = "Top Apps", items = listOf("Focus", "Loop")) { Text(it) }
+                section(title = "Games", items = listOf("Nova")) { Text(it) }
             }
         }
 
@@ -51,15 +49,13 @@ public class ShowcaseTest {
     public fun sectionActionInvokesCallback() {
         var clicked = false
         composeRule.setContent {
-            AppTheme {
-                ShowcaseFeed {
-                    section(
-                        title = "Top Apps",
-                        items = listOf("Focus"),
-                        actionLabel = "See all",
-                        onAction = { clicked = true },
-                    ) { Text(it) }
-                }
+            ShowcaseFeed {
+                section(
+                    title = "Top Apps",
+                    items = listOf("Focus"),
+                    actionLabel = "See all",
+                    onAction = { clicked = true },
+                ) { Text(it) }
             }
         }
 
@@ -73,10 +69,8 @@ public class ShowcaseTest {
     @Test
     public fun customSectionRendersArbitraryContent() {
         composeRule.setContent {
-            AppTheme {
-                ShowcaseFeed {
-                    customSection { Text("Hero Banner") }
-                }
+            ShowcaseFeed {
+                customSection { Text("Hero Banner") }
             }
         }
 

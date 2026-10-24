@@ -22,6 +22,7 @@ mavenPublish = "0.37.0"
 roborazzi = "1.76.0"
 robolectric = "4.17"
 showkase = "1.0.5"
+testcommons = "0.1.0"
 tink = "1.23.0"
 truth = "1.4.5"
 uiautomator = "2.4.0"
@@ -61,6 +62,10 @@ showkase = { module = "com.airbnb.android:showkase", version.ref = "showkase" }
 showkase-annotation = { module = "com.airbnb.android:showkase-annotation", version.ref = "showkase" }
 showkase-processor = { module = "com.airbnb.android:showkase-processor", version.ref = "showkase" }
 tink-android = { module = "com.google.crypto.tink:tink-android", version.ref = "tink" }
+testcommons-compose = { module = "io.github.maniramezan.testcommons:compose", version.ref = "testcommons" }
+testcommons-core = { module = "io.github.maniramezan.testcommons:core", version.ref = "testcommons" }
+testcommons-device = { module = "io.github.maniramezan.testcommons:device", version.ref = "testcommons" }
+testcommons-junit = { module = "io.github.maniramezan.testcommons:junit", version.ref = "testcommons" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
 
 [plugins]

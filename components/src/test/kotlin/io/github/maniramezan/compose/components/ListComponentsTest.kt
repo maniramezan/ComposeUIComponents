@@ -8,11 +8,11 @@ import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.hasTextExactly
-import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.maniramezan.compose.theme.AppTheme
+import io.github.maniramezan.testcommons.compose.ThemedComposeRule
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -22,18 +22,16 @@ import org.robolectric.annotation.Config
 @Config(sdk = [35])
 public class ListComponentsTest {
     @get:Rule
-    public val composeRule = createComposeRule()
+    public val composeRule = ThemedComposeRule(theme = { content -> AppTheme(content = content) })
 
     @Test
     public fun emptyStateRendersCallerSuppliedTextAndAction() {
         composeRule.setContent {
-            AppTheme {
-                EmptyState(
-                    title = "Nothing here",
-                    message = "Items appear here",
-                    action = { TextButton(text = "Add", onClick = {}) },
-                )
-            }
+            EmptyState(
+                title = "Nothing here",
+                message = "Items appear here",
+                action = { TextButton(text = "Add", onClick = {}) },
+            )
         }
 
         composeRule.onNodeWithText("Nothing here").assertIsDisplayed()
@@ -44,13 +42,11 @@ public class ListComponentsTest {
     @Test
     public fun listItemMergesHeadlineAndSupportingTextIntoOneFocusStop() {
         composeRule.setContent {
-            AppTheme {
-                ListItem(
-                    headline = "Headline",
-                    supportingText = "Supporting",
-                    trailingContent = { Text("Trailing") },
-                )
-            }
+            ListItem(
+                headline = "Headline",
+                supportingText = "Supporting",
+                trailingContent = { Text("Trailing") },
+            )
         }
 
         composeRule
@@ -62,9 +58,7 @@ public class ListComponentsTest {
     @Test
     public fun listItemOmitsSupportingTextWhenNull() {
         composeRule.setContent {
-            AppTheme {
-                ListItem(headline = "Headline only")
-            }
+            ListItem(headline = "Headline only")
         }
 
         composeRule.onAllNodes(hasText("Headline only")).assertCountEquals(1)
@@ -74,10 +68,8 @@ public class ListComponentsTest {
     @Test
     public fun lazyListRendersItemsLazily() {
         composeRule.setContent {
-            AppTheme {
-                LazyList(modifier = Modifier.height(200.dp)) {
-                    items(100) { index -> Text("Row $index") }
-                }
+            LazyList(modifier = Modifier.height(200.dp)) {
+                items(100) { index -> Text("Row $index") }
             }
         }
 

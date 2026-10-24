@@ -6,12 +6,12 @@ import androidx.compose.ui.platform.AccessibilityManager
 import androidx.compose.ui.platform.LocalAccessibilityManager
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import io.github.maniramezan.compose.theme.AppTheme
+import io.github.maniramezan.testcommons.compose.ThemedComposeRule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.junit.Rule
@@ -23,7 +23,7 @@ import org.robolectric.annotation.Config
 @Config(sdk = [35])
 public class ToastHostInteractionTest {
     @get:Rule
-    public val composeRule = createComposeRule()
+    public val composeRule = ThemedComposeRule(theme = { content -> AppTheme(content = content) })
 
     @Test
     public fun autoDismissUsesTheAccessibilityRecommendedTimeout() {
@@ -78,11 +78,9 @@ public class ToastHostInteractionTest {
         lateinit var scope: CoroutineScope
         composeRule.mainClock.autoAdvance = false
         composeRule.setContent {
-            AppTheme {
-                hostState = rememberToastHostState()
-                scope = rememberCoroutineScope()
-                ToastHost(hostState = hostState, dismissContentDescription = "Dismiss")
-            }
+            hostState = rememberToastHostState()
+            scope = rememberCoroutineScope()
+            ToastHost(hostState = hostState, dismissContentDescription = "Dismiss")
         }
         return hostState to scope
     }

@@ -7,12 +7,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.maniramezan.compose.theme.AppTheme
+import io.github.maniramezan.testcommons.compose.ThemedComposeRule
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -22,18 +22,16 @@ import org.robolectric.annotation.Config
 @Config(sdk = [35])
 public class FlipCardTest {
     @get:Rule
-    public val composeRule = createComposeRule()
+    public val composeRule = ThemedComposeRule(theme = { content -> AppTheme(content = content) })
 
     @Test
     public fun uncontrolledCardSwapsFaceOnTap() {
         composeRule.setContent {
-            AppTheme {
-                FlipCard(
-                    modifier = Modifier.size(200.dp, 120.dp),
-                    front = { Text("Front") },
-                    back = { Text("Back") },
-                )
-            }
+            FlipCard(
+                modifier = Modifier.size(200.dp, 120.dp),
+                front = { Text("Front") },
+                back = { Text("Back") },
+            )
         }
 
         // Both faces are composed, but the away-facing one is culled from the
@@ -51,19 +49,17 @@ public class FlipCardTest {
     public fun controlledCardReportsRequestedStateOnTap() {
         var lastRequested: Boolean? = null
         composeRule.setContent {
-            AppTheme {
-                var flipped by remember { mutableStateOf(false) }
-                FlipCard(
-                    modifier = Modifier.size(200.dp, 120.dp),
-                    flipped = flipped,
-                    onFlippedChange = {
-                        lastRequested = it
-                        flipped = it
-                    },
-                    front = { Text("Front") },
-                    back = { Text("Back") },
-                )
-            }
+            var flipped by remember { mutableStateOf(false) }
+            FlipCard(
+                modifier = Modifier.size(200.dp, 120.dp),
+                flipped = flipped,
+                onFlippedChange = {
+                    lastRequested = it
+                    flipped = it
+                },
+                front = { Text("Front") },
+                back = { Text("Back") },
+            )
         }
 
         composeRule.onNodeWithText("Front").performClick()
@@ -77,14 +73,12 @@ public class FlipCardTest {
     @Test
     public fun disabledCardDoesNotFlipOnTap() {
         composeRule.setContent {
-            AppTheme {
-                FlipCard(
-                    modifier = Modifier.size(200.dp, 120.dp),
-                    enabled = false,
-                    front = { Text("Front") },
-                    back = { Text("Back") },
-                )
-            }
+            FlipCard(
+                modifier = Modifier.size(200.dp, 120.dp),
+                enabled = false,
+                front = { Text("Front") },
+                back = { Text("Back") },
+            )
         }
 
         composeRule.onNodeWithText("Front").performClick()
