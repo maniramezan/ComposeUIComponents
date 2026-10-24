@@ -31,8 +31,8 @@ Audit scope: patterns observed in consuming Android apps. Do not copy app code i
 | ✅ Done | Chat bubble | `components/ChatLog.kt` | `ChatLog` owns sender alignment, typing, and error bubbles, and takes a rendering-agnostic `messageContent` slot for Markdown. Apps map their turn models to `ChatMessage` at the UI boundary. |
 | ✅ Done | Typing dots | `components/TypingIndicator.kt` | Three-dot wave for a pending reply. Draw-phase only and static under Remove animations. `ChatLog`'s typing bubble uses it. |
 | ✅ Done | Blocking loading overlay | `components/LoadingOverlay.kt` | Scrim that swallows touches, swaps content semantics for a caller-supplied live-region announcement, and has an optional spinner card. Consumers choose whether to show the indicator. |
-| 🔄 In review | Labeled divider | `components/DividerComponents.kt` ([PR #117](https://github.com/maniramezan/ComposeUIComponents/pull/117)) | Rule + centered caption + rule. A caller-supplied label keeps section and alternative separators generic. |
-| ⏳ Pending | Thumbs feedback row | — | State-hoisted positive/negative rating with caller-supplied descriptions and 48dp minimum targets. Submission rules and retry decisions stay with consumers. |
+| ✅ Done | Labeled divider | `components/DividerComponents.kt` | Rule + centered caption + rule. A caller-supplied label keeps section and alternative separators generic. |
+| 🔄 In review | Thumbs feedback row | `components/ThumbsFeedbackRow.kt` ([PR #128](https://github.com/maniramezan/ComposeUIComponents/pull/128)) | State-hoisted positive/negative rating with caller-supplied descriptions and 48dp minimum targets. Submission rules and retry decisions stay with consumers. |
 | ❌ Not a candidate | Form error text | — | Covered by `TextField(isError = …, supportingText = …)`. A standalone error line has no reusable behaviour beyond a token-styled `Text`. |
 | ❌ Not a candidate | Branded loading indicator | — | Product-branded illustration. Generic loading uses `ProgressIndicator`, `LoadingState`, or `LoadingOverlay`. |
 
@@ -44,11 +44,12 @@ The sibling SwiftUI library (`SwiftUIComponents`) ships the same design language
 |---|---|---|---|
 | ✅ Done | `Badge`, `AvatarView` | `Badge`, `CountBadge`, `Avatar` | New **Indicators** category. |
 | ✅ Done | `TypingDotsView`, `TypingIndicatorBubbleView` | `TypingIndicator`, `ChatLog` typing bubble | |
-| ⏳ Pending | `NoticeCard`, `ErrorBanner`, `AssistantUnavailableBanner` | — | An inline, full-width tonal banner (info / success / warning / error) with an optional icon, action, and dismiss. `AssistantStatusBanner` is assistant-specific; a generic banner would let it delegate. |
-| ⏳ Pending | `AsyncContentView` | — | Loading / empty / error / content switcher over the existing `LoadingState`, `EmptyState`, and `ErrorState`, so screens stop hand-writing the same `when`. |
-| ⏳ Pending | `MenuPicker` | — | A themed dropdown or exposed-menu single-choice picker. Today callers fall back to raw Material 3 `ExposedDropdownMenuBox`. |
-| ⏳ Pending | `SelectableCardSurface` | — | A card with selectable semantics and a selected outline, for plan or option pickers. `Modifier.selectableRole` already provides the semantics. |
-| ⏳ Pending | `ProportionalHStackLayout` | — | A row that splits width by fractions rather than weights of measured content. Check whether `Row` + `weight` already covers real usages before adding it. |
+| ✅ Done | `NoticeCard`, `ErrorBanner`, `AssistantUnavailableBanner` | `NoticeBanner` (`components/NoticeBanner.kt`) | An inline, full-width tonal banner (info / success / warning / error) with an optional icon, action, and dismiss. `AssistantStatusBanner` is assistant-specific; the generic banner lets it delegate. |
+| 🔄 In review | `AsyncContentView` | `AsyncContent` (`components/AsyncContent.kt`, [PR #126](https://github.com/maniramezan/ComposeUIComponents/pull/126)) | Loading / empty / error / content switcher over the existing `LoadingState`, `EmptyState`, and `ErrorState`, so screens stop hand-writing the same `when`. |
+| 🔄 In review | `MenuPicker` | `MenuPicker` (`components/MenuPicker.kt`, [PR #125](https://github.com/maniramezan/ComposeUIComponents/pull/125)) | A themed dropdown or exposed-menu single-choice picker. Today callers fall back to raw Material 3 `ExposedDropdownMenuBox`. |
+| 🔄 In review | `SelectableCardSurface` | `SelectableCard` (`components/SelectableCard.kt`, [PR #127](https://github.com/maniramezan/ComposeUIComponents/pull/127)) | A card with selectable semantics and a selected outline, for plan or option pickers. It uses `selectable` directly, because `Modifier.selectableRole` hard-codes `Role.Button` and has no `enabled` parameter. |
+| ❌ Not a candidate | `ProportionalHStackLayout` | — | `internal` in SwiftUIComponents; it only backs `SegmentSizing.fillProportionally` on `SegmentedPicker`. A public layout has no reuse outside that control. |
+| ⏳ Pending | `SegmentSizing` for `SegmentedControl` | — | Compose `SegmentedControl` gives every segment equal weight. SwiftUI's `SegmentedPicker` also offers fit and proportional-to-content sizing. Add it as a `SegmentedControl` option if a consumer needs it. |
 | ✅ Done | `CarouselRow`, `CarouselBoard` | `ShowcaseRow`, `ShowcaseFeed` | |
 | ✅ Done | `TitledPageView` | `PaginatedContent` | |
 | ✅ Done | `SegmentedPicker`, `PillChip`, `ActionPill`, `FlipCard`, `DisclosureCard`, `SelectionListView`, `GhostShimmer`, `ToastView`, `LoadMoreFooter`, `CachedAsyncImage`, `FlowLayout`, `SectionHeader` | Same names (`SegmentedContent` / `SegmentedControl`, `Modifier.skeletonShimmer`, `ToastHost`) | |
