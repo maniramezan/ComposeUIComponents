@@ -13,6 +13,7 @@ Feedback components communicate loading, transient status, and placeholder state
 - `Toast`
 - `ToastHost`
 - `ChatLog`
+- `ChatComposer`
 - `AssistantContextCard`
 - `AssistantQuickActionChips`
 - `AssistantStatusBanner`
@@ -104,6 +105,52 @@ bubble instead of replacing it.
 
 The wave is applied in the draw phase and never recomposes. It is static (all dots opaque)
 under the system **Remove animations** setting and in `@Preview`.
+
+### Chat composer
+
+`ChatComposer` is the input side of a chat: a growing message field (one line up to
+`maxLines`) with a trailing 48dp button. The button sends a non-blank draft. When you pass
+`voiceInput` and the draft is blank it becomes a microphone, then a stop button with a pulsing
+level ring while listening, then a progress indicator while the final transcript is pending.
+
+```kotlin
+var draft by remember { mutableStateOf("") }
+
+ChatComposer(
+    text = draft,
+    onTextChange = { draft = it },
+    onSend = {
+        send(draft)
+        draft = ""
+    },
+    placeholder = "Message",
+    sendContentDescription = "Send",
+    voiceInput = ChatComposerVoiceInput(
+        state = voiceState,
+        onStart = ::startRecording,
+        onStop = ::stopRecording,
+        startContentDescription = "Start voice input",
+        stopContentDescription = "Stop voice input",
+        processingContentDescription = "Processing voice input",
+    ),
+)
+```
+
+| Parameter | Notes |
+|---|---|
+| `text` / `onTextChange` | Hoisted draft. The composer never clears it; clear it in `onSend`. |
+| `onSend` | Called for a non-blank draft from the button or the keyboard's Send action, only while `enabled`. |
+| `placeholder` | Caller-supplied hint. Blank renders no hint. |
+| `sendContentDescription` | Caller-supplied label for the send button. There is no English default. |
+| `enabled` | Gates sending and starting voice input. Stopping a recording is always allowed. |
+| `maxLines` | Lines the field grows to before it scrolls. |
+| `voiceInput` | `null` for a text-only composer. Otherwise the voice state, callbacks, and the three caller-supplied labels. |
+
+The composer does not record or transcribe. Start and stop recording in `onStart` and `onStop`,
+and write the live transcript into `text`; the field is read-only while listening or
+processing, so dictation can be reviewed and edited once it stops. `Listening.level` is
+clamped to `0..1` and scales the ring from 0.8x to 1.25x; the ring stays at rest size under the
+system **Remove animations** setting. `Unavailable` shows a disabled microphone.
 
 ## Assistant chat surfaces
 
