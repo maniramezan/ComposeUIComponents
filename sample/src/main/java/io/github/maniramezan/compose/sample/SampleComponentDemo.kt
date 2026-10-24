@@ -386,6 +386,13 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             content = { BottomSheetPage() },
         ),
         SampleComponentDemo(
+            id = "selectable-card",
+            title = "SelectableCard",
+            category = "Containers",
+            description = "Selectable card with a selected outline for plan and option pickers.",
+            content = { SelectableCardPage() },
+        ),
+        SampleComponentDemo(
             id = "adaptive-content-container",
             title = "AdaptiveContentContainer",
             category = "Layout",
