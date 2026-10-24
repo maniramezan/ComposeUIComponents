@@ -11,12 +11,12 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertLeftPositionInRootIsEqualTo
 import androidx.compose.ui.test.assertWidthIsEqualTo
-import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.maniramezan.compose.theme.AppTheme
+import io.github.maniramezan.testcommons.compose.ThemedComposeRule
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -26,16 +26,14 @@ import org.robolectric.annotation.Config
 @Config(sdk = [35])
 public class LayoutComponentsTest {
     @get:Rule
-    public val composeRule = createComposeRule()
+    public val composeRule = ThemedComposeRule(theme = { content -> AppTheme(content = content) })
 
     @Test
     public fun adaptiveContentContainerPassesThroughOnNarrowScreens() {
         composeRule.setContent {
-            AppTheme {
-                Box(Modifier.requiredWidth(NARROW)) {
-                    AdaptiveContentContainer(maxWidth = MAX) {
-                        Box(Modifier.fillMaxWidth().height(10.dp).testTag(CONTENT))
-                    }
+            Box(Modifier.requiredWidth(NARROW)) {
+                AdaptiveContentContainer(maxWidth = MAX) {
+                    Box(Modifier.fillMaxWidth().height(10.dp).testTag(CONTENT))
                 }
             }
         }
@@ -49,12 +47,10 @@ public class LayoutComponentsTest {
     @Test
     public fun overlayCardSurfaceAndDividerRenderCallerContent() {
         composeRule.setContent {
-            AppTheme {
-                Column {
-                    OverlayCard { Text("Overlay content") }
-                    HorizontalDivider(modifier = Modifier.testTag(DIVIDER))
-                    Surface { Text("Surface content") }
-                }
+            Column {
+                OverlayCard { Text("Overlay content") }
+                HorizontalDivider(modifier = Modifier.testTag(DIVIDER))
+                Surface { Text("Surface content") }
             }
         }
 

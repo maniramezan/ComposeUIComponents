@@ -30,7 +30,7 @@ When adding or updating dependencies, check the latest stable version online fir
 - `:icons` — curated default icon implementations.
 - `:compose-utils` — preview annotations, modifiers, semantics helpers.
 - `:components` — public UI components; depends on theme/icons/utils.
-- `:testing` — Compose testing helpers; must not depend on `:components`.
+- `:testing` — design-system-specific Compose testing helpers; must not depend on `:components`. Generic test helpers come from KotlinTestCommons (ADR 0008).
 - `:catalog` — exhaustive component browser via Showkase.
 - `:sample` — consumer-like app for realistic validation.
 - `:baselineprofile` — sample startup macrobenchmark/profile generation.
@@ -41,6 +41,7 @@ When adding or updating dependencies, check the latest stable version online fir
 
 - The theming model is defined by ADR 0001: extend Material 3 with immutable semantic token bundles exposed through `AppTheme` and `CompositionLocal`s.
 - The module boundary model is defined by ADR 0002: keep pure Kotlin helpers, tokens, theme contracts, icons, Compose utilities, components, testing, catalog, sample, and benchmark concerns separate.
+- Generic test helpers come from KotlinTestCommons per ADR 0008; do not add new generic helpers to `:testing`.
 - The testing model is defined by ADR 0003: use JVM/domain tests for pure logic, Compose UI tests for semantics and interaction, and Roborazzi for screenshot verification.
 - The localization and a11y string contract is defined by ADR 0004: all user-visible and accessibility strings are caller-supplied; the library ships no Android string resources and uses no English defaults.
 - Treat `docs/adr/*.md`, `docs/theming.md`, `docs/accessibility.md`, `docs/performance.md`, and `docs/contributing.md` as the current design and process references when behavior or architecture questions come up.

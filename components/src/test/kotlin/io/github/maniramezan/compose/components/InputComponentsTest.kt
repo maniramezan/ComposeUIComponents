@@ -21,7 +21,6 @@ import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -29,6 +28,7 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.text.input.ImeAction
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.maniramezan.compose.theme.AppTheme
+import io.github.maniramezan.testcommons.compose.ThemedComposeRule
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -38,26 +38,24 @@ import org.robolectric.annotation.Config
 @Config(sdk = [35])
 public class InputComponentsTest {
     @get:Rule
-    public val composeRule = createComposeRule()
+    public val composeRule = ThemedComposeRule(theme = { content -> AppTheme(content = content) })
 
     @Test
     public fun textAndPasswordFieldsForwardKeyboardOptions() {
         composeRule.setContent {
-            AppTheme {
-                Column {
-                    TextField(
-                        value = "",
-                        onValueChange = {},
-                        label = "Search",
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                    )
-                    PasswordField(
-                        value = "",
-                        onValueChange = {},
-                        label = "Password",
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    )
-                }
+            Column {
+                TextField(
+                    value = "",
+                    onValueChange = {},
+                    label = "Search",
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                )
+                PasswordField(
+                    value = "",
+                    onValueChange = {},
+                    label = "Password",
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                )
             }
         }
 
@@ -68,10 +66,8 @@ public class InputComponentsTest {
     @Test
     public fun searchFieldForwardsTypedTextAndShowsPlaceholderWhenEmpty() {
         composeRule.setContent {
-            AppTheme {
-                var query by remember { mutableStateOf("") }
-                SearchField(value = query, onValueChange = { query = it }, placeholder = "Find items")
-            }
+            var query by remember { mutableStateOf("") }
+            SearchField(value = query, onValueChange = { query = it }, placeholder = "Find items")
         }
 
         composeRule.onNodeWithText("Find items").assertExists()
@@ -82,9 +78,7 @@ public class InputComponentsTest {
     @Test
     public fun disabledSearchFieldIsNotEnabled() {
         composeRule.setContent {
-            AppTheme {
-                SearchField(value = "", onValueChange = {}, placeholder = "Find items", enabled = false)
-            }
+            SearchField(value = "", onValueChange = {}, placeholder = "Find items", enabled = false)
         }
 
         composeRule.onNode(SemanticsMatcher.keyIsDefined(SemanticsProperties.EditableText)).assertIsNotEnabled()
@@ -93,9 +87,7 @@ public class InputComponentsTest {
     @Test
     public fun searchFieldWithBlankPlaceholderRendersNoPlaceholderNode() {
         composeRule.setContent {
-            AppTheme {
-                SearchField(value = "", onValueChange = {})
-            }
+            SearchField(value = "", onValueChange = {})
         }
 
         composeRule

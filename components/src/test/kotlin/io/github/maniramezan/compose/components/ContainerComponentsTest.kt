@@ -11,7 +11,6 @@ import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.Density
@@ -19,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import io.github.maniramezan.compose.theme.AppTheme
+import io.github.maniramezan.testcommons.compose.ThemedComposeRule
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -28,7 +28,7 @@ import org.robolectric.annotation.Config
 @Config(sdk = [35])
 public class ContainerComponentsTest {
     @get:Rule
-    public val composeRule = createComposeRule()
+    public val composeRule = ThemedComposeRule(theme = { content -> AppTheme(content = content) })
 
     private val longTitle = "A section title long enough to wrap across several lines on a phone-width screen"
 
@@ -36,9 +36,7 @@ public class ContainerComponentsTest {
     public fun sectionHeaderActionInvokesCallback() {
         var invoked = false
         composeRule.setContent {
-            AppTheme {
-                SectionHeader(title = "Recent", actionLabel = "See all", onAction = { invoked = true })
-            }
+            SectionHeader(title = "Recent", actionLabel = "See all", onAction = { invoked = true })
         }
 
         composeRule.onNodeWithText("See all").performClick()

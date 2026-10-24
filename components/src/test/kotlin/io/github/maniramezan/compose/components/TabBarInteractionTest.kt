@@ -25,7 +25,6 @@ import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
-import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -37,6 +36,7 @@ import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.maniramezan.compose.theme.AppTheme
+import io.github.maniramezan.testcommons.compose.ThemedComposeRule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.junit.Rule
@@ -48,7 +48,7 @@ import org.robolectric.annotation.Config
 @Config(sdk = [35])
 public class TabBarInteractionTest {
     @get:Rule
-    public val composeRule = createComposeRule()
+    public val composeRule = ThemedComposeRule(theme = { content -> AppTheme(content = content) })
 
     private fun items(disableIndex: Int? = null) =
         listOf(0, 1, 2).mapIndexed { index, value ->
@@ -64,9 +64,7 @@ public class TabBarInteractionTest {
     public fun tappingItemInvokesCallbackWithItsValue() {
         var lastSelection = -1
         composeRule.setContent {
-            AppTheme {
-                TabBar(items = items(), selection = 0, onSelectionChange = { lastSelection = it })
-            }
+            TabBar(items = items(), selection = 0, onSelectionChange = { lastSelection = it })
         }
 
         composeRule.onNodeWithText("Item 2").performClick()
@@ -79,15 +77,13 @@ public class TabBarInteractionTest {
     @Test
     public fun selectionIsDrivenByValueNotPosition() {
         composeRule.setContent {
-            AppTheme {
-                var selection by remember { mutableIntStateOf(1) }
-                TabBar(
-                    // Reversed order — selection must still track by value, not list position.
-                    items = items().reversed(),
-                    selection = selection,
-                    onSelectionChange = { selection = it },
-                )
-            }
+            var selection by remember { mutableIntStateOf(1) }
+            TabBar(
+                // Reversed order — selection must still track by value, not list position.
+                items = items().reversed(),
+                selection = selection,
+                onSelectionChange = { selection = it },
+            )
         }
 
         composeRule.onNodeWithText("Item 1").assertIsSelected()
@@ -99,13 +95,11 @@ public class TabBarInteractionTest {
     public fun disabledItemDoesNotInvokeCallbackAndIsNotEnabled() {
         var lastSelection = -1
         composeRule.setContent {
-            AppTheme {
-                TabBar(
-                    items = items(disableIndex = 2),
-                    selection = 0,
-                    onSelectionChange = { lastSelection = it },
-                )
-            }
+            TabBar(
+                items = items(disableIndex = 2),
+                selection = 0,
+                onSelectionChange = { lastSelection = it },
+            )
         }
 
         composeRule.onNodeWithText("Item 2").assertIsNotEnabled()
@@ -120,9 +114,7 @@ public class TabBarInteractionTest {
     @Test
     public fun itemsMeetMinimumTouchTargetHeight() {
         composeRule.setContent {
-            AppTheme {
-                TabBar(items = items(), selection = 0, onSelectionChange = {})
-            }
+            TabBar(items = items(), selection = 0, onSelectionChange = {})
         }
 
         composeRule.onNodeWithText("Item 0").assertHeightIsAtLeast(48.dp)
@@ -132,23 +124,21 @@ public class TabBarInteractionTest {
     @Test
     public fun iconOnlyItemExposesContentDescriptionForAccessibility() {
         composeRule.setContent {
-            AppTheme {
-                TabBar(
-                    items =
-                        listOf(
-                            TabBarItemData(
-                                value = 0,
-                                icon = {
-                                    Icon(imageVector = AppTheme.icons.check.imageVector, contentDescription = null)
-                                },
-                                label = null,
-                                contentDescription = "Home",
-                            ),
+            TabBar(
+                items =
+                    listOf(
+                        TabBarItemData(
+                            value = 0,
+                            icon = {
+                                Icon(imageVector = AppTheme.icons.check.imageVector, contentDescription = null)
+                            },
+                            label = null,
+                            contentDescription = "Home",
                         ),
-                    selection = 0,
-                    onSelectionChange = {},
-                )
-            }
+                    ),
+                selection = 0,
+                onSelectionChange = {},
+            )
         }
 
         composeRule.onNodeWithContentDescription("Home").assertIsSelected()
@@ -157,14 +147,12 @@ public class TabBarInteractionTest {
     @Test
     public fun centeredArrangementRendersAllItems() {
         composeRule.setContent {
-            AppTheme {
-                TabBar(
-                    items = items(),
-                    selection = 0,
-                    onSelectionChange = {},
-                    arrangement = TabBarArrangement.Centered,
-                )
-            }
+            TabBar(
+                items = items(),
+                selection = 0,
+                onSelectionChange = {},
+                arrangement = TabBarArrangement.Centered,
+            )
         }
 
         composeRule.onNodeWithText("Item 0").assertIsSelected()
@@ -176,15 +164,13 @@ public class TabBarInteractionTest {
     public fun scrollBehaviorCollapsesTheBarsMeasuredHeightNotJustItsDrawPosition() {
         lateinit var scrollBehavior: TabBarScrollBehavior
         composeRule.setContent {
-            AppTheme {
-                scrollBehavior = rememberTabBarScrollBehavior()
-                TabBar(
-                    items = items(),
-                    selection = 0,
-                    onSelectionChange = {},
-                    scrollBehavior = scrollBehavior,
-                )
-            }
+            scrollBehavior = rememberTabBarScrollBehavior()
+            TabBar(
+                items = items(),
+                selection = 0,
+                onSelectionChange = {},
+                scrollBehavior = scrollBehavior,
+            )
         }
         composeRule.waitForIdle()
 
@@ -204,26 +190,24 @@ public class TabBarInteractionTest {
     public fun scrollingRealContentUpHidesTheBarViaTheNestedScrollConnection() {
         lateinit var scrollBehavior: TabBarScrollBehavior
         composeRule.setContent {
-            AppTheme {
-                scrollBehavior = rememberTabBarScrollBehavior()
-                Column(modifier = Modifier.fillMaxSize()) {
-                    LazyColumn(
-                        modifier =
-                            Modifier
-                                .weight(1f)
-                                .fillMaxWidth()
-                                .nestedScroll(scrollBehavior.nestedScrollConnection)
-                                .testTag("list"),
-                    ) {
-                        items(100) { index -> Text(text = "Row $index", modifier = Modifier.fillMaxWidth().height(48.dp)) }
-                    }
-                    TabBar(
-                        items = items(),
-                        selection = 0,
-                        onSelectionChange = {},
-                        scrollBehavior = scrollBehavior,
-                    )
+            scrollBehavior = rememberTabBarScrollBehavior()
+            Column(modifier = Modifier.fillMaxSize()) {
+                LazyColumn(
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                            .nestedScroll(scrollBehavior.nestedScrollConnection)
+                            .testTag("list"),
+                ) {
+                    items(100) { index -> Text(text = "Row $index", modifier = Modifier.fillMaxWidth().height(48.dp)) }
                 }
+                TabBar(
+                    items = items(),
+                    selection = 0,
+                    onSelectionChange = {},
+                    scrollBehavior = scrollBehavior,
+                )
             }
         }
         composeRule.waitForIdle()
@@ -248,31 +232,29 @@ public class TabBarInteractionTest {
         lateinit var scrollBehavior: TabBarScrollBehavior
         var lastBottomPaddingDp = androidx.compose.ui.unit.Dp.Unspecified
         composeRule.setContent {
-            AppTheme {
-                scrollBehavior = rememberTabBarScrollBehavior()
-                Scaffold(
-                    contentWindowInsets = WindowInsets(0, 0, 0, 0),
-                    bottomBar = {
-                        TabBar(
-                            items = items(),
-                            selection = 0,
-                            onSelectionChange = {},
-                            scrollBehavior = scrollBehavior,
-                        )
-                    },
-                ) { innerPadding ->
-                    lastBottomPaddingDp = innerPadding.calculateBottomPadding()
-                    LazyColumn(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(innerPadding)
-                                .nestedScroll(scrollBehavior.nestedScrollConnection)
-                                .testTag("scaffoldList"),
-                    ) {
-                        items(100) { index ->
-                            Text(text = "Row $index", modifier = Modifier.fillMaxWidth().height(48.dp))
-                        }
+            scrollBehavior = rememberTabBarScrollBehavior()
+            Scaffold(
+                contentWindowInsets = WindowInsets(0, 0, 0, 0),
+                bottomBar = {
+                    TabBar(
+                        items = items(),
+                        selection = 0,
+                        onSelectionChange = {},
+                        scrollBehavior = scrollBehavior,
+                    )
+                },
+            ) { innerPadding ->
+                lastBottomPaddingDp = innerPadding.calculateBottomPadding()
+                LazyColumn(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(innerPadding)
+                            .nestedScroll(scrollBehavior.nestedScrollConnection)
+                            .testTag("scaffoldList"),
+                ) {
+                    items(100) { index ->
+                        Text(text = "Row $index", modifier = Modifier.fillMaxWidth().height(48.dp))
                     }
                 }
             }
