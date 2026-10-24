@@ -330,6 +330,13 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             content = { SkeletonShimmerPage() },
         ),
         SampleComponentDemo(
+            id = "notice-banner",
+            title = "NoticeBanner",
+            category = "Feedback",
+            description = "Inline tonal banner with severity, optional icon, action, and dismiss.",
+            content = { NoticeBannerPage() },
+        ),
+        SampleComponentDemo(
             id = "chat-composer",
             title = "ChatComposer",
             category = "Feedback",

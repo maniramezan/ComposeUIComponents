@@ -52,6 +52,10 @@ public fun ToastShowkase(): Unit =
         )
     }
 
+@ShowkaseComposable(name = "Notice Banner", group = "Feedback")
+@Composable
+public fun NoticeBannerShowkase(): Unit = NoticeBannerPreview()
+
 @ShowkaseComposable(name = "Chat Log", group = "Feedback")
 @Composable
 public fun ChatLogShowkase(): Unit = ChatLogPreview()
