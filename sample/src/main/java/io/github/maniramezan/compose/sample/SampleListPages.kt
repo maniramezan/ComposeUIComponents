@@ -12,8 +12,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import io.github.maniramezan.compose.components.AsyncContent
+import io.github.maniramezan.compose.components.AsyncContentState
 import io.github.maniramezan.compose.components.ContentRow
 import io.github.maniramezan.compose.components.EmptyState
 import io.github.maniramezan.compose.components.ErrorState
@@ -26,6 +29,7 @@ import io.github.maniramezan.compose.components.TextButton
 import io.github.maniramezan.compose.theme.AppTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -149,6 +153,124 @@ internal fun ErrorStatePage() {
 }
 
 @Composable
+internal fun AsyncContentPage() {
+    val stateOptions = listOf("Loading", "Empty", "Error", "Content")
+    val alignmentOptions = listOf("Top", "Center")
+    var stateIndex by remember { mutableIntStateOf(0) }
+    var itemCount by remember { mutableIntStateOf(3) }
+    var showEmptyMessage by remember { mutableStateOf(true) }
+    var showEmptyAction by remember { mutableStateOf(true) }
+    var showErrorAction by remember { mutableStateOf(true) }
+    var customErrorMessage by remember { mutableStateOf(false) }
+    var alignmentIndex by remember { mutableIntStateOf(1) }
+    var customLoading by remember { mutableStateOf(false) }
+
+    val state: AsyncContentState<Int> =
+        when (stateIndex) {
+            0 -> AsyncContentState.Loading
+            1 -> AsyncContentState.Empty
+            2 ->
+                AsyncContentState.Error(
+                    message = if (customErrorMessage) "The server is unavailable." else null,
+                )
+            else -> AsyncContentState.Content(data = itemCount)
+        }
+    val alignment = if (alignmentIndex == 0) Alignment.TopStart else Alignment.Center
+
+    SamplePage(
+        preview = {
+            if (customLoading) {
+                AsyncContent(
+                    state = state,
+                    modifier = Modifier.height(SAMPLE_STATE_HEIGHT),
+                    contentAlignment = alignment,
+                    loading = { Text("Custom loading slot") },
+                    empty = { Text("Custom empty slot") },
+                    error = { error -> Text(error.message ?: "Custom error slot") },
+                    content = { count -> AsyncContentSampleRows(count = count) },
+                )
+            } else {
+                AsyncContent(
+                    state = state,
+                    loadingLabel = "Loading projects…",
+                    emptyTitle = "No projects",
+                    errorTitle = "Could not load",
+                    errorMessage = "Check your connection and retry.",
+                    modifier = Modifier.height(SAMPLE_STATE_HEIGHT),
+                    emptyMessage = if (showEmptyMessage) "Create your first project to get started." else null,
+                    emptyAction =
+                        if (showEmptyAction) {
+                            { TextButton(text = "Create project", onClick = { stateIndex = 3 }) }
+                        } else {
+                            null
+                        },
+                    errorAction =
+                        if (showErrorAction) {
+                            { TextButton(text = "Retry", onClick = { stateIndex = 0 }) }
+                        } else {
+                            null
+                        },
+                    contentAlignment = alignment,
+                    content = { count -> AsyncContentSampleRows(count = count) },
+                )
+            }
+        },
+        controls = {
+            ControlSegmented(
+                label = "State",
+                options = stateOptions,
+                selectedIndex = stateIndex,
+                onOptionSelected = { stateIndex = it },
+            )
+            ControlSlider(
+                label = "Content rows: $itemCount",
+                value = itemCount.toFloat(),
+                onValueChange = { itemCount = it.roundToInt() },
+                valueRange = 1f..6f,
+            )
+            ControlSegmented(
+                label = "Alignment",
+                options = alignmentOptions,
+                selectedIndex = alignmentIndex,
+                onOptionSelected = { alignmentIndex = it },
+            )
+            ControlSwitch(
+                label = "Custom slots",
+                checked = customLoading,
+                onCheckedChange = { customLoading = it },
+            )
+            ControlSwitch(
+                label = "Empty message",
+                checked = showEmptyMessage,
+                onCheckedChange = { showEmptyMessage = it },
+            )
+            ControlSwitch(
+                label = "Empty action",
+                checked = showEmptyAction,
+                onCheckedChange = { showEmptyAction = it },
+            )
+            ControlSwitch(
+                label = "Error action",
+                checked = showErrorAction,
+                onCheckedChange = { showErrorAction = it },
+            )
+            ControlSwitch(
+                label = "Error message from state",
+                checked = customErrorMessage,
+                onCheckedChange = { customErrorMessage = it },
+            )
+        },
+    )
+}
+
+@Composable
+private fun AsyncContentSampleRows(count: Int) {
+    Column {
+        repeat(count) { index -> ListItem(headline = "Project ${index + 1}") }
+    }
+}
+
+@Composable
 internal fun InfiniteLazyListPage() {
     val pageSizes = listOf(10, 20, 40)
     var pageSizeIndex by remember { mutableIntStateOf(1) }
@@ -224,3 +346,5 @@ internal fun InfiniteLazyListPage() {
 }
 
 private val SAMPLE_LIST_HEIGHT = 320.dp
+
+private val SAMPLE_STATE_HEIGHT = 320.dp
