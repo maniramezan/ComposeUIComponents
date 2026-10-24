@@ -15,6 +15,7 @@ Feedback components communicate loading, transient status, and placeholder state
 - `NoticeBanner`
 - `ChatLog`
 - `ChatComposer`
+- `ThumbsFeedbackRow`
 - `AssistantContextCard`
 - `AssistantQuickActionChips`
 - `AssistantStatusBanner`
@@ -200,6 +201,46 @@ and write the live transcript into `text`; the field is read-only while listenin
 processing, so dictation can be reviewed and edited once it stops. `Listening.level` is
 clamped to `0..1` and scales the ring from 0.8x to 1.25x; the ring stays at rest size under the
 system **Remove animations** setting. `Unavailable` shows a disabled microphone.
+
+### Thumbs feedback row
+
+`ThumbsFeedbackRow` is a pair of thumbs up / thumbs down buttons for rating a piece of content,
+such as a generated answer. It is state-hoisted: it shows `rating` and reports taps through
+`onRatingChange`. Submitting the rating, retrying a failed submission, and any follow-up dialog
+stay with the caller.
+
+```kotlin
+var rating by remember { mutableStateOf(ThumbsRating.None) }
+
+ThumbsFeedbackRow(
+    rating = rating,
+    onRatingChange = {
+        rating = it
+        submitRating(it)
+    },
+    positiveContentDescription = "Good response",
+    negativeContentDescription = "Bad response",
+    selectedStateDescription = "Selected",
+)
+```
+
+| Parameter | Notes |
+|---|---|
+| `rating` | Hoisted `ThumbsRating`: `None`, `Positive`, or `Negative`. |
+| `onRatingChange` | Called with the new rating. It is never called with the rating already shown. |
+| `positiveContentDescription` / `negativeContentDescription` | Caller-supplied labels. There is no English default; a blank value leaves that button unlabeled. |
+| `enabled` | Disabled buttons are dimmed, ignore taps, and keep showing `rating`. |
+| `allowClearing` | `true` (default): tapping the selected choice reports `ThumbsRating.None`. `false`: tapping the selected choice does nothing. |
+| `selectedStateDescription` | Optional caller-supplied `stateDescription` for the selected button. `null` or blank keeps the platform's default selected announcement. |
+
+The thumbs glyphs are internal vectors, so the row does not need extra icons in `AppTheme`.
+
+Accessibility behavior:
+
+- The two buttons form a `selectableGroup()`; each is a `Role.Button` that exposes `selected`,
+  and `enabled` when disabled.
+- Each button has at least a 48dp touch target.
+- The selected button also gets a filled container, so selection is not conveyed by color alone.
 
 ## Assistant chat surfaces
 
