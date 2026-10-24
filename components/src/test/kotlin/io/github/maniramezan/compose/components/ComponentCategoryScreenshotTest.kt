@@ -354,6 +354,36 @@ public class ComponentCategoryScreenshotTest {
     }
 
     @Test
+    public fun selectableCardMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/selectable-card.png") {
+            SelectableCardPreview()
+        }
+    }
+
+    @Test
+    public fun selectableCardDarkMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/selectable-card-dark.png") {
+            AppTheme(darkTheme = true, dynamicColor = false) {
+                Box(modifier = Modifier.background(AppTheme.colors.background)) {
+                    SelectableCardPreviewContent()
+                }
+            }
+        }
+    }
+
+    @Test
+    public fun selectableCardFontScaleRtlMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/selectable-card-font200-rtl.png") {
+            CompositionLocalProvider(
+                LocalDensity provides Density(LocalDensity.current.density, fontScale = 2f),
+                LocalLayoutDirection provides LayoutDirection.Rtl,
+            ) {
+                SelectableCardPreview()
+            }
+        }
+    }
+
+    @Test
     public fun loadingOverlayMatchesGolden() {
         captureRoboImage("build/outputs/roborazzi/loading-overlay.png") {
             LoadingOverlayPreview()

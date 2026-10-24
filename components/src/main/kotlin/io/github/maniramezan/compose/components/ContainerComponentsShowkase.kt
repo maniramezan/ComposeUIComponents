@@ -64,3 +64,7 @@ public fun SnackbarShowkase(): Unit =
             onAction = {},
         )
     }
+
+@ShowkaseComposable(name = "Selectable Card", group = "Containers")
+@Composable
+public fun SelectableCardShowkase(): Unit = SelectableCardPreview()
