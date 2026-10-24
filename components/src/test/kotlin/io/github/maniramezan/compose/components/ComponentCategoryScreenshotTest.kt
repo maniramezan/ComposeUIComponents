@@ -408,4 +408,34 @@ public class ComponentCategoryScreenshotTest {
             }
         }
     }
+
+    @Test
+    public fun asyncContentMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/async-content.png") {
+            AsyncContentPreview()
+        }
+    }
+
+    @Test
+    public fun asyncContentDarkMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/async-content-dark.png") {
+            AppTheme(darkTheme = true, dynamicColor = false) {
+                Box(modifier = Modifier.background(AppTheme.colors.background)) {
+                    AsyncContentPreviewContent()
+                }
+            }
+        }
+    }
+
+    @Test
+    public fun asyncContentFontScaleRtlMatchesGolden() {
+        captureRoboImage("build/outputs/roborazzi/async-content-font200-rtl.png") {
+            CompositionLocalProvider(
+                LocalDensity provides Density(LocalDensity.current.density, fontScale = 2f),
+                LocalLayoutDirection provides LayoutDirection.Rtl,
+            ) {
+                AsyncContentPreview()
+            }
+        }
+    }
 }

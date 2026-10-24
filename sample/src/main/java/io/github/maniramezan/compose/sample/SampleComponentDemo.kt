@@ -260,6 +260,13 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             content = { ErrorStatePage() },
         ),
         SampleComponentDemo(
+            id = "async-content",
+            title = "AsyncContent",
+            category = "Lists",
+            description = "Switches between loading, empty, error, and content states.",
+            content = { AsyncContentPage() },
+        ),
+        SampleComponentDemo(
             id = "card",
             title = "Card",
             category = "Containers",
