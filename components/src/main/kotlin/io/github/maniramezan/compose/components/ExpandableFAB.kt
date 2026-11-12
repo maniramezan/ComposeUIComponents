@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
@@ -37,6 +38,7 @@ import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.Constraints
@@ -44,7 +46,6 @@ import androidx.compose.ui.unit.constrainHeight
 import androidx.compose.ui.unit.constrainWidth
 import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.compose.theme.IconToken
-import io.github.maniramezan.compose.utils.minimumTouchTargetHeight
 
 /** Direction in which an [ExpandableFAB] reveals actions. Start and end follow layout direction. */
 public enum class FABExpansionDirection {
@@ -55,7 +56,7 @@ public enum class FABExpansionDirection {
 }
 
 /**
- * An icon and visible [label] for an [ExpandableFAB] action.
+ * An icon and caller-supplied [label] for an [ExpandableFAB] action.
  *
  * [id] must be unique within the menu and stable across updates. [label] must be nonblank
  * and supplies the action's accessibility name; the icon is decorative. This is a plain class
@@ -75,7 +76,11 @@ public class FABAction(
 }
 
 /**
- * A floating action button that reveals labeled icon actions along one axis.
+ * A floating action button that reveals icon actions along one axis.
+ *
+ * Set [showActionLabels] to false for icon-only actions; [FABAction.label] remains their
+ * accessibility name. A nonblank [triggerLabel] displays an extended trigger with visible text.
+ * Null or blank labels keep the trigger icon-only and use [contentDescription] as its name.
  *
  * Hoist [expanded] and apply [onExpandedChange] to accept toggle and dismissal requests.
  * Supply localized [contentDescription], [expandedStateDescription], and
@@ -93,6 +98,12 @@ public class FABAction(
  * Theme motion tokens control interruptible fade and size transitions. Compose honors the
  * system animation duration scale. Exiting actions immediately lose interaction and semantics.
  *
+ * @param showActionLabels Whether action titles are visible. Hidden titles remain accessible.
+ * @param triggerLabel Supply a localized string for a visible trigger title. Null or blank
+ * keeps the trigger icon-only and uses [contentDescription] as its accessibility name.
+ * @param contentDescription Supply a localized string naming the icon-only trigger.
+ * @param expandedStateDescription Supply a localized string describing the expanded state.
+ * @param collapsedStateDescription Supply a localized string describing the collapsed state.
  * @throws IllegalArgumentException if two [actions] share an [FABAction.id].
  */
 @Composable
@@ -107,6 +118,8 @@ public fun ExpandableFAB(
     modifier: Modifier = Modifier,
     direction: FABExpansionDirection = FABExpansionDirection.Up,
     collapseOnAction: Boolean = true,
+    showActionLabels: Boolean = true,
+    triggerLabel: String? = null,
 ) {
     val seenIds = HashSet<String>(actions.size)
     require(actions.all { seenIds.add(it.id) }) { "FABAction ids must be unique" }
@@ -122,6 +135,7 @@ public fun ExpandableFAB(
                     actions = actions,
                     horizontal = horizontal,
                     actionsFirst = actionsFirst,
+                    showActionLabels = showActionLabels,
                     onAction = { action ->
                         if (collapseOnAction) onExpandedChange(false)
                         action.onClick()
@@ -129,21 +143,62 @@ public fun ExpandableFAB(
                 )
             }
             Box {
-                FAB(
-                    icon = icon,
-                    contentDescription = contentDescription,
-                    onClick = { onExpandedChange(!expanded) },
-                    modifier =
-                        Modifier.semantics {
-                            if (hasActions) {
-                                stateDescription = if (expanded) expandedStateDescription else collapsedStateDescription
-                            }
-                        },
-                )
+                val triggerModifier =
+                    Modifier.semantics {
+                        if (hasActions) {
+                            stateDescription = if (expanded) expandedStateDescription else collapsedStateDescription
+                        }
+                    }
+                if (triggerLabel.isNullOrBlank()) {
+                    FAB(
+                        icon = icon,
+                        contentDescription = contentDescription,
+                        onClick = { onExpandedChange(!expanded) },
+                        modifier = triggerModifier,
+                    )
+                } else {
+                    ExtendedFloatingActionButton(
+                        text = triggerLabel,
+                        icon = icon,
+                        onClick = { onExpandedChange(!expanded) },
+                        modifier = triggerModifier,
+                    )
+                }
             }
         },
         modifier = modifier,
         measurePolicy = measurePolicy,
+    )
+}
+
+/** Retains the original signature for already compiled callers. */
+@Deprecated("Use the overload with showActionLabels and triggerLabel.", level = DeprecationLevel.HIDDEN)
+@Composable
+public fun ExpandableFAB(
+    expanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit,
+    actions: List<FABAction>,
+    icon: IconToken,
+    contentDescription: String,
+    expandedStateDescription: String,
+    collapsedStateDescription: String,
+    modifier: Modifier = Modifier,
+    direction: FABExpansionDirection = FABExpansionDirection.Up,
+    collapseOnAction: Boolean = true,
+) {
+    ExpandableFAB(
+        expanded = expanded,
+        onExpandedChange = onExpandedChange,
+        actions = actions,
+        icon = icon,
+        contentDescription = contentDescription,
+        expandedStateDescription = expandedStateDescription,
+        collapsedStateDescription = collapsedStateDescription,
+        modifier = modifier,
+        direction = direction,
+        collapseOnAction = collapseOnAction,
+        showActionLabels = true,
+        triggerLabel = null,
     )
 }
 
@@ -219,6 +274,7 @@ private fun FABActionMenu(
     actions: List<FABAction>,
     horizontal: Boolean,
     actionsFirst: Boolean,
+    showActionLabels: Boolean,
     onAction: (FABAction) -> Unit,
 ) {
     val duration = AppTheme.motion.mediumMillis
@@ -256,7 +312,7 @@ private fun FABActionMenu(
         val content: @Composable () -> Unit = {
             actions.forEach { action ->
                 key(action.id) {
-                    FABActionButton(action = action, onClick = { onAction(action) })
+                    FABActionButton(action = action, showLabel = showActionLabels, onClick = { onAction(action) })
                 }
             }
         }
@@ -294,12 +350,23 @@ private fun Modifier.consumeAllPointerInput(): Modifier =
 @Composable
 private fun FABActionButton(
     action: FABAction,
+    showLabel: Boolean,
     onClick: () -> Unit,
 ) {
     FilledTonalButton(
         onClick = onClick,
         enabled = action.enabled,
-        modifier = Modifier.minimumTouchTargetHeight(minimumTouchTargetSize()),
+        modifier =
+            Modifier
+                .sizeIn(minWidth = minimumTouchTargetSize(), minHeight = minimumTouchTargetSize())
+                .semantics {
+                    if (!showLabel) contentDescription = action.label
+                },
+        contentPadding =
+            PaddingValues(
+                horizontal = if (showLabel) AppTheme.spacing.x3 else AppTheme.spacing.x1,
+                vertical = AppTheme.spacing.x1,
+            ),
         shape = AppTheme.shapes.pill,
         colors =
             ButtonDefaults.filledTonalButtonColors(
@@ -310,11 +377,11 @@ private fun FABActionButton(
         Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.x1), verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 imageVector = action.icon.imageVector,
-                // @check:suppress decorative; the adjacent text labels the action
+                // @check:suppress decorative; the button supplies the action name
                 contentDescription = null,
                 modifier = Modifier.size(standardIconSize()),
             )
-            Text(text = action.label, style = AppTheme.typography.labelLarge)
+            if (showLabel) Text(text = action.label, style = AppTheme.typography.labelLarge)
         }
     }
 }

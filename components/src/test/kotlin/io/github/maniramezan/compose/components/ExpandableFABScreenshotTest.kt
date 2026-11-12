@@ -51,6 +51,31 @@ public class ExpandableFABScreenshotTest {
     }
 
     @Test
+    public fun iconOnlyVerticalWithExtendedTrigger() {
+        captureRoboImage("build/outputs/roborazzi/expandable-fab-icon-only-up.png") {
+            AppTheme(icons = defaultAppIcons(), dynamicColor = false) {
+                ExpandableFABPreviewContent(showActionLabels = false, triggerLabel = "Actions")
+            }
+        }
+    }
+
+    @Test
+    public fun iconOnlyHorizontalDarkRtlWithDoubleFontScale() {
+        captureRoboImage("build/outputs/roborazzi/expandable-fab-icon-only-dark-rtl-font200.png") {
+            CompositionLocalProvider(
+                LocalLayoutDirection provides LayoutDirection.Rtl,
+                LocalDensity provides Density(LocalDensity.current.density, fontScale = 2f),
+            ) {
+                AppTheme(icons = defaultAppIcons(), darkTheme = true, dynamicColor = false) {
+                    Box(Modifier.width(320.dp).background(AppTheme.colors.background)) {
+                        ExpandableFABPreviewContent(direction = FABExpansionDirection.Start, showActionLabels = false)
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
     public fun darkRtlWithDoubleFontScale() {
         captureRoboImage("build/outputs/roborazzi/expandable-fab-dark-rtl-font200.png") {
             CompositionLocalProvider(

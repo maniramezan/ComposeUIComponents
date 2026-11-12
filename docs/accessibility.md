@@ -66,6 +66,13 @@ provide localized strings for a finished experience.
 
 ### Other components
 
+- `ExpandableFAB` retains each caller-supplied `FABAction.label` as the button's
+  accessible name when `showActionLabels = false`. A nonblank `triggerLabel` supplies
+  the extended trigger's visible and accessible title; otherwise `contentDescription`
+  names the icon-only trigger. Supply localized expanded/collapsed state descriptions.
+- `ExtendedFloatingActionButton.text` supplies both the visible title and the button's
+  accessible name. Its icon stays decorative.
+
 - `Slider` announces only a raw percentage by default. Pass `label` (what it
   controls) and `valueDescription` (a meaningful current value) for context.
 - `PaginatedContent` exposes page position only when given `pagePositionDescription`

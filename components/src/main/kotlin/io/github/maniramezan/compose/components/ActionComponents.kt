@@ -15,6 +15,7 @@ import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import io.github.maniramezan.compose.theme.AppTheme
@@ -205,9 +206,9 @@ public fun SegmentedControl(
  * An extended FAB that pairs [icon] with a visible [text] label.
  *
  * The icon is always rendered decoratively (description omitted): the
- * visible [text] already labels the action, and Material3 merges the icon and
- * text into a single accessibility node, so a separate icon description would
- * only cause TalkBack to announce the label twice.
+ * button exposes [text] as its accessibility name. Material3 hides the visible
+ * text from semantics in this overload, so the name is applied to the button
+ * explicitly and announced once.
  */
 @Composable
 public fun ExtendedFloatingActionButton(
@@ -218,7 +219,7 @@ public fun ExtendedFloatingActionButton(
 ) {
     MaterialExtendedFloatingActionButton(
         onClick = onClick,
-        modifier = modifier,
+        modifier = modifier.semantics { contentDescription = text },
         containerColor = AppTheme.colors.primary,
         contentColor = AppTheme.colors.onPrimary,
         icon = {
