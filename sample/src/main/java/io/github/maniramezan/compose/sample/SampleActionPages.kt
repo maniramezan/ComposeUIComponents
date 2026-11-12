@@ -124,31 +124,26 @@ internal fun IconButtonPage() {
 
 @Composable
 internal fun FabPage() {
-    val iconOptions = listOf("Check", "Close")
     var iconIndex by remember { mutableIntStateOf(0) }
-    val icon = if (iconIndex == 0) AppTheme.icons.check else AppTheme.icons.close
+    val icon = FloatingActionIcon.entries[iconIndex].token
     var extended by remember { mutableStateOf(false) }
-    var label by remember { mutableStateOf("Create") }
+    var label by remember { mutableStateOf("Add item") }
+    var taps by remember { mutableIntStateOf(0) }
 
     SamplePage(
         preview = {
             if (extended) {
-                ExtendedFloatingActionButton(text = label, icon = icon, onClick = {})
+                ExtendedFloatingActionButton(text = label, icon = icon, onClick = { taps++ })
             } else {
-                FAB(icon = icon, contentDescription = iconOptions[iconIndex], onClick = {})
+                FAB(icon = icon, contentDescription = label, onClick = { taps++ })
             }
+            Text("Button taps: $taps")
+            Text("Tap the demo button to increase the count.")
         },
         controls = {
-            ControlSegmented(
-                label = "Icon",
-                options = iconOptions,
-                selectedIndex = iconIndex,
-                onOptionSelected = { iconIndex = it },
-            )
-            ControlSwitch(label = "Extended (with label)", checked = extended, onCheckedChange = { extended = it })
-            if (extended) {
-                TextField(value = label, onValueChange = { label = it }, label = "Label")
-            }
+            TextField(value = label, onValueChange = { label = it }, label = "Button title")
+            FloatingActionIconPicker("Button icon", iconIndex) { iconIndex = it }
+            ControlSwitch(label = "Show title", checked = extended, onCheckedChange = { extended = it })
         },
     )
 }

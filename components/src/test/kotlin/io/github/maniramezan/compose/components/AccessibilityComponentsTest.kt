@@ -369,6 +369,7 @@ public class AccessibilityComponentsTest {
         }
 
         composeRule.onNodeWithText("Create", useUnmergedTree = true).assertExists()
+        composeRule.onNodeWithContentDescription("Create").assertExists()
         composeRule.onNodeWithContentDescription("Create icon").assertDoesNotExist()
     }
 
