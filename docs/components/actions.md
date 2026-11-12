@@ -143,8 +143,9 @@ ExpandableFAB(
 All labels and accessibility descriptions come from the caller. Action labels must
 be nonblank and IDs must be unique and stable. Each icon is decorative because its
 button receives its name from visible text or, in icon-only mode, the action label.
-Actions have a minimum 48dp touch target and support disabled states. Collapsing removes interaction and accessibility nodes
-immediately while the exit animation finishes.
+Actions have a minimum 48dp touch target and support disabled states. Collapsing
+removes interaction and accessibility nodes immediately while the exit animation
+finishes.
 
 Choose `Up` or `Down` for vertical expansion, or `Start` or `End` for horizontal
 expansion. Start/end follow RTL layout. Items retain their supplied order and

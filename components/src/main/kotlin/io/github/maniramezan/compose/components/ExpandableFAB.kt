@@ -171,37 +171,6 @@ public fun ExpandableFAB(
     )
 }
 
-/** Retains the original signature for already compiled callers. */
-@Deprecated("Use the overload with showActionLabels and triggerLabel.", level = DeprecationLevel.HIDDEN)
-@Composable
-public fun ExpandableFAB(
-    expanded: Boolean,
-    onExpandedChange: (Boolean) -> Unit,
-    actions: List<FABAction>,
-    icon: IconToken,
-    contentDescription: String,
-    expandedStateDescription: String,
-    collapsedStateDescription: String,
-    modifier: Modifier = Modifier,
-    direction: FABExpansionDirection = FABExpansionDirection.Up,
-    collapseOnAction: Boolean = true,
-) {
-    ExpandableFAB(
-        expanded = expanded,
-        onExpandedChange = onExpandedChange,
-        actions = actions,
-        icon = icon,
-        contentDescription = contentDescription,
-        expandedStateDescription = expandedStateDescription,
-        collapsedStateDescription = collapsedStateDescription,
-        modifier = modifier,
-        direction = direction,
-        collapseOnAction = collapseOnAction,
-        showActionLabels = true,
-        triggerLabel = null,
-    )
-}
-
 /**
  * Measures the trigger first so it is never squeezed out, then gives the menu the remaining
  * space along the expansion axis. When that axis is unbounded the menu is limited to its own
