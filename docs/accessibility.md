@@ -72,7 +72,6 @@ provide localized strings for a finished experience.
   names the icon-only trigger. Supply localized expanded/collapsed state descriptions.
 - `ExtendedFloatingActionButton.text` supplies both the visible title and the button's
   accessible name. Its icon stays decorative.
-
 - `Slider` announces only a raw percentage by default. Pass `label` (what it
   controls) and `valueDescription` (a meaningful current value) for context.
 - `PaginatedContent` exposes page position only when given `pagePositionDescription`
