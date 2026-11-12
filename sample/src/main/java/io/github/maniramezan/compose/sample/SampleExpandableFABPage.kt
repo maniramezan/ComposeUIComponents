@@ -65,7 +65,14 @@ internal fun ExpandableFABPage() {
         }
     SamplePage(
         preview = {
-            Text("Tap the trigger to open the menu, then select an action.")
+            ControlSwitch("Show selected item on FAB", showSelectedAction) { showSelectedAction = it }
+            Text(
+                if (showSelectedAction) {
+                    "Choose a menu item to show its title and icon on the FAB."
+                } else {
+                    "Tap the trigger to open the menu, then select an action."
+                },
+            )
             CompositionLocalProvider(LocalLayoutDirection provides if (rightToLeft) LayoutDirection.Rtl else LayoutDirection.Ltr) {
                 Box(
                     modifier = Modifier.fillMaxWidth().height(AppTheme.spacing.x9 * 4),
@@ -82,7 +89,7 @@ internal fun ExpandableFABPage() {
                         direction = direction,
                         collapseOnAction = collapseOnAction,
                         showActionLabels = showActionLabels,
-                        triggerLabel = displayedLabel.takeIf { showTriggerLabel },
+                        triggerLabel = displayedLabel.takeIf { showTriggerLabel || usesSelection },
                     )
                 }
             }
@@ -95,8 +102,6 @@ internal fun ExpandableFABPage() {
             Text("Sets the number of demo menu buttons. At zero, only the trigger remains.")
             ControlSwitch("Show trigger title", showTriggerLabel) { showTriggerLabel = it }
             ControlSwitch("Show menu item titles", showActionLabels) { showActionLabels = it }
-            ControlSwitch("Show selected action on trigger", showSelectedAction) { showSelectedAction = it }
-            Text("Off keeps the configured title and icon. On shows the last selected menu item.")
             ControlSwitch("Actions enabled", actionsEnabled) { actionsEnabled = it }
             ControlSwitch("Collapse on action", collapseOnAction) { collapseOnAction = it }
             ControlSwitch("Long labels", longLabels) { longLabels = it }

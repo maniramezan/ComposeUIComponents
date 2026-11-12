@@ -163,6 +163,7 @@ Selecting an enabled item requests collapse before invoking its callback. Set
 outside-tap dismissal, and back navigation. The sample browser includes live
 controls for direction, expansion, menu item count, trigger and menu title visibility,
 icons, disabled actions, RTL, state descriptions, and collapse behavior. Its icon picker
-uses a fixed set of choices. Enable “Show selected action on trigger” to display the
-last selected item's title and icon; turning it off restores the configured trigger.
+uses a fixed set of choices. Enable “Show selected item on FAB” beside the preview
+to display the last selected item's title and icon without enabling a separate title
+control. Turning it off restores the configured trigger.
 The standalone FAB demo also includes the icon picker and a button tap counter.
