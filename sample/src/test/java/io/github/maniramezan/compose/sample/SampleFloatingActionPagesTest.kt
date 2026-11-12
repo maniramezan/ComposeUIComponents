@@ -28,7 +28,7 @@ public class SampleFloatingActionPagesTest {
     public val composeRule = createComposeRule()
 
     @Test
-    public fun selectedActionCanReplaceTriggerAndConfiguredTitleCanBeRestored() {
+    public fun selectedItemModeShowsVisibleTitleWithoutEnablingTriggerTitle() {
         composeRule.setContent {
             AppTheme(icons = defaultAppIcons()) {
                 Column(Modifier.verticalScroll(rememberScrollState())) {
@@ -38,18 +38,18 @@ public class SampleFloatingActionPagesTest {
         }
         composeRule
             .onNodeWithText(
-                "Show selected action on trigger",
+                "Show selected item on FAB",
             ).performScrollTo()
             .performSemanticsAction(SemanticsActions.OnClick) { it() }
-        composeRule.onNodeWithText("Show trigger title").performScrollTo().performSemanticsAction(SemanticsActions.OnClick) { it() }
-        composeRule.onNodeWithText("Show selected action on trigger").assertIsOn()
-        composeRule.onNodeWithText("Show trigger title").assertIsOn()
+        composeRule.onNodeWithText("Show selected item on FAB").assertIsOn()
         composeRule.onNodeWithContentDescription("Actions").performScrollTo().performSemanticsAction(SemanticsActions.OnClick) { it() }
         composeRule.onNodeWithText("Action 1").performScrollTo().performSemanticsAction(SemanticsActions.OnClick) { it() }
         composeRule.onNodeWithContentDescription("Action 1").performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithText("Action 1", useUnmergedTree = true).assertIsDisplayed()
         composeRule.onNodeWithText("Last selection: Action 1").performScrollTo().assertIsDisplayed()
-        composeRule.onNodeWithText("Show selected action on trigger").performScrollTo().performClick()
+        composeRule.onNodeWithText("Show selected item on FAB").performScrollTo().performClick()
         composeRule.onNodeWithContentDescription("Actions").performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithText("Action 1", useUnmergedTree = true).assertDoesNotExist()
     }
 
     @Test
