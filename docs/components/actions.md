@@ -8,6 +8,7 @@ Action components wrap Material 3 controls with AppTheme colors, spacing, and mi
 - `SecondaryButton`
 - `TextButton`
 - `IconButton`
+- `ExpandableFAB`
 - `FAB`
 - `ExtendedFloatingActionButton`
 - `SegmentedControl`
@@ -105,3 +106,54 @@ building `AppTheme`.
 | `label` | `String` | Badge text. |
 | `tier` | `LevelTier` | Background/foreground color pair for this tier. |
 | `modifier` | `Modifier` | Applied to the badge container. |
+
+## ExpandableFAB
+
+`FAB` already provides the normal icon-only floating action button, and
+`ExtendedFloatingActionButton` pairs an icon with a visible label. `ExpandableFAB`
+adds a state-hoisted menu whose actions each have an icon and text label.
+
+```kotlin
+var expanded by remember { mutableStateOf(false) }
+ExpandableFAB(
+    expanded = expanded,
+    onExpandedChange = { expanded = it },
+    actions = listOf(
+        FABAction(
+            id = "first",
+            label = firstActionLabel,
+            icon = AppTheme.icons.check,
+            onClick = ::performFirstAction,
+        ),
+    ),
+    icon = AppTheme.icons.expand,
+    contentDescription = actionsDescription,
+    expandedStateDescription = expandedDescription,
+    collapsedStateDescription = collapsedDescription,
+    direction = FABExpansionDirection.Up,
+)
+```
+
+All labels and accessibility descriptions come from the caller. Action labels must
+be nonblank and IDs must be unique and stable. Each icon is decorative because its
+adjacent text labels the button. Actions have a minimum 48dp touch target and
+support disabled states. Collapsing removes interaction and accessibility nodes
+immediately while the exit animation finishes.
+
+Choose `Up` or `Down` for vertical expansion, or `Start` or `End` for horizontal
+expansion. Start/end follow RTL layout. Items retain their supplied order and
+scroll along the expansion axis when space is limited. Vertical labels wrap at large font
+sizes; horizontal labels remain reachable by scrolling. An empty menu renders only the trigger.
+
+Transitions combine fading with expansion/shrinkage using `AppTheme.motion` and
+can reverse during animation. Compose applies the system animation duration
+scale, including disabled animations. Keep the component in an aligned container
+so its trigger remains anchored: use bottom-end for up/start, top-end for down,
+and bottom-start for end. A `Scaffold` floating-action slot works for up/start;
+leave system-bar and IME inset handling to the host scaffold.
+
+Selecting an enabled item requests collapse before invoking its callback. Set
+`collapseOnAction = false` to keep the menu open. The caller owns expanded state,
+outside-tap dismissal, and back navigation. The sample browser includes live
+controls for direction, expansion, item count, labels, icons, disabled actions,
+state descriptions, and collapse behavior.
