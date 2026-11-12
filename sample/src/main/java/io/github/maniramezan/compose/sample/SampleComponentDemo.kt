@@ -78,6 +78,13 @@ internal fun sampleDemos(): List<SampleComponentDemo> =
             content = { FabPage() },
         ),
         SampleComponentDemo(
+            id = "expandable-fab",
+            title = "ExpandableFAB",
+            category = "Actions",
+            description = "Floating action menu with animated horizontal or vertical labeled icon actions.",
+            content = { ExpandableFABPage() },
+        ),
+        SampleComponentDemo(
             id = "segmented-control",
             title = "SegmentedControl",
             category = "Actions",
