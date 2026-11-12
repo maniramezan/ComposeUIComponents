@@ -1,8 +1,12 @@
 package io.github.maniramezan.compose.components
 
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -178,7 +182,11 @@ public class ExpandableFABTest {
     @Test
     public fun emptyActionsLeaveUsableTrigger() {
         setMenu(count = 0)
-        composeRule.onNodeWithContentDescription("Actions").performClick().assertIsDisplayed()
+        composeRule
+            .onNodeWithContentDescription("Actions")
+            .assert(SemanticsMatcher.keyNotDefined(SemanticsProperties.StateDescription))
+            .performClick()
+            .assertIsDisplayed()
         assertEquals(listOf("expanded true"), events)
     }
 
@@ -278,15 +286,63 @@ public class ExpandableFABTest {
     }
 
     @Test
-    public fun worksInUnboundedColumn() {
+    public fun worksInVerticallyScrollingParent() {
         composeRule.setContent {
-            AppTheme {
-                Column {
+            AppTheme(icons = defaultAppIcons()) {
+                Column(Modifier.size(320.dp).verticalScroll(rememberScrollState())) {
                     Menu(expanded = true, onExpandedChange = {})
                 }
             }
         }
         composeRule.onNodeWithText("Action 0").assertIsDisplayed()
+        composeRule.onNodeWithText("Action 1").assertIsDisplayed()
+    }
+
+    @Test
+    public fun worksInHorizontallyScrollingParent() {
+        composeRule.setContent {
+            AppTheme(icons = defaultAppIcons()) {
+                Row(Modifier.size(320.dp).horizontalScroll(rememberScrollState())) {
+                    Menu(expanded = true, onExpandedChange = {}, direction = FABExpansionDirection.Start)
+                }
+            }
+        }
+        composeRule.onNodeWithText("Action 0").assertIsDisplayed()
+        composeRule.onNodeWithText("Action 1").assertIsDisplayed()
+    }
+
+    @Test
+    public fun overflowStartsAtTheEndNearestTheTrigger() {
+        setMenu(initiallyExpanded = true, count = 10)
+        composeRule.onNodeWithText("Action 9").assertIsDisplayed()
+    }
+
+    @Test
+    public fun horizontalOverflowStartsAtTheEndNearestTheTrigger() {
+        setMenu(initiallyExpanded = true, direction = FABExpansionDirection.Start, count = 6)
+        composeRule.onNodeWithText("Action 5").assertIsDisplayed()
+    }
+
+    @Test
+    public fun duplicateIdsAreRejected() {
+        val failure =
+            runCatching {
+                composeRule.setContent {
+                    AppTheme(icons = defaultAppIcons()) {
+                        val action = FABAction("same", "Label", AppTheme.icons.check, {})
+                        ExpandableFAB(
+                            expanded = false,
+                            onExpandedChange = {},
+                            actions = listOf(action, action),
+                            icon = AppTheme.icons.expand,
+                            contentDescription = "Actions",
+                            expandedStateDescription = "Expanded",
+                            collapsedStateDescription = "Collapsed",
+                        )
+                    }
+                }
+            }
+        assertTrue(failure.exceptionOrNull() is IllegalArgumentException)
     }
 
     @Test
