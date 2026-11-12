@@ -60,6 +60,8 @@ public class ExpandableFABTest {
         enabled: Boolean = true,
         collapseOnAction: Boolean = true,
         count: Int = 2,
+        showActionLabels: Boolean = true,
+        triggerLabel: String? = null,
     ) {
         ExpandableFAB(
             expanded = expanded,
@@ -80,6 +82,8 @@ public class ExpandableFABTest {
             collapsedStateDescription = "Collapsed",
             direction = direction,
             collapseOnAction = collapseOnAction,
+            showActionLabels = showActionLabels,
+            triggerLabel = triggerLabel,
         )
     }
 
@@ -91,6 +95,8 @@ public class ExpandableFABTest {
         count: Int = 2,
         layoutDirection: LayoutDirection = LayoutDirection.Ltr,
         fontScale: Float = 1f,
+        showActionLabels: Boolean = true,
+        triggerLabel: String? = null,
     ) {
         composeRule.setContent {
             AppTheme(icons = defaultAppIcons()) {
@@ -116,6 +122,8 @@ public class ExpandableFABTest {
                             enabled = enabled,
                             collapseOnAction = collapseOnAction,
                             count = count,
+                            showActionLabels = showActionLabels,
+                            triggerLabel = triggerLabel,
                         )
                     }
                 }
@@ -180,6 +188,55 @@ public class ExpandableFABTest {
     }
 
     @Test
+    public fun iconOnlyActionsRetainAccessibleNamesRolesAndTouchTargets() {
+        setMenu(initiallyExpanded = true, showActionLabels = false, fontScale = 2f)
+        composeRule.onNodeWithText("Action 0").assertDoesNotExist()
+        composeRule
+            .onNodeWithContentDescription("Action 0")
+            .assertIsDisplayed()
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button))
+            .assertHeightIsAtLeast(48.dp)
+            .assertWidthIsAtLeast(48.dp)
+            .performClick()
+        composeRule.onNodeWithContentDescription("Action 0").assertDoesNotExist()
+        assertEquals(listOf("expanded false", "action 0"), events)
+    }
+
+    @Test
+    public fun disabledIconOnlyActionsIgnoreClicks() {
+        setMenu(initiallyExpanded = true, showActionLabels = false, enabled = false)
+        composeRule.onNodeWithContentDescription("Action 0").assertIsNotEnabled().performClick()
+        assertTrue(events.isEmpty())
+    }
+
+    @Test
+    public fun iconOnlyPersistentMenuKeepsActionsAvailable() {
+        setMenu(initiallyExpanded = true, showActionLabels = false, collapseOnAction = false)
+        composeRule.onNodeWithContentDescription("Action 0").performClick().assertIsDisplayed()
+        assertEquals(listOf("action 0"), events)
+    }
+
+    @Test
+    public fun extendedTriggerUsesVisibleLabelAndAnnouncesExpansion() {
+        setMenu(showActionLabels = false, triggerLabel = "Menu title", fontScale = 2f)
+        composeRule.onNodeWithContentDescription("Actions").assertDoesNotExist()
+        composeRule
+            .onNodeWithContentDescription("Menu title")
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, "Collapsed"))
+            .performClick()
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, "Expanded"))
+        composeRule.onNodeWithContentDescription("Action 0").assertIsDisplayed()
+    }
+
+    @Test
+    public fun blankTriggerLabelUsesIconOnlyTrigger() {
+        setMenu(triggerLabel = " ")
+        composeRule.onNodeWithText(" ").assertDoesNotExist()
+        composeRule.onNodeWithContentDescription("Actions").assertIsDisplayed().performClick()
+        composeRule.onNodeWithText("Action 0").assertIsDisplayed()
+    }
+
+    @Test
     public fun emptyActionsLeaveUsableTrigger() {
         setMenu(count = 0)
         composeRule
@@ -237,17 +294,47 @@ public class ExpandableFABTest {
         assertDirection(FABExpansionDirection.Start, fontScale = 2f)
     }
 
+    @Test
+    public fun iconOnlyMenuWithExtendedTriggerStaysAnchoredInRtlAtDoubleFontScale() {
+        assertDirection(
+            FABExpansionDirection.Start,
+            LayoutDirection.Rtl,
+            fontScale = 2f,
+            showActionLabels = false,
+            triggerLabel = "Actions",
+        )
+    }
+
+    @Test
+    public fun iconOnlyEndMenuStaysAnchored() {
+        assertDirection(FABExpansionDirection.End, showActionLabels = false)
+    }
+
     private fun assertDirection(
         direction: FABExpansionDirection,
         layoutDirection: LayoutDirection = LayoutDirection.Ltr,
         fontScale: Float = 1f,
+        showActionLabels: Boolean = true,
+        triggerLabel: String? = null,
     ) {
-        setMenu(direction = direction, layoutDirection = layoutDirection, count = 1, fontScale = fontScale)
-        val trigger = composeRule.onNodeWithContentDescription("Actions")
+        setMenu(
+            direction = direction,
+            layoutDirection = layoutDirection,
+            count = 1,
+            fontScale = fontScale,
+            showActionLabels = showActionLabels,
+            triggerLabel = triggerLabel,
+        )
+        val trigger = composeRule.onNodeWithContentDescription(triggerLabel ?: "Actions")
         val before = trigger.getUnclippedBoundsInRoot()
         trigger.performClick()
         assertEquals(before, trigger.getUnclippedBoundsInRoot())
-        val action = composeRule.onNodeWithText("Action 0").getUnclippedBoundsInRoot()
+        val action =
+            if (showActionLabels) {
+                composeRule.onNodeWithText("Action 0").getUnclippedBoundsInRoot()
+            } else {
+                composeRule.onNodeWithContentDescription("Action 0").getUnclippedBoundsInRoot()
+            }
         when (direction) {
             FABExpansionDirection.Up -> assertTrue(action.bottom <= before.top)
             FABExpansionDirection.Down -> assertTrue(action.top >= before.bottom)

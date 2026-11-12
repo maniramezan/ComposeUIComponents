@@ -111,7 +111,11 @@ building `AppTheme`.
 
 `FAB` already provides the normal icon-only floating action button, and
 `ExtendedFloatingActionButton` pairs an icon with a visible label. `ExpandableFAB`
-adds a state-hoisted menu whose actions each have an icon and text label.
+adds a state-hoisted menu whose actions each have an icon and caller-supplied label.
+Set `showActionLabels = false` for an icon-only menu; each action retains its label
+as its accessibility name. The default is `true`, preserving visible action text.
+Supply a nonblank `triggerLabel` for an extended trigger with a visible title;
+null or blank keeps the trigger icon-only and uses `contentDescription` as its name.
 
 ```kotlin
 var expanded by remember { mutableStateOf(false) }
@@ -131,13 +135,15 @@ ExpandableFAB(
     expandedStateDescription = expandedDescription,
     collapsedStateDescription = collapsedDescription,
     direction = FABExpansionDirection.Up,
+    showActionLabels = false,
+    triggerLabel = actionsDescription,
 )
 ```
 
 All labels and accessibility descriptions come from the caller. Action labels must
 be nonblank and IDs must be unique and stable. Each icon is decorative because its
-adjacent text labels the button. Actions have a minimum 48dp touch target and
-support disabled states. Collapsing removes interaction and accessibility nodes
+button receives its name from visible text or, in icon-only mode, the action label.
+Actions have a minimum 48dp touch target and support disabled states. Collapsing removes interaction and accessibility nodes
 immediately while the exit animation finishes.
 
 Choose `Up` or `Down` for vertical expansion, or `Start` or `End` for horizontal
@@ -155,5 +161,8 @@ leave system-bar and IME inset handling to the host scaffold.
 Selecting an enabled item requests collapse before invoking its callback. Set
 `collapseOnAction = false` to keep the menu open. The caller owns expanded state,
 outside-tap dismissal, and back navigation. The sample browser includes live
-controls for direction, expansion, item count, labels, icons, disabled actions,
-state descriptions, and collapse behavior.
+controls for direction, expansion, menu item count, trigger and menu title visibility,
+icons, disabled actions, RTL, state descriptions, and collapse behavior. Its icon picker
+uses a fixed set of choices. Enable “Show selected action on trigger” to display the
+last selected item's title and icon; turning it off restores the configured trigger.
+The standalone FAB demo also includes the icon picker and a button tap counter.

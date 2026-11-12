@@ -17,6 +17,7 @@ public fun ExpandableFABPreview(): Unit =
             ExpandableFABPreviewContent(expanded = false)
             ExpandableFABPreviewContent()
             ExpandableFABPreviewContent(direction = FABExpansionDirection.Start)
+            ExpandableFABPreviewContent(showActionLabels = false, triggerLabel = "Actions")
         }
     }
 
@@ -25,6 +26,8 @@ internal fun ExpandableFABPreviewContent(
     expanded: Boolean = true,
     direction: FABExpansionDirection = FABExpansionDirection.Up,
     longLabels: Boolean = false,
+    showActionLabels: Boolean = true,
+    triggerLabel: String? = null,
 ) {
     ExpandableFAB(
         expanded = expanded,
@@ -49,5 +52,7 @@ internal fun ExpandableFABPreviewContent(
         expandedStateDescription = "Expanded",
         collapsedStateDescription = "Collapsed",
         direction = direction,
+        showActionLabels = showActionLabels,
+        triggerLabel = triggerLabel,
     )
 }
