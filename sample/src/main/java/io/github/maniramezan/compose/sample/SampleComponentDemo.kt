@@ -29,6 +29,13 @@ internal data class SampleComponentDemo(
 internal fun sampleDemos(): List<SampleComponentDemo> =
     listOf(
         SampleComponentDemo(
+            id = "questionnaire",
+            title = "QuestionnaireView",
+            category = "Inputs",
+            description = "Paged choices, booleans, numbers, dates, text, and custom inputs with validation.",
+            content = { QuestionnairePage() },
+        ),
+        SampleComponentDemo(
             id = "labeled-divider",
             title = "LabeledDivider",
             category = "Containers",
