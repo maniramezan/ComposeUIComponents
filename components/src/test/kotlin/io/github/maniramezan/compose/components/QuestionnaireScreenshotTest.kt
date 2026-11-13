@@ -30,6 +30,42 @@ import java.time.LocalDate
 @Config(sdk = [35], qualifiers = "w360dp-h800dp-xhdpi")
 public class QuestionnaireScreenshotTest {
     @Test
+    public fun everyChoiceKindAndPresentation() {
+        val options = listOf(QuestionnaireOption("a", "First option"), QuestionnaireOption("b", "Second option"))
+        val kinds =
+            listOf(
+                QuestionnaireQuestionKind.SingleChoice(options) to QuestionnaireAnswer.Choices(listOf("a")),
+                QuestionnaireQuestionKind.MultipleChoice(options) to QuestionnaireAnswer.Choices(listOf("a", "b")),
+                QuestionnaireQuestionKind.Boolean("Yes", "No") to QuestionnaireAnswer.Boolean(false),
+            )
+        kinds.forEachIndexed { index, (kind, answer) ->
+            QuestionnaireChoiceStyle.entries.forEach { style ->
+                captureRoboImage("build/outputs/roborazzi/questionnaire-choice-$index-${style.name}.png") {
+                    AppTheme(darkTheme = false, dynamicColor = false) {
+                        QuestionnaireView(
+                            questions =
+                                listOf(
+                                    QuestionnaireQuestion(
+                                        id = "choice",
+                                        prompt = "Which options apply?",
+                                        kind = kind,
+                                        isRequired = true,
+                                        choiceStyle = style,
+                                    ),
+                                ),
+                            answers = mapOf("choice" to answer),
+                            onAnswersChange = {},
+                            labels = QuestionnaireLabels("Back", "Next", "Done", "Increase", "Decrease"),
+                            onSubmit = {},
+                            modifier = Modifier.width(360.dp).height(700.dp).background(AppTheme.colors.surface),
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
     public fun questionnaireInputsInLightAndDarkThemes() {
         val today = LocalDate.of(2026, 6, 15)
         val options = listOf(QuestionnaireOption("a", "Option A"), QuestionnaireOption("b", "Option B"))

@@ -29,7 +29,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
@@ -127,13 +126,12 @@ internal fun QuestionnaireDateInput(
     val displayed = (QuestionnaireFlow.effectiveAnswer(answer, question, today) as QuestionnaireAnswer.Date).value
     BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
         val calendarWidth = minimumTouchTargetSize() * 7 + AppTheme.spacing.x3
-        val compact = maxWidth < calendarWidth || LocalDensity.current.fontScale >= 2f
         val viewportWidth = maxWidth
-        key(kind.range, compact) {
+        key(kind.range) {
             val state =
                 rememberDatePickerState(
                     initialSelectedDateMillis = displayed.utcMillis(),
-                    initialDisplayMode = if (compact) DisplayMode.Input else DisplayMode.Picker,
+                    initialDisplayMode = DisplayMode.Input,
                     yearRange = kind.range.start.year..kind.range.endInclusive.year,
                     selectableDates =
                         object : SelectableDates {

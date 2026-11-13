@@ -175,6 +175,7 @@ public class QuestionnaireViewTest {
                 listOf(QuestionnaireQuestion("date", "Date", QuestionnaireQuestionKind.Date(today..today.plusDays(10)))),
             )
         }
+        composeRule.onNodeWithContentDescription("Switch to calendar input mode").performClick()
         composeRule.onNodeWithText("Thursday, June 18, 2026").performClick()
         composeRule.onNodeWithText("Submit").performClick()
         composeRule.runOnIdle { assertThat(submitted).containsExactly("date", QuestionnaireAnswer.Date(today.plusDays(3))) }
