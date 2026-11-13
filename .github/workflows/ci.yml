@@ -75,23 +75,12 @@ jobs:
           name: docs-site
           path: site
 
-  # Deploys docs to GitHub Pages on every push to main. Runs after `build` so
-  # it can download the freshly-recorded component screenshots and bundle them
-  # into the MkDocs site — no PNGs need to be committed to the repo.
-  deploy-docs:
+  prepare-docs:
     needs: build
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-      pages: write
-    environment:
-      name: github-pages
-      url: ${{ steps.pages-deployment.outputs.page_url }}
-    concurrency:
-      group: pages
-      cancel-in-progress: false
+    outputs:
+      artifact-name: github-pages-${{ github.run_attempt }}
     steps:
       - uses: actions/checkout@v7
 
@@ -118,7 +107,25 @@ jobs:
 
       - uses: actions/upload-pages-artifact@v5
         with:
+          name: github-pages-${{ github.run_attempt }}
           path: site
 
+  deploy-docs:
+    needs: prepare-docs
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+      pages: write
+    environment:
+      name: github-pages
+      url: ${{ steps.pages-deployment.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
       - id: pages-deployment
         uses: actions/deploy-pages@v5
+        with:
+          artifact_name: ${{ needs.prepare-docs.outputs.artifact-name }}
