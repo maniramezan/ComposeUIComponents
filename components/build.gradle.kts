@@ -18,6 +18,7 @@ android {
 }
 
 dependencies {
+    api(project(":foundation"))
     implementation(project(":theme"))
     implementation(project(":icons"))
     implementation(project(":compose-utils"))

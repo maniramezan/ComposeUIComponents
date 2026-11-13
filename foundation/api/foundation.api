@@ -5,3 +5,213 @@ public final class io/github/maniramezan/compose/foundation/StringsKt {
 	public static synthetic fun toStableIdentifier$default (Ljava/lang/String;CILjava/lang/Object;)Ljava/lang/String;
 }
 
+public abstract interface class io/github/maniramezan/compose/foundation/questionnaire/QuestionnaireAnswer {
+}
+
+public final class io/github/maniramezan/compose/foundation/questionnaire/QuestionnaireAnswer$Boolean : io/github/maniramezan/compose/foundation/questionnaire/QuestionnaireAnswer {
+	public fun <init> (Z)V
+	public final fun component1 ()Z
+	public final fun copy (Z)Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireAnswer$Boolean;
+	public static synthetic fun copy$default (Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireAnswer$Boolean;ZILjava/lang/Object;)Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireAnswer$Boolean;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/maniramezan/compose/foundation/questionnaire/QuestionnaireAnswer$Choices : io/github/maniramezan/compose/foundation/questionnaire/QuestionnaireAnswer {
+	public fun <init> (Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireAnswer$Choices;
+	public static synthetic fun copy$default (Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireAnswer$Choices;Ljava/util/List;ILjava/lang/Object;)Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireAnswer$Choices;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getIds ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/maniramezan/compose/foundation/questionnaire/QuestionnaireAnswer$Date : io/github/maniramezan/compose/foundation/questionnaire/QuestionnaireAnswer {
+	public fun <init> (Ljava/time/LocalDate;)V
+	public final fun component1 ()Ljava/time/LocalDate;
+	public final fun copy (Ljava/time/LocalDate;)Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireAnswer$Date;
+	public static synthetic fun copy$default (Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireAnswer$Date;Ljava/time/LocalDate;ILjava/lang/Object;)Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireAnswer$Date;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/time/LocalDate;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/maniramezan/compose/foundation/questionnaire/QuestionnaireAnswer$Number : io/github/maniramezan/compose/foundation/questionnaire/QuestionnaireAnswer {
+	public fun <init> (D)V
+	public final fun component1 ()D
+	public final fun copy (D)Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireAnswer$Number;
+	public static synthetic fun copy$default (Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireAnswer$Number;DILjava/lang/Object;)Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireAnswer$Number;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()D
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/maniramezan/compose/foundation/questionnaire/QuestionnaireAnswer$Text : io/github/maniramezan/compose/foundation/questionnaire/QuestionnaireAnswer {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireAnswer$Text;
+	public static synthetic fun copy$default (Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireAnswer$Text;Ljava/lang/String;ILjava/lang/Object;)Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireAnswer$Text;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/maniramezan/compose/foundation/questionnaire/QuestionnaireChoiceStyle : java/lang/Enum {
+	public static final field Automatic Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireChoiceStyle;
+	public static final field Bullets Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireChoiceStyle;
+	public static final field Checkmarks Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireChoiceStyle;
+	public static final field Chips Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireChoiceStyle;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireChoiceStyle;
+	public static fun values ()[Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireChoiceStyle;
+}
+
+public final class io/github/maniramezan/compose/foundation/questionnaire/QuestionnaireFlow {
+	public static final field INSTANCE Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireFlow;
+	public final fun canAdvance (Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestion;Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireAnswer;Ljava/time/LocalDate;)Z
+	public final fun effectiveAnswer (Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireAnswer;Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestion;Ljava/time/LocalDate;)Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireAnswer;
+	public final fun firstUnansweredRequiredIndex (Ljava/util/List;Ljava/util/Map;Ljava/time/LocalDate;)Ljava/lang/Integer;
+	public final fun normalized (Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireAnswer;Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestion;)Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireAnswer;
+	public final fun snapped (DLkotlin/ranges/ClosedFloatingPointRange;D)D
+	public final fun stepped (Ljava/lang/Double;ZLkotlin/ranges/ClosedFloatingPointRange;D)D
+	public final fun submission (Ljava/util/List;Ljava/util/Map;Ljava/time/LocalDate;)Ljava/util/Map;
+	public final fun toggling (Ljava/lang/String;Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireAnswer;Ljava/util/List;Z)Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireAnswer;
+	public final fun validQuestions (Ljava/util/List;Z)Ljava/util/List;
+	public static synthetic fun validQuestions$default (Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireFlow;Ljava/util/List;ZILjava/lang/Object;)Ljava/util/List;
+}
+
+public final class io/github/maniramezan/compose/foundation/questionnaire/QuestionnaireNumbers {
+	public static final field INSTANCE Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireNumbers;
+	public final fun format (DLjava/util/Locale;)Ljava/lang/String;
+	public final fun parse (Ljava/lang/String;Ljava/util/Locale;)Ljava/lang/Double;
+	public final fun sanitize (Ljava/lang/String;Ljava/util/Locale;Z)Ljava/lang/String;
+}
+
+public final class io/github/maniramezan/compose/foundation/questionnaire/QuestionnaireOption {
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireOption;
+	public static synthetic fun copy$default (Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireOption;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireOption;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getId ()Ljava/lang/String;
+	public final fun getTitle ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestion {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind;Ljava/lang/String;ZLio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireChoiceStyle;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind;Ljava/lang/String;ZLio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireChoiceStyle;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Z
+	public final fun component6 ()Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireChoiceStyle;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind;Ljava/lang/String;ZLio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireChoiceStyle;)Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestion;
+	public static synthetic fun copy$default (Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestion;Ljava/lang/String;Ljava/lang/String;Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind;Ljava/lang/String;ZLio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireChoiceStyle;ILjava/lang/Object;)Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestion;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getChoiceStyle ()Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireChoiceStyle;
+	public final fun getDetail ()Ljava/lang/String;
+	public final fun getId ()Ljava/lang/String;
+	public final fun getKind ()Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind;
+	public final fun getPrompt ()Ljava/lang/String;
+	public fun hashCode ()I
+	public final fun isRequired ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class io/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind {
+}
+
+public final class io/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind$Boolean : io/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind$Boolean;
+	public static synthetic fun copy$default (Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind$Boolean;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind$Boolean;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFalseTitle ()Ljava/lang/String;
+	public final fun getTrueTitle ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind$Custom : io/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind {
+	public static final field INSTANCE Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind$Custom;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind$Date : io/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind {
+	public fun <init> (Lkotlin/ranges/ClosedRange;)V
+	public final fun component1 ()Lkotlin/ranges/ClosedRange;
+	public final fun copy (Lkotlin/ranges/ClosedRange;)Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind$Date;
+	public static synthetic fun copy$default (Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind$Date;Lkotlin/ranges/ClosedRange;ILjava/lang/Object;)Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind$Date;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getRange ()Lkotlin/ranges/ClosedRange;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind$MultipleChoice : io/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind {
+	public fun <init> (Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind$MultipleChoice;
+	public static synthetic fun copy$default (Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind$MultipleChoice;Ljava/util/List;ILjava/lang/Object;)Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind$MultipleChoice;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getOptions ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind$Number : io/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind {
+	public fun <init> (Lkotlin/ranges/ClosedFloatingPointRange;DLjava/lang/String;)V
+	public synthetic fun <init> (Lkotlin/ranges/ClosedFloatingPointRange;DLjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lkotlin/ranges/ClosedFloatingPointRange;
+	public final fun component2 ()D
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (Lkotlin/ranges/ClosedFloatingPointRange;DLjava/lang/String;)Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind$Number;
+	public static synthetic fun copy$default (Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind$Number;Lkotlin/ranges/ClosedFloatingPointRange;DLjava/lang/String;ILjava/lang/Object;)Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind$Number;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getRange ()Lkotlin/ranges/ClosedFloatingPointRange;
+	public final fun getStep ()D
+	public final fun getUnitLabel ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind$SingleChoice : io/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind {
+	public fun <init> (Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind$SingleChoice;
+	public static synthetic fun copy$default (Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind$SingleChoice;Ljava/util/List;ILjava/lang/Object;)Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind$SingleChoice;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getOptions ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind$Text : io/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind$Text;
+	public static synthetic fun copy$default (Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind$Text;Ljava/lang/String;ILjava/lang/Object;)Lio/github/maniramezan/compose/foundation/questionnaire/QuestionnaireQuestionKind$Text;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getPlaceholder ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
