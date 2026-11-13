@@ -59,7 +59,7 @@ optional captions are omitted. Skip appears only when both a nonblank skip label
 | `MultipleChoice(options)` | `Choices(ids)` | Toggles independently; submission uses option order. |
 | `Boolean(trueTitle, falseTitle)` | `Boolean(value)` | Starts unanswered. Both `true` and `false` satisfy required validation. |
 | `Number(range, step, unitLabel)` | `Number(value)` | Decimal field and stepper; localized digits and decimal separator. |
-| `Date(range)` | `Date(value)` | Calendar day picker, restricted to the inclusive range. |
+| `Date(range)` | `Date(value)` | Date field with a calendar toggle, restricted to the inclusive range. |
 | `Text(placeholder)` | `Text(value)` | Multiline text; surrounding whitespace is removed when advancing/submitting. |
 | `Custom` | Any answer type | Caller supplies the renderer and writes null while incomplete. |
 
@@ -124,7 +124,7 @@ Compose `key`. A changed question list clamps the current page into the availabl
 Use a bounded height for a scrollable input with persistent navigation. Inside an
 unbounded scrolling parent the view expands naturally. The sample browser bounds its
 questionnaire preview and already consumes safe-drawing and IME insets; other hosts must
-handle those insets themselves. The date picker starts in localized text-input mode in narrow panes and at 200% font
+handle those insets themselves. The date picker starts in localized text-input mode at every pane width and font
 scale. Its mode toggle also offers a calendar, which scrolls horizontally when needed
 to preserve seven complete columns with 48dp day targets.
 
@@ -135,6 +135,36 @@ choices, and steppers have at least 48dp touch targets. An optional caller-local
 progress formatter supplies a polite live-region caption in addition to the progress bar.
 Navigation buttons stack vertically to accommodate long labels and large text.
 
-The sample includes independently reachable examples for every type, plus a complete
-flow, a custom rating control, and live configuration. Light/dark previews and screenshot
-coverage include each input, with additional RTL/200% font-scale coverage.
+## Swift questionnaire coverage
+
+The question kinds correspond to SwiftUIComponents' questionnaire: single choice,
+multiple choice, multiline text, boolean, number, date, and caller-rendered custom input.
+All four choice presentations work with single, multiple, and boolean questions.
+Rating scales use labeled single-choice options; they do not require a separate answer type.
+
+The sample follows the Swift showcase with nine independently reachable examples:
+Single choice, Multiple choice, Free-form text, Boolean choices, Number, Date,
+Custom component example, Rating scale, and Complete questionnaire. The complete flow
+contains all eight input examples. The custom example uses an inline calendar and
+records its displayed date immediately. Switching examples or choosing Restart clears
+answers, events, and paging while keeping the configuration controls.
+In narrow panes the custom calendar scrolls horizontally, with a weekday-navigation
+button as an alternative to swiping.
+
+The controls are grouped into Question and presentation, Number and date, and Navigation
+and answers. They include multiline option titles, per-example prompts with an editable
+override, choice presentation, required/detail flags, numeric bounds and step, date range
+in months, skip, submit title, and answer summaries.
+
+Android uses native Material date input and calendar controls. Labels are caller-supplied
+under ADR 0004, and dates use `LocalDate`; Swift uses package-localized navigation labels
+and Foundation dates. Swift also animates page transitions and explicitly moves VoiceOver
+focus to the prompt. Android exposes heading semantics and a polite progress announcement;
+equivalent TalkBack focus behavior has not been established. This comparison covers the
+questionnaire, not every component in the two libraries.
+
+Automated coverage exercises selection, clearing, required gating, option ordering, and
+explicit false answers across every choice presentation. Sample tests reach all nine
+examples, submit the complete eight-question flow, verify resets, and exercise custom
+calendar selection and range synchronization. Light/dark previews and screenshot coverage
+include each input, with additional RTL/200% font-scale coverage.

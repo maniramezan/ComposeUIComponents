@@ -1,6 +1,8 @@
 package io.github.maniramezan.compose.sample
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -10,154 +12,160 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import io.github.maniramezan.compose.components.Card
 import io.github.maniramezan.compose.components.MenuPicker
 import io.github.maniramezan.compose.components.QuestionnaireLabels
 import io.github.maniramezan.compose.components.QuestionnaireView
 import io.github.maniramezan.compose.components.SecondaryButton
-import io.github.maniramezan.compose.components.Slider
+import io.github.maniramezan.compose.components.Section
 import io.github.maniramezan.compose.components.TextField
 import io.github.maniramezan.compose.foundation.questionnaire.QuestionnaireAnswer
 import io.github.maniramezan.compose.foundation.questionnaire.QuestionnaireChoiceStyle
-import io.github.maniramezan.compose.foundation.questionnaire.QuestionnaireOption
-import io.github.maniramezan.compose.foundation.questionnaire.QuestionnaireQuestion
-import io.github.maniramezan.compose.foundation.questionnaire.QuestionnaireQuestionKind
 import java.time.LocalDate
 
-private val QUESTIONNAIRE_EXAMPLES = listOf("Single", "Multiple", "Boolean", "Number", "Date", "Text", "Custom", "All")
-
 @Composable
-internal fun QuestionnairePage() {
-    var example by remember { mutableIntStateOf(0) }
-    var style by remember { mutableIntStateOf(0) }
-    var required by remember { mutableStateOf(true) }
-    var detail by remember { mutableStateOf(true) }
+internal fun QuestionnairePage(
+    initialExample: QuestionnaireExample = QuestionnaireExample.SingleChoice,
+    today: LocalDate = LocalDate.now(),
+) {
+    var example by remember { mutableStateOf(initialExample) }
+    var configuration by remember { mutableStateOf(QuestionnaireExampleConfiguration()) }
     var skip by remember { mutableStateOf(true) }
     var progress by remember { mutableStateOf(true) }
     var optionalCaption by remember { mutableStateOf(true) }
     var customRenderer by remember { mutableStateOf(true) }
-    var prompt by remember { mutableStateOf("Choose an answer") }
-    var optionTitles by remember { mutableStateOf("Option A, Option B, Option C") }
-    var trueTitle by remember { mutableStateOf("Yes") }
-    var falseTitle by remember { mutableStateOf("No") }
-    var placeholder by remember { mutableStateOf("Write your answer") }
-    var unit by remember { mutableStateOf("items") }
-    var submit by remember { mutableStateOf("Done") }
-    var lower by remember { mutableStateOf(0f) }
-    var upper by remember { mutableStateOf(100f) }
-    var step by remember { mutableStateOf(5f) }
-    var days by remember { mutableStateOf(90f) }
+    var submit by remember { mutableStateOf("") }
     var generation by remember { mutableIntStateOf(0) }
-    var answers by remember { mutableStateOf<Map<String, QuestionnaireAnswer>>(emptyMap()) }
-    var event by remember { mutableStateOf("No event yet") }
-    val today = remember { LocalDate.now() }
-    val options =
-        optionTitles
-            .split(',')
-            .map(String::trim)
-            .filter(String::isNotBlank)
-            .map(::QuestionnaireOption)
-    val kinds =
-        listOf(
-            QuestionnaireQuestionKind.SingleChoice(options),
-            QuestionnaireQuestionKind.MultipleChoice(options),
-            QuestionnaireQuestionKind.Boolean(trueTitle, falseTitle),
-            QuestionnaireQuestionKind.Number(lower.toDouble()..upper.toDouble(), step.toDouble(), unit),
-            QuestionnaireQuestionKind.Date(today..today.plusDays(days.toLong())),
-            QuestionnaireQuestionKind.Text(placeholder),
-            QuestionnaireQuestionKind.Custom,
-        )
-    val questions =
-        kinds
-            .mapIndexed { index, kind ->
-                QuestionnaireQuestion(
-                    id = "question-$index",
-                    prompt = if (example == 7) "${QUESTIONNAIRE_EXAMPLES[index]}: $prompt" else prompt,
-                    kind = kind,
-                    detail = if (detail) "Provide the value that fits best." else null,
-                    isRequired = required,
-                    choiceStyle = QuestionnaireChoiceStyle.entries[style],
-                )
-            }.filterIndexed { index, _ -> example == 7 || index == example }
 
-    SamplePage(
-        preview = {
-            key(example, generation) {
-                QuestionnaireView(
-                    questions = questions,
-                    answers = answers,
-                    onAnswersChange = { answers = it },
-                    labels =
-                        QuestionnaireLabels(
-                            back = "Back",
-                            next = "Next",
-                            submit = submit,
-                            increment = "Increase value",
-                            decrement = "Decrease value",
-                            skip = "Skip",
-                            optional = if (optionalCaption) "Optional" else null,
-                        ),
-                    onSubmit = { event = "Submitted ${it.size} answers: $it" },
-                    onSkip = if (skip) ({ event = "Skipped" }) else null,
-                    progressDescription = if (progress) ({ page, count -> "Question $page of $count" }) else null,
-                    today = today,
-                    modifier = Modifier.height(580.dp),
-                    customInput =
-                        if (customRenderer) {
-                            { question, answer, onChange ->
-                                val rating = (answer as? QuestionnaireAnswer.Number)?.value
-                                Text(text = rating?.let { "Rating: ${it.toInt()}" } ?: "Move the slider to answer")
-                                Slider(
-                                    value = rating?.toFloat() ?: 3f,
-                                    onValueChange = { onChange(QuestionnaireAnswer.Number(it.toInt().toDouble())) },
-                                    valueRange = 1f..5f,
-                                    label = question.prompt,
-                                    valueDescription = rating?.let { "${it.toInt()} of 5" },
-                                )
-                                SecondaryButton(text = "Clear rating", onClick = { onChange(null) })
+    key(example, generation) {
+        var answers by remember { mutableStateOf<Map<String, QuestionnaireAnswer>>(emptyMap()) }
+        var event by remember { mutableStateOf("None yet") }
+        SamplePage(
+            preview = {
+                Section("Questionnaire example") {
+                    MenuPicker(
+                        options = QuestionnaireExample.entries,
+                        selectedOption = example,
+                        onOptionSelected = { example = it },
+                        optionLabel = { it.title },
+                        label = "Example",
+                    )
+                    Card(contentPadding = PaddingValues(0.dp)) {
+                        QuestionnaireView(
+                            questions = configuration.questions(example, today),
+                            answers = answers,
+                            onAnswersChange = { answers = it },
+                            labels =
+                                QuestionnaireLabels(
+                                    back = "Back",
+                                    next = "Next",
+                                    submit = submit.ifBlank { "Done" },
+                                    increment = "Increase value",
+                                    decrement = "Decrease value",
+                                    skip = "Skip",
+                                    optional = if (optionalCaption) "Optional" else null,
+                                ),
+                            onSubmit = { event = "Submitted ${it.size} answer(s)" },
+                            onSkip = if (skip) ({ event = "Skipped" }) else null,
+                            progressDescription = if (progress) ({ page, count -> "Question $page of $count" }) else null,
+                            today = today,
+                            modifier = Modifier.height(580.dp),
+                            customInput =
+                                if (customRenderer) {
+                                    { question, answer, onChange ->
+                                        QuestionnaireSampleCalendar(question.prompt, configuration.dateRange(today), answer, onChange)
+                                    }
+                                } else {
+                                    null
+                                },
+                        )
+                    }
+                    Text(text = "Last event: $event", modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+                }
+            },
+            controls = {
+                Section("Question and presentation") {
+                    TextField(
+                        configuration.prompt,
+                        { configuration = configuration.copy(prompt = it) },
+                        "Prompt (empty uses example prompt)",
+                    )
+                    ControlSwitch("Required answers", configuration.required) { configuration = configuration.copy(required = it) }
+                    ControlSwitch("Detail text", configuration.showsDetail) { configuration = configuration.copy(showsDetail = it) }
+                    MenuPicker(
+                        options = QuestionnaireChoiceStyle.entries,
+                        selectedOption = configuration.choiceStyle,
+                        onOptionSelected = { configuration = configuration.copy(choiceStyle = it) },
+                        optionLabel = {
+                            when (it) {
+                                QuestionnaireChoiceStyle.Automatic -> "Automatic rows"
+                                QuestionnaireChoiceStyle.Bullets -> "Bullet rows"
+                                QuestionnaireChoiceStyle.Checkmarks -> "Checkmark rows"
+                                QuestionnaireChoiceStyle.Chips -> "Wrapping chips"
                             }
-                        } else {
-                            null
                         },
-                )
-            }
-            Text(text = event)
-            Text(text = "Answers: $answers")
-        },
-        controls = {
-            MenuPicker(
-                options = QUESTIONNAIRE_EXAMPLES.indices.toList(),
-                selectedOption = example,
-                onOptionSelected = { example = it },
-                optionLabel = { QUESTIONNAIRE_EXAMPLES[it] },
-                label = "Example",
-            )
-            ControlSegmented("Choice appearance", QuestionnaireChoiceStyle.entries.map { it.name }, style) { style = it }
-            ControlSwitch("Required answers", required) { required = it }
-            ControlSwitch("Supporting text", detail) { detail = it }
-            ControlSwitch("Allow skip", skip) { skip = it }
-            ControlSwitch("Progress caption", progress) { progress = it }
-            ControlSwitch("Optional caption", optionalCaption) { optionalCaption = it }
-            ControlSwitch("Custom renderer", customRenderer) { customRenderer = it }
-            TextField(prompt, { prompt = it }, "Prompt")
-            TextField(optionTitles, { optionTitles = it }, "Options separated by commas")
-            TextField(trueTitle, { trueTitle = it }, "True label")
-            TextField(falseTitle, { falseTitle = it }, "False label")
-            TextField(placeholder, { placeholder = it }, "Text placeholder")
-            TextField(unit, { unit = it }, "Number unit")
-            TextField(submit, { submit = it }, "Submit label")
-            ControlSlider("Lower bound: ${lower.toInt()}", lower, { lower = it }, -100f..0f)
-            ControlSlider("Upper bound: ${upper.toInt()}", upper, { upper = it }, 0f..200f)
-            ControlSlider("Step: ${step.toInt()}", step, { step = it.toInt().toFloat() }, 0f..20f)
-            ControlSlider("Date range in days: ${days.toInt()}", days, { days = it }, 0f..365f)
-            SecondaryButton(
-                text = "Reset answers and page",
-                onClick = {
-                    answers = emptyMap()
-                    event = "Reset"
-                    generation++
-                },
-            )
-        },
-    )
+                        label = "Choice presentation",
+                    )
+                    Text("Presentation changes the indicators. The question kind controls single or multiple selection.")
+                    OutlinedTextField(
+                        value = configuration.optionTitles,
+                        onValueChange = { configuration = configuration.copy(optionTitles = it) },
+                        label = { Text("Options (one per line)") },
+                        minLines = 3,
+                        maxLines = 6,
+                    )
+                    TextField(configuration.placeholder, { configuration = configuration.copy(placeholder = it) }, "Free-text placeholder")
+                    TextField(configuration.trueTitle, { configuration = configuration.copy(trueTitle = it) }, "True choice title")
+                    TextField(configuration.falseTitle, { configuration = configuration.copy(falseTitle = it) }, "False choice title")
+                }
+                Section("Number and date") {
+                    ControlSlider(
+                        "Lower bound: ${configuration.lowerBound.toInt()}",
+                        configuration.lowerBound.toFloat(),
+                        { configuration = configuration.copy(lowerBound = it.toInt().toDouble()) },
+                        -100f..configuration.upperBound.toFloat(),
+                    )
+                    ControlSlider(
+                        "Upper bound: ${configuration.upperBound.toInt()}",
+                        configuration.upperBound.toFloat(),
+                        { configuration = configuration.copy(upperBound = it.toInt().toDouble()) },
+                        configuration.lowerBound.toFloat()..1000f,
+                    )
+                    ControlSlider(
+                        "Number step: ${configuration.step.toInt()}",
+                        configuration.step.toFloat(),
+                        { configuration = configuration.copy(step = it.toInt().toDouble()) },
+                        0f..100f,
+                    )
+                    TextField(configuration.unit, { configuration = configuration.copy(unit = it) }, "Number unit")
+                    ControlSlider(
+                        "Date range: ${configuration.dateRangeMonths} month(s)",
+                        configuration.dateRangeMonths.toFloat(),
+                        { configuration = configuration.copy(dateRangeMonths = it.toInt()) },
+                        1f..24f,
+                    )
+                }
+                Section("Navigation and answers") {
+                    ControlSwitch("Skip button", skip) { skip = it }
+                    ControlSwitch("Progress caption", progress) { progress = it }
+                    ControlSwitch("Optional caption", optionalCaption) { optionalCaption = it }
+                    ControlSwitch("Custom renderer", customRenderer) { customRenderer = it }
+                    TextField(submit, { submit = it }, "Submit title (empty uses Done)")
+                    SecondaryButton(text = "Restart", onClick = { generation++ })
+                    Text(
+                        text =
+                            if (answers.isEmpty()) {
+                                "No answers"
+                            } else {
+                                answers.toSortedMap().entries.joinToString("\n") { (id, answer) -> "$id: $answer" }
+                            },
+                    )
+                }
+            },
+        )
+    }
 }
