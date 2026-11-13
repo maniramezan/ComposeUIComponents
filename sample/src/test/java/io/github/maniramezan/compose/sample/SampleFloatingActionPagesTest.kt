@@ -28,7 +28,7 @@ public class SampleFloatingActionPagesTest {
     public val composeRule = createComposeRule()
 
     @Test
-    public fun selectedItemModeShowsVisibleTitleWithoutEnablingTriggerTitle() {
+    public fun selectedItemModeShowsTitleOnlyWhenTriggerTitleIsEnabled() {
         composeRule.setContent {
             AppTheme(icons = defaultAppIcons()) {
                 Column(Modifier.verticalScroll(rememberScrollState())) {
@@ -45,7 +45,13 @@ public class SampleFloatingActionPagesTest {
         composeRule.onNodeWithContentDescription("Actions").performScrollTo().performSemanticsAction(SemanticsActions.OnClick) { it() }
         composeRule.onNodeWithText("Action 1").performScrollTo().performSemanticsAction(SemanticsActions.OnClick) { it() }
         composeRule.onNodeWithContentDescription("Action 1").performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithText("Action 1", useUnmergedTree = true).assertDoesNotExist()
+        composeRule.onNodeWithText("Show trigger title").performScrollTo().performSemanticsAction(SemanticsActions.OnClick) { it() }
+        composeRule.onNodeWithContentDescription("Action 1").performScrollTo()
         composeRule.onNodeWithText("Action 1", useUnmergedTree = true).assertIsDisplayed()
+        composeRule.onNodeWithText("Show trigger title").performScrollTo().performSemanticsAction(SemanticsActions.OnClick) { it() }
+        composeRule.onNodeWithContentDescription("Action 1").performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithText("Action 1", useUnmergedTree = true).assertDoesNotExist()
         composeRule.onNodeWithText("Last selection: Action 1").performScrollTo().assertIsDisplayed()
         composeRule.onNodeWithText("Show selected item on FAB").performScrollTo().performClick()
         composeRule.onNodeWithContentDescription("Actions").performScrollTo().assertIsDisplayed()

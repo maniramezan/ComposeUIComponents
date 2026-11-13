@@ -68,7 +68,7 @@ internal fun ExpandableFABPage() {
             ControlSwitch("Show selected item on FAB", showSelectedAction) { showSelectedAction = it }
             Text(
                 if (showSelectedAction) {
-                    "Choose a menu item to show its title and icon on the FAB."
+                    "Choose a menu item to show its icon on the FAB. Enable \"Show trigger title\" to add its title."
                 } else {
                     "Tap the trigger to open the menu, then select an action."
                 },
@@ -89,7 +89,7 @@ internal fun ExpandableFABPage() {
                         direction = direction,
                         collapseOnAction = collapseOnAction,
                         showActionLabels = showActionLabels,
-                        triggerLabel = displayedLabel.takeIf { showTriggerLabel || usesSelection },
+                        triggerLabel = displayedLabel.takeIf { showTriggerLabel },
                     )
                 }
             }
