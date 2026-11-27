@@ -8,6 +8,7 @@
 |---|---|---|---|
 | Colors | `AppColors` | `AppColors.light()` / `AppColors.dark()` | `AppTheme.colors` |
 | Spacing | `AppSpacing` | `AppSpacing.default()` (8-dp grid) | `AppTheme.spacing` |
+| Stroke widths | `AppStroke` | `AppStroke()` (0.5, 1, 2, 4 dp) | `AppTheme.stroke` |
 | Typography | `AppTypography` | `AppTypography.default()` (M3 scale + extensions) | `AppTheme.typography` |
 | Shapes | `AppShapes` | `AppShapes.default()` (standard/small/large/image/pill/badge) | `AppTheme.shapes` |
 | Motion | `AppMotion` | `AppMotion.default()` (short/medium/long + emphasized easing) | `AppTheme.motion` |
@@ -59,7 +60,6 @@ Two parallel naming schemes are exposed for back-compat:
 - **Multiplier scale** — `half` (4 dp), `x1` (8 dp), `x1_5` (12 dp), `x2` (16 dp), `x3` (24 dp), `x4` (32 dp), `x5` (40 dp), `x6` (48 dp), `x9` (72 dp). Preferred for new code.
 - **T-shirt scale** — `xs` (4 dp) … `xl` (24 dp). Kept for back-compat and Material-style component sizing.
 - **Semantic aliases** — `padding`, `contentPadding`, `itemSpacing`, `gridSpacing`.
-- **Strokes** — `strokeThin`, `strokeRegular`, `strokeThick`.
 - **Interaction** — `minTapTarget` defaults to 44 dp for compatibility. Interactive
   components enforce at least 48 dp through the shared minimum-target helpers.
 - **Layout dimensions (apps override)** — `gridItemMinWidth`, `gridImageHeight`, `videoCardThumbnailHeight`, `maxContentWidthForm`, `maxContentWidthList`, `maxContentWidthPlayer`. `AppSpacing.default()` sets `maxContentWidthForm` to 600 dp. The other layout
@@ -99,3 +99,14 @@ AppTheme(lightColors = brandLight) {
 ## Catalog token coverage
 
 Showkase discovers the light and dark semantic color tokens plus the default typography scale through annotated catalog entries in `:components`. Spacing, motion, shapes, and icons remain visible through component previews because Showkase only has first-class token annotations for colors and typography.
+
+## Stroke widths
+
+Use `AppTheme.stroke.hairline` for subtle outlines, `thin` for standard dividers and borders,
+`regular` for emphasized outlines and compact spinners, and `thick` for strong indicators.
+The 0.5 dp hairline scales with display density. The stroke scale is independent of the 8 dp layout grid.
+
+Pass `AppTheme(stroke = AppStroke(thin = 2.dp)) { … }` to customize widths. Existing
+`AppSpacing.strokeThin`, `strokeRegular`, and `strokeThick` overrides still apply through the
+original theme overload. An explicit `AppStroke` takes precedence and supplies the
+corresponding legacy values inside that theme.

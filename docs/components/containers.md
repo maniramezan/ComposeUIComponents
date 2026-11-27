@@ -175,7 +175,7 @@ Column(
 ### Selection outline
 
 The outline is drawn inside the card bounds, so changing `selected` recolors and thickens it
-(`strokeRegular` in `primary` when selected, `strokeThin` in `outlineVariant` otherwise)
+(`stroke.regular` in `primary` when selected, `stroke.thin` in `outlineVariant` otherwise)
 without changing the card size or moving its content. A selected card that is also disabled
 keeps its outline.
 
@@ -274,7 +274,7 @@ tokens (`AppTheme.spacing.maxContentWidthForm` is provided as a form-width defau
 
 `LabeledDivider` centers a caller-localized label between two themed horizontal rules.
 Use it to separate sections or indicate alternatives. The rules use `outlineVariant`
-and `spacing.strokeThin` by default; `color` and `thickness` can be customized.
+and `stroke.thin` by default; `color` and `thickness` can be customized.
 
 ```kotlin
 LabeledDivider(label = "Section")

@@ -64,7 +64,7 @@ public fun Avatar(
                 .size(size.diameter())
                 .clip(CircleShape)
                 .background(AppTheme.colors.primaryContainer)
-                .border(AppTheme.spacing.strokeThin, AppTheme.colors.outlineVariant, CircleShape)
+                .border(AppTheme.stroke.thin, AppTheme.colors.outlineVariant, CircleShape)
                 .clearAndSetSemantics {
                     if (name.isNotBlank()) {
                         contentDescription = name

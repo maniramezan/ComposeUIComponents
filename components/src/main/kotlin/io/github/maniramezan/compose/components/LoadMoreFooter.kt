@@ -62,7 +62,7 @@ public fun LoadMoreFooter(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            CircularProgressIndicator()
+            CircularProgressIndicator(strokeWidth = AppTheme.stroke.thick)
         }
     }
 }

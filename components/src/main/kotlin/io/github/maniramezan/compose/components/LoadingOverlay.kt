@@ -125,7 +125,7 @@ private fun LoadingOverlayCard(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.x1_5),
         ) {
-            CircularProgressIndicator(color = AppTheme.colors.primary)
+            CircularProgressIndicator(color = AppTheme.colors.primary, strokeWidth = AppTheme.stroke.thick)
             if (message != null) {
                 Text(
                     text = message,

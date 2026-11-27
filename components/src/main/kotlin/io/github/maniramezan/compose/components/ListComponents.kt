@@ -112,7 +112,7 @@ public fun LoadingState(
         // Announce the transition into the loading state.
         modifier = modifier.semantics { liveRegion = LiveRegionMode.Polite },
     ) {
-        CircularProgressIndicator()
+        CircularProgressIndicator(strokeWidth = AppTheme.stroke.thick)
         Text(
             text = label,
             style = AppTheme.typography.bodyMedium,

@@ -6,6 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerScope
@@ -488,6 +489,7 @@ private fun PageProgressFooter(
     // The bar is a visual position cue; expose the settled page as a spoken
     // node (and announce changes) when the caller supplies a formatter.
     val positionDescription = pagePositionDescription?.invoke(currentPage, pageCount)
+    val trackModifier = modifier.height(AppTheme.stroke.thick).clip(CircleShape)
     LinearProgressIndicator(
         progress = {
             if (pageCount <= 1) {
@@ -498,12 +500,12 @@ private fun PageProgressFooter(
         },
         modifier =
             if (positionDescription != null) {
-                modifier.clip(CircleShape).semantics {
+                trackModifier.semantics {
                     contentDescription = positionDescription
                     liveRegion = LiveRegionMode.Polite
                 }
             } else {
-                modifier.clip(CircleShape)
+                trackModifier
             },
         color = AppTheme.colors.primary,
         trackColor = AppTheme.colors.onSurfaceVariant.copy(alpha = 0.12f),
