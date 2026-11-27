@@ -9,6 +9,7 @@ import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension
 
 internal const val COMPILE_SDK = 37
+internal const val COMPILE_SDK_MINOR = 2
 internal const val MIN_SDK = 26
 internal const val TARGET_SDK = 37
 
@@ -18,6 +19,7 @@ private val Project.libs
 internal fun Project.configureAndroidApplication(extension: ApplicationExtension) {
     extension.apply {
         compileSdk = COMPILE_SDK
+        compileSdkMinor = COMPILE_SDK_MINOR
 
         defaultConfig {
             minSdk = MIN_SDK
@@ -36,6 +38,7 @@ internal fun Project.configureAndroidApplication(extension: ApplicationExtension
 internal fun Project.configureAndroidLibrary(extension: LibraryExtension) {
     extension.apply {
         compileSdk = COMPILE_SDK
+        compileSdkMinor = COMPILE_SDK_MINOR
 
         defaultConfig {
             minSdk = MIN_SDK
