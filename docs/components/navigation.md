@@ -146,7 +146,9 @@ Inactive page titles are dimmed using the theme `outline` color to match the de-
 
 ## SegmentedContent
 
-A tap-driven segmented picker paired with a client-supplied content slot. Tapping a segment crossfades to that segment's content. When segment titles fit the available width they distribute evenly; when they overflow, the bar becomes horizontally scrollable and shows a soft edge fade on whichever side has more to reveal. Scrolling the selection into view also keeps a sliver of the adjacent segment peeking, so it stays obvious there's more to either side.
+A tap-driven segmented picker paired with a client-supplied content slot. Tapping a segment crossfades to that segment's content.
+
+In the default fill-width mode, `SegmentFitMode.EvenWhenFits` gives each segment an equal share when every share can hold the padded title and minimum touch width. If any share is too narrow, the bar sizes each segment to its content and scrolls horizontally as needed. A soft edge fade shows where more segments are available, and scrolling the selection into view leaves part of a neighboring segment visible when space allows.
 
 Reach for `SegmentedContent` when selection should be discrete and tap-driven (settings sections, filter modes). Reach for `PaginatedContent` when the user should be able to swipe between full-width pages of content.
 
@@ -176,9 +178,7 @@ SegmentedContent(
     onSelectionChanged = { selectedIndex = it },
     indicator = SegmentSelectionIndicator.Underline,
     fitMode = SegmentFitMode.Intrinsic,
-    segmentTitle = { _, item, isSelected ->
-        // any composable — icons, badges, multi-line, etc.
-    },
+    segmentTitle = { _, item, isSelected -> SectionTitle(item, isSelected) },
 ) { _, item ->
     SectionContent(item)
 }

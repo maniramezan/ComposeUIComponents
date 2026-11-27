@@ -53,4 +53,56 @@ class SegmentedContentTest {
                 SegmentDensity.Compact,
             ).inOrder()
     }
+
+    @Test
+    fun evenRowWhenEverySegmentFitsItsShare() {
+        val layout =
+            segmentRowLayout(
+                intrinsicWidths = listOf(90, 80, 90),
+                spacing = 4,
+                maxWidth = 300,
+                fitMode = SegmentFitMode.EvenWhenFits,
+                fillWidth = true,
+            )
+        assertThat(layout).isEqualTo(SegmentRowLayout(useEven = true, useScrollable = false))
+    }
+
+    @Test
+    fun unevenTitlesUseIntrinsicWidthsWhenTheirCombinedWidthFits() {
+        val layout =
+            segmentRowLayout(
+                intrinsicWidths = listOf(150, 60, 70),
+                spacing = 4,
+                maxWidth = 300,
+                fitMode = SegmentFitMode.EvenWhenFits,
+                fillWidth = true,
+            )
+        assertThat(layout).isEqualTo(SegmentRowLayout(useEven = false, useScrollable = true))
+    }
+
+    @Test
+    fun overflowingRowScrolls() {
+        val layout =
+            segmentRowLayout(
+                intrinsicWidths = listOf(150, 120, 140),
+                spacing = 4,
+                maxWidth = 300,
+                fitMode = SegmentFitMode.EvenWhenFits,
+                fillWidth = true,
+            )
+        assertThat(layout).isEqualTo(SegmentRowLayout(useEven = false, useScrollable = true))
+    }
+
+    @Test
+    fun fitWidthRowThatFitsNeitherSpreadsNorScrolls() {
+        val layout =
+            segmentRowLayout(
+                intrinsicWidths = listOf(150, 60, 70),
+                spacing = 4,
+                maxWidth = 300,
+                fitMode = SegmentFitMode.EvenWhenFits,
+                fillWidth = false,
+            )
+        assertThat(layout).isEqualTo(SegmentRowLayout(useEven = false, useScrollable = false))
+    }
 }

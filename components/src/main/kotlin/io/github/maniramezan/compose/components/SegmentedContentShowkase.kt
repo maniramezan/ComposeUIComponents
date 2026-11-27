@@ -7,6 +7,10 @@ import com.airbnb.android.showkase.annotation.ShowkaseComposable
 @Composable
 public fun SegmentedContentShowkase(): Unit = SegmentedContentPreview()
 
+@ShowkaseComposable(name = "Segmented Content – Uneven Titles", group = "Navigation")
+@Composable
+public fun SegmentedContentUnevenTitlesShowkase(): Unit = SegmentedContentUnevenTitlesPreview()
+
 @ShowkaseComposable(name = "Segmented Content – Overflow Scrollable", group = "Navigation")
 @Composable
 public fun SegmentedContentOverflowShowkase(): Unit = SegmentedContentOverflowPreview()
