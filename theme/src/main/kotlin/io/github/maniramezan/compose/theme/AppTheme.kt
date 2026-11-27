@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 
 private val LocalAppColors = staticCompositionLocalOf { AppColors.light() }
 private val LocalAppSpacing = staticCompositionLocalOf { AppSpacing.default() }
+private val LocalAppStroke = staticCompositionLocalOf { AppStroke() }
 private val LocalAppMotion = staticCompositionLocalOf { AppMotion.default() }
 private val LocalAppIcons = staticCompositionLocalOf { AppIcons.default() }
 private val LocalAppTypography = staticCompositionLocalOf { AppTypography.default() }
@@ -30,7 +31,7 @@ private val LocalAppShapes = staticCompositionLocalOf { AppShapes.default() }
  *
  * @param lightColors Colors used when [darkTheme] is `false`.
  * @param darkColors Colors used when [darkTheme] is `true`.
- * @param spacing Spacing, stroke, and layout-dimension tokens.
+ * @param spacing Spacing and layout tokens. Its legacy stroke values supply the stroke widths.
  * @param motion Duration and easing tokens.
  * @param icons Icon contracts; pass `defaultAppIcons()` from `:icons` for the curated set.
  * @param typography Typography scale, including weight-variant slots.
@@ -52,6 +53,51 @@ public fun AppTheme(
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit,
 ) {
+    AppTheme(
+        stroke = AppStroke(thin = spacing.strokeThin, regular = spacing.strokeRegular, thick = spacing.strokeThick),
+        lightColors = lightColors,
+        darkColors = darkColors,
+        spacing = spacing,
+        motion = motion,
+        icons = icons,
+        typography = typography,
+        shapes = shapes,
+        darkTheme = darkTheme,
+        dynamicColor = dynamicColor,
+        content = content,
+    )
+}
+
+/**
+ * Provides semantic tokens with a dedicated [stroke] scale. Its widths also resolve
+ * through the legacy stroke properties read by older components.
+ *
+ * @param stroke Stroke widths supplied to the hierarchy.
+ * @param lightColors Colors used when [darkTheme] is `false`.
+ * @param darkColors Colors used when [darkTheme] is `true`.
+ * @param spacing Spacing and layout-dimension tokens.
+ * @param motion Duration and easing tokens.
+ * @param icons Icon contracts.
+ * @param typography Typography scale, including weight-variant slots.
+ * @param shapes Corner-shape tokens.
+ * @param darkTheme Whether to resolve [darkColors]; follows the system setting by default.
+ * @param dynamicColor Whether to use the platform's wallpaper-derived color scheme on Android 12+.
+ * @param content The themed hierarchy.
+ */
+@Composable
+public fun AppTheme(
+    stroke: AppStroke,
+    lightColors: AppColors = AppColors.light(),
+    darkColors: AppColors = AppColors.dark(),
+    spacing: AppSpacing = AppSpacing.default(),
+    motion: AppMotion = AppMotion.default(),
+    icons: AppIcons = AppIcons.default(),
+    typography: AppTypography = AppTypography.default(),
+    shapes: AppShapes = AppShapes.default(),
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    dynamicColor: Boolean = false,
+    content: @Composable () -> Unit,
+) {
     val resolvedColors = if (darkTheme) darkColors else lightColors
     val colorScheme =
         appColorScheme(
@@ -62,10 +108,15 @@ public fun AppTheme(
     val appColors = remember(colorScheme, resolvedColors) { colorScheme.toAppColors(base = resolvedColors) }
     val materialTypography = remember(typography) { typography.toMaterialTypography() }
     val materialShapes = remember(shapes) { shapes.toMaterialShapes() }
+    val resolvedSpacing =
+        remember(spacing, stroke) {
+            spacing.copy(strokeThin = stroke.thin, strokeRegular = stroke.regular, strokeThick = stroke.thick)
+        }
 
     CompositionLocalProvider(
         LocalAppColors provides appColors,
-        LocalAppSpacing provides spacing,
+        LocalAppSpacing provides resolvedSpacing,
+        LocalAppStroke provides stroke,
         LocalAppMotion provides motion,
         LocalAppIcons provides icons,
         LocalAppTypography provides typography,
@@ -91,6 +142,12 @@ public object AppTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalAppSpacing.current
+
+    /** Stroke widths for the current theme. */
+    public val stroke: AppStroke
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalAppStroke.current
 
     public val motion: AppMotion
         @Composable

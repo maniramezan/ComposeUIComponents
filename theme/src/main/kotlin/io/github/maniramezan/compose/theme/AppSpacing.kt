@@ -84,9 +84,9 @@ public data class AppSpacing(
                 contentPadding = AppReferenceSpacing.Space24,
                 itemSpacing = AppReferenceSpacing.Space8,
                 gridSpacing = AppReferenceSpacing.Space16,
-                strokeThin = AppReferenceSpacing.Space1,
-                strokeRegular = AppReferenceSpacing.Space2,
-                strokeThick = AppReferenceSpacing.Space4,
+                strokeThin = AppSpacingDefaults.strokeThin,
+                strokeRegular = AppSpacingDefaults.strokeRegular,
+                strokeThick = AppSpacingDefaults.strokeThick,
                 minTapTarget = AppReferenceSpacing.Space44,
                 maxContentWidthForm = AppReferenceSpacing.Space600,
                 expandedNavigationBreakpoint = AppReferenceSpacing.Space600,
@@ -117,9 +117,10 @@ public object AppSpacingDefaults {
     public val contentPadding: Dp = AppReferenceSpacing.Space24
     public val itemSpacing: Dp = AppReferenceSpacing.Space8
     public val gridSpacing: Dp = AppReferenceSpacing.Space16
-    public val strokeThin: Dp = AppReferenceSpacing.Space1
-    public val strokeRegular: Dp = AppReferenceSpacing.Space2
-    public val strokeThick: Dp = AppReferenceSpacing.Space4
+    private val defaultStroke = AppStroke()
+    public val strokeThin: Dp = defaultStroke.thin
+    public val strokeRegular: Dp = defaultStroke.regular
+    public val strokeThick: Dp = defaultStroke.thick
     public val minTapTarget: Dp = AppReferenceSpacing.Space44
     public val maxContentWidthForm: Dp = AppReferenceSpacing.Space600
     public val expandedNavigationBreakpoint: Dp = AppReferenceSpacing.Space600

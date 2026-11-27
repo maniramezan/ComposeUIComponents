@@ -128,7 +128,7 @@ public fun NoticeBanner(
                 .fillMaxWidth()
                 .clip(shape)
                 .background(container)
-                .border(AppTheme.spacing.strokeThin, accent, shape)
+                .border(AppTheme.stroke.thin, accent, shape)
                 .padding(
                     start = AppTheme.spacing.lg,
                     end = if (hasDismiss) AppTheme.spacing.xs else AppTheme.spacing.lg,

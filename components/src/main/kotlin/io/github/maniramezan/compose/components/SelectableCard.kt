@@ -96,9 +96,9 @@ public fun SelectableCard(
 ) {
     val outline =
         if (selected) {
-            BorderStroke(AppTheme.spacing.strokeRegular, AppTheme.colors.primary)
+            BorderStroke(AppTheme.stroke.regular, AppTheme.colors.primary)
         } else {
-            BorderStroke(AppTheme.spacing.strokeThin, AppTheme.colors.outlineVariant)
+            BorderStroke(AppTheme.stroke.thin, AppTheme.colors.outlineVariant)
         }
     val customState = stateDescription?.takeIf { it.isNotBlank() }
 

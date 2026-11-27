@@ -1,6 +1,7 @@
 package io.github.maniramezan.compose.components
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
@@ -16,10 +17,12 @@ import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertHeightIsEqualTo
 import androidx.compose.ui.test.assertWidthIsEqualTo
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.github.maniramezan.compose.theme.AppStroke
 import io.github.maniramezan.compose.theme.AppTheme
 import io.github.maniramezan.testcommons.compose.ThemedComposeRule
 import kotlinx.coroutines.launch
@@ -38,6 +41,24 @@ public class FeedbackComponentsTest {
 
     private val indeterminateProgress =
         SemanticsMatcher.expectValue(SemanticsProperties.ProgressBarRangeInfo, ProgressBarRangeInfo.Indeterminate)
+
+    @Test
+    public fun determinateProgressTrackUsesTheThickStroke() {
+        composeRule.setContent {
+            Column {
+                AppTheme(stroke = AppStroke(thick = 2.dp)) {
+                    ProgressIndicator(modifier = Modifier.testTag(THIN_PROGRESS), progress = 0.5f, label = "Loading")
+                }
+                AppTheme(stroke = AppStroke(thick = 8.dp)) {
+                    ProgressIndicator(modifier = Modifier.testTag(THICK_PROGRESS), progress = 0.5f, label = "Loading")
+                }
+            }
+        }
+
+        val thinTrack = composeRule.onNodeWithTag(THIN_PROGRESS).getUnclippedBoundsInRoot()
+        val thickTrack = composeRule.onNodeWithTag(THICK_PROGRESS).getUnclippedBoundsInRoot()
+        assertEquals(thinTrack.bottom - thinTrack.top + 6.dp, thickTrack.bottom - thickTrack.top)
+    }
 
     @Test
     public fun skeletonPlaceholdersAreHiddenFromAccessibility() {
@@ -115,6 +136,8 @@ public class FeedbackComponentsTest {
     }
 
     private companion object {
+        const val THIN_PROGRESS = "thin-progress"
+        const val THICK_PROGRESS = "thick-progress"
         const val SKELETON = "skeleton"
         const val BLOCK = "block"
         const val LIST = "list"

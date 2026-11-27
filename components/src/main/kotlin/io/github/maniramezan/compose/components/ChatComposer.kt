@@ -217,7 +217,7 @@ private fun ChatComposerActionButton(
                 CircularProgressIndicator(
                     modifier = Modifier.size(AppTheme.spacing.x3),
                     color = AppTheme.colors.primary,
-                    strokeWidth = AppTheme.spacing.strokeRegular,
+                    strokeWidth = AppTheme.stroke.regular,
                 )
         }
     }

@@ -39,11 +39,16 @@ class AppSpacingTest {
     }
 
     @Test
-    fun strokeWidthsAreOrdered() {
+    fun legacySpacingStrokeWidthsMatchTheDefaultStrokeScale() {
         val spacing = AppSpacing.default()
-        assertThat(spacing.strokeThin).isEqualTo(1.dp)
-        assertThat(spacing.strokeRegular).isEqualTo(2.dp)
-        assertThat(spacing.strokeThick).isEqualTo(4.dp)
+        val stroke = AppStroke()
+        assertThat(stroke.hairline).isEqualTo(0.5.dp)
+        assertThat(stroke.thin).isEqualTo(1.dp)
+        assertThat(stroke.regular).isEqualTo(2.dp)
+        assertThat(stroke.thick).isEqualTo(4.dp)
+        assertThat(spacing.strokeThin).isEqualTo(stroke.thin)
+        assertThat(spacing.strokeRegular).isEqualTo(stroke.regular)
+        assertThat(spacing.strokeThick).isEqualTo(stroke.thick)
     }
 
     @Test

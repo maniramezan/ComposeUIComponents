@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,13 +17,13 @@ import androidx.compose.material3.HorizontalDivider as MaterialHorizontalDivider
 import androidx.compose.material3.VerticalDivider as MaterialVerticalDivider
 
 /**
- * A full-width horizontal rule. Defaults to `AppTheme.colors.outlineVariant` so it
+ * A full-width horizontal rule. Uses `AppTheme.stroke.thin` and `AppTheme.colors.outlineVariant` so it
  * blends with themed surfaces without extra configuration.
  */
 @Composable
 public fun HorizontalDivider(
     modifier: Modifier = Modifier,
-    thickness: Dp = DividerDefaults.Thickness,
+    thickness: Dp = AppTheme.stroke.thin,
     color: Color = AppTheme.colors.outlineVariant,
 ) {
     MaterialHorizontalDivider(
@@ -35,13 +34,13 @@ public fun HorizontalDivider(
 }
 
 /**
- * A full-height vertical rule. Defaults to `AppTheme.colors.outlineVariant` so it
+ * A full-height vertical rule. Uses `AppTheme.stroke.thin` and `AppTheme.colors.outlineVariant` so it
  * blends with themed surfaces without extra configuration.
  */
 @Composable
 public fun VerticalDivider(
     modifier: Modifier = Modifier,
-    thickness: Dp = DividerDefaults.Thickness,
+    thickness: Dp = AppTheme.stroke.thin,
     color: Color = AppTheme.colors.outlineVariant,
 ) {
     MaterialVerticalDivider(
@@ -65,7 +64,7 @@ public fun VerticalDivider(
 public fun LabeledDivider(
     label: String,
     modifier: Modifier = Modifier,
-    thickness: Dp = AppTheme.spacing.strokeThin,
+    thickness: Dp = AppTheme.stroke.thin,
     color: Color = AppTheme.colors.outlineVariant,
 ) {
     if (label.isBlank()) {

@@ -34,7 +34,7 @@ internal fun Modifier.pillSurface(
     border: Boolean = false,
 ): Modifier =
     clip(AppTheme.shapes.pill).background(containerColor).let {
-        if (border) it.border(AppTheme.spacing.strokeThin, AppTheme.colors.outline, AppTheme.shapes.pill) else it
+        if (border) it.border(AppTheme.stroke.thin, AppTheme.colors.outline, AppTheme.shapes.pill) else it
     }
 
 /**

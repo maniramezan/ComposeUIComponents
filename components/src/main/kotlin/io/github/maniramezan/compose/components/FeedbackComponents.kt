@@ -51,11 +51,11 @@ public fun ProgressIndicator(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         if (progress == null) {
-            CircularProgressIndicator()
+            CircularProgressIndicator(strokeWidth = AppTheme.stroke.thick)
         } else {
             LinearProgressIndicator(
                 progress = { progress.coerceIn(0f, 1f) },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().height(AppTheme.stroke.thick),
             )
         }
         Text(

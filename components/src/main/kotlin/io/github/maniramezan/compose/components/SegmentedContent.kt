@@ -645,7 +645,7 @@ private fun SegmentSlot(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .height(AppTheme.spacing.strokeThick)
+                            .height(AppTheme.stroke.thick)
                             .background(underlineColor),
                 )
             }

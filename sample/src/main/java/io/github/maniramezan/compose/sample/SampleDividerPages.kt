@@ -19,7 +19,8 @@ internal fun LabeledDividerPage() {
     var thicknessIndex by rememberSaveable { mutableIntStateOf(0) }
     var colorIndex by rememberSaveable { mutableIntStateOf(0) }
     var narrow by rememberSaveable { mutableStateOf(false) }
-    val thicknesses = listOf(AppTheme.spacing.strokeThin, AppTheme.spacing.strokeRegular)
+    val stroke = AppTheme.stroke
+    val thicknesses = listOf(stroke.thin, stroke.hairline, stroke.regular, stroke.thick)
     val colors = listOf(AppTheme.colors.outlineVariant, AppTheme.colors.primary)
 
     SamplePage(
@@ -40,7 +41,7 @@ internal fun LabeledDividerPage() {
             TextField(value = label, onValueChange = { label = it }, label = "Label (blank draws one rule)")
             ControlSegmented(
                 label = "Thickness",
-                options = listOf("Thin", "Regular"),
+                options = listOf("Thin", "Hairline", "Regular", "Thick"),
                 selectedIndex = thicknessIndex,
                 onOptionSelected = { thicknessIndex = it },
             )
