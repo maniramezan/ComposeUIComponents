@@ -50,6 +50,16 @@ public fun SegmentedContentPreview(): Unit =
     }
 
 @PreviewLightDark
+@Preview(name = "SegmentedContent – Uneven Titles at 200%", group = "Navigation", widthDp = 380, fontScale = 2f)
+@Composable
+internal fun SegmentedContentUnevenTitlesPreview(): Unit =
+    AppTheme {
+        SegmentedContent(
+            items = listOf(SegmentedItem("Detailed settings"), SegmentedItem("A"), SegmentedItem("B")),
+        ) { _, item -> SegmentPlaceholder(item.title) }
+    }
+
+@PreviewLightDark
 @Preview(name = "SegmentedContent – Overflow Scrollable", group = "Navigation")
 @Composable
 public fun SegmentedContentOverflowPreview(): Unit =

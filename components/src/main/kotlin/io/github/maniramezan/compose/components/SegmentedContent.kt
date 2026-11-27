@@ -86,7 +86,7 @@ public enum class SegmentSelectionIndicator {
  * always sized to their intrinsic width.
  */
 public enum class SegmentFitMode {
-    /** Distribute evenly when titles fit; fall back to horizontal scroll when they don't. */
+    /** Distribute evenly when every padded title and minimum touch width fits its equal share. */
     EvenWhenFits,
 
     /** Always size segments to their intrinsic width. Scrolls horizontally when they overflow. */
@@ -126,10 +126,11 @@ public enum class SegmentDensity {
 
 /**
  * A tab-style picker paired with a client-supplied content slot. Tapping a
- * segment swaps the content with a short crossfade. When all segment titles
- * fit on one row, they distribute evenly (in [SegmentFitMode.EvenWhenFits]);
- * when they overflow, the bar becomes horizontally scrollable and shows a
- * soft edge fade on whichever side has more content.
+ * segment swaps the content with a short crossfade. With [SegmentWidthMode.Fill]
+ * and [SegmentFitMode.EvenWhenFits], segments share the width equally when each
+ * share can accommodate its padded title and minimum touch width. Otherwise
+ * segments use their natural widths and the bar scrolls horizontally as needed.
+ * A soft edge fade appears on either side that has more content.
  *
  * This overload owns selection state. Use the hoisted overload when the
  * caller needs to drive selection externally.
@@ -296,13 +297,14 @@ private fun SegmentBar(
             // even distribution and horizontal scroll. This pass is never placed,
             // and its semantics are cleared so the throwaway titles don't appear
             // twice to accessibility services or UI tests.
-            val intrinsicPlaceables =
+            val intrinsicWidths =
                 subcompose("intrinsic") {
                     items.forEachIndexed { i, item ->
                         Box(
                             modifier =
                                 Modifier
                                     .clearAndSetSemantics {}
+                                    .minimumTouchTargetWidth(minimumTouchTargetSize())
                                     .padding(
                                         horizontal = AppTheme.spacing.x2,
                                         vertical = AppTheme.spacing.x1,
@@ -311,15 +313,16 @@ private fun SegmentBar(
                             segmentTitle(i, item, i == selectedIndex)
                         }
                     }
-                }.map { it.measure(constraints.copy(minWidth = 0)) }
+                }.map { it.measure(constraints.copy(minWidth = 0)).width }
 
-            val gapCount = (items.size - 1).coerceAtLeast(0)
-            val totalIntrinsic = intrinsicPlaceables.sumOf { it.width } + itemSpacingPx * gapCount
-            val fits = totalIntrinsic <= constraints.maxWidth
-            // Even distribution only when explicitly requested and the bar is filling available width.
-            val useEven = fitMode == SegmentFitMode.EvenWhenFits && fillWidth && fits
-            // Scroll when overflowing, or when Fill+Intrinsic (always scroll regardless of fit).
-            val useScrollable = !useEven && (fillWidth || !fits)
+            val (useEven, useScrollable) =
+                segmentRowLayout(
+                    intrinsicWidths = intrinsicWidths,
+                    spacing = itemSpacingPx,
+                    maxWidth = constraints.maxWidth,
+                    fitMode = fitMode,
+                    fillWidth = fillWidth,
+                )
 
             val mainPlaceables =
                 subcompose("main") {
@@ -362,6 +365,8 @@ private fun SegmentBar(
                 if (fillWidth) {
                     constraints.maxWidth
                 } else {
+                    val totalIntrinsic =
+                        intrinsicWidths.sum() + itemSpacingPx * intrinsicWidths.lastIndex.coerceAtLeast(0)
                     totalIntrinsic.coerceIn(constraints.minWidth, constraints.maxWidth)
                 }
             val height = mainPlaceables.maxOfOrNull { it.height } ?: 0
@@ -370,6 +375,36 @@ private fun SegmentBar(
             }
         }
     }
+}
+
+/** Layout choices for a segment row. */
+internal data class SegmentRowLayout(
+    val useEven: Boolean,
+    val useScrollable: Boolean,
+)
+
+/**
+ * Picks the row layout from each segment's measured width, including title
+ * padding and minimum touch width.
+ *
+ * Even distribution gives every segment the same share of the row, so it only fits when the
+ * widest segment fits its share. When equal shares are too narrow, the scrollable
+ * row can give each segment its natural width.
+ */
+internal fun segmentRowLayout(
+    intrinsicWidths: List<Int>,
+    spacing: Int,
+    maxWidth: Int,
+    fitMode: SegmentFitMode,
+    fillWidth: Boolean,
+): SegmentRowLayout {
+    val gapCount = (intrinsicWidths.size - 1).coerceAtLeast(0)
+    val totalSpacing = spacing * gapCount
+    val fits = intrinsicWidths.sum() + totalSpacing <= maxWidth
+    val evenFits = (intrinsicWidths.maxOrNull() ?: 0).toLong() * intrinsicWidths.size + totalSpacing <= maxWidth
+    val useEven = fitMode == SegmentFitMode.EvenWhenFits && fillWidth && evenFits
+    val useScrollable = !useEven && (fillWidth || !fits)
+    return SegmentRowLayout(useEven = useEven, useScrollable = useScrollable)
 }
 
 @Composable

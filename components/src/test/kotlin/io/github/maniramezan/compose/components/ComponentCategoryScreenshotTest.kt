@@ -154,6 +154,15 @@ public class ComponentCategoryScreenshotTest {
     }
 
     @Test
+    public fun segmentedContentUnevenTitlesAtDoubleFontScale() {
+        captureRoboImage("build/outputs/roborazzi/segmented-content-uneven-font200.png") {
+            CompositionLocalProvider(LocalDensity provides Density(LocalDensity.current.density, fontScale = 2f)) {
+                SegmentedContentUnevenTitlesPreview()
+            }
+        }
+    }
+
+    @Test
     public fun tabBarCenteredMatchesGolden() {
         captureRoboImage("build/outputs/roborazzi/tab-bar-centered.png") {
             TabBarCenteredPreview()
